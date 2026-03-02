@@ -375,12 +375,12 @@ const stages = [
 ];
 
 const state = {
-  currentMoodId: 'neutral',
   stageIndex: 0,
-  currentTab: null
+  currentMoodId: 'neutral'
 };
 
 const els = {
+  resetBtn: document.getElementById('resetBtn'),
   moodButtons: document.getElementById('moodButtons'),
   currentMoodPill: document.getElementById('currentMoodPill'),
   stageTitle: document.getElementById('stageTitle'),
@@ -389,7 +389,6 @@ const els = {
   progressFill: document.getElementById('progressFill'),
   checklist: document.getElementById('checklist'),
   objectionsList: document.getElementById('objectionsList'),
-  argumentTabs: document.getElementById('argumentTabs'),
   argumentCards: document.getElementById('argumentCards'),
   coachCue: document.getElementById('coachCue'),
   microScript: document.getElementById('microScript'),
@@ -398,16 +397,15 @@ const els = {
   dontDo: document.getElementById('dontDo'),
   nextStageLabel: document.getElementById('nextStageLabel'),
   nextStageBtn: document.getElementById('nextStageBtn'),
-  prevStageBtn: document.getElementById('prevStageBtn'),
-  resetBtn: document.getElementById('resetBtn')
+  prevStageBtn: document.getElementById('prevStageBtn')
 };
-
-function getCurrentMood() {
-  return moods.find(m => m.id === state.currentMoodId) || moods[0];
-}
 
 function getCurrentStage() {
   return stages[state.stageIndex];
+}
+
+function getCurrentMood() {
+  return moods.find(m => m.id === state.currentMoodId) || moods[0];
 }
 
 function renderMoodButtons() {
@@ -418,8 +416,8 @@ function renderMoodButtons() {
     btn.innerHTML = `
       <span class="emoji">${mood.emoji}</span>
       <span class="label">${mood.label}</span>
-      <span class="desc">${mood.desc}</span>
     `;
+    btn.title = `${mood.label} · ${mood.desc}`;
     btn.addEventListener('click', () => {
       state.currentMoodId = mood.id;
       renderMoodButtons();
@@ -432,7 +430,7 @@ function renderMoodButtons() {
 
 function renderList(container, items) {
   container.innerHTML = '';
-  items.forEach(item => {
+  (items || []).forEach(item => {
     const li = document.createElement('li');
     li.textContent = item;
     container.appendChild(li);
@@ -441,29 +439,11 @@ function renderList(container, items) {
 
 function renderObjections(objections) {
   els.objectionsList.innerHTML = '';
-  objections.forEach(o => {
+  (objections || []).forEach(o => {
     const div = document.createElement('div');
     div.className = 'obj-chip';
     div.innerHTML = `<div class="obj-title">${escapeHtml(o.title)}</div><div class="obj-answer">${escapeHtml(o.answer)}</div>`;
     els.objectionsList.appendChild(div);
-  });
-}
-
-function renderTabs(stage) {
-  const tabKeys = Object.keys(stage.arguments);
-  if (!tabKeys.includes(state.currentTab)) state.currentTab = tabKeys[0];
-
-  els.argumentTabs.innerHTML = '';
-  tabKeys.forEach(tab => {
-    const btn = document.createElement('button');
-    btn.className = `tab-btn ${tab === state.currentTab ? 'active' : ''}`;
-    btn.textContent = tabLabel(tab);
-    btn.addEventListener('click', () => {
-      state.currentTab = tab;
-      renderTabs(stage);
-      renderArgumentCards(stage);
-    });
-    els.argumentTabs.appendChild(btn);
   });
 }
 
@@ -475,56 +455,66 @@ function buildMoodAdjustedScript(text, mood) {
   if (mood.id === 'urgent') prefix = '⚡ ';
   if (mood.id === 'rescue') prefix = '🫱🏻‍🫲🏽 ';
 
-  let adjusted = text;
-  if (mood.id === 'playful') {
-    adjusted = adjusted.replace('consulta rápida', 'consulta rapidita');
-  }
-  if (mood.id === 'dominant') {
-    adjusted = adjusted.replace(/\n/g, '\n').replace('Estoy', 'Mira, estoy');
-  }
-  if (mood.id === 'rescue') {
-    adjusted = adjusted.replace('Lo que pasa', 'Tranquilo, lo que suele pasar');
-  }
+  let adjusted = String(text || '');
+  if (mood.id === 'playful') adjusted = adjusted.replace('consulta rápida', 'consulta rapidita');
+  if (mood.id === 'dominant') adjusted = adjusted.replace('Estoy', 'Mira, estoy');
+  if (mood.id === 'rescue') adjusted = adjusted.replace('Lo que pasa', 'Tranquilo, lo que suele pasar');
   return `${prefix}${adjusted}`;
+}
+
+function collectStageCards(stage) {
+  const all = [];
+  Object.entries(stage.arguments || {}).forEach(([technique, cards]) => {
+    (cards || []).forEach(card => all.push({ ...card, technique }));
+  });
+  return all.slice(0, 4);
 }
 
 function renderArgumentCards(stage) {
   const mood = getCurrentMood();
-  const cards = stage.arguments[state.currentTab] || [];
+  const cards = collectStageCards(stage);
   els.argumentCards.innerHTML = '';
 
+  if (!cards.length) {
+    els.argumentCards.innerHTML = '<div class="argument-card"><div class="script-box">No hay argumentos cargados para esta etapa.</div></div>';
+    return;
+  }
+
   cards.forEach((card, idx) => {
+    const adjustedScript = buildMoodAdjustedScript(card.script, mood);
     const div = document.createElement('div');
     div.className = 'argument-card';
-    const adjustedScript = buildMoodAdjustedScript(card.script, mood);
-
     div.innerHTML = `
-      <div class="arg-top">
-        <h4>${escapeHtml(card.title)}</h4>
-        <span class="tag">${escapeHtml(card.intensity)}</span>
+      <div class="arg-header">
+        <span class="tech-tag">${escapeHtml(tabLabel(card.technique))}</span>
+        <span class="intensity-tag">${escapeHtml(card.intensity || 'base')}</span>
+        <h4 class="arg-title">${escapeHtml(card.title)}</h4>
       </div>
       <div class="script-box">${escapeHtml(adjustedScript)}</div>
       <div class="arg-note">${escapeHtml(card.note || '')}</div>
       <div class="arg-actions">
-        <button class="small-btn" data-copy="${idx}">Copiar guion</button>
-        <button class="small-btn" data-coach="${idx}">Usar como micro-guion</button>
+        <button class="small-btn" data-copy="${idx}">Copiar</button>
+        <button class="small-btn" data-coach="${idx}">Usar</button>
       </div>
     `;
 
-    const [copyBtn, coachBtn] = div.querySelectorAll('.small-btn');
+    const copyBtn = div.querySelector('[data-copy]');
+    const coachBtn = div.querySelector('[data-coach]');
+
     copyBtn.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(adjustedScript);
         copyBtn.textContent = '✅ Copiado';
-        setTimeout(() => (copyBtn.textContent = 'Copiar guion'), 1200);
+        setTimeout(() => (copyBtn.textContent = 'Copiar'), 1000);
       } catch {
-        copyBtn.textContent = 'No se pudo copiar';
-        setTimeout(() => (copyBtn.textContent = 'Copiar guion'), 1200);
+        copyBtn.textContent = 'No se pudo';
+        setTimeout(() => (copyBtn.textContent = 'Copiar'), 1000);
       }
     });
+
     coachBtn.addEventListener('click', () => {
       els.microScript.textContent = adjustedScript;
-      flash(els.microScript.closest('.coach-block'));
+      flash(els.microScript.closest('.micro-script-card'));
     });
 
     els.argumentCards.appendChild(div);
@@ -532,35 +522,35 @@ function renderArgumentCards(stage) {
 }
 
 function renderCoach(stage, mood) {
-  els.coachCue.textContent = `${mood.cuePrefix} · ${stage.coach.cue.replace(/^[^a-zA-ZÁÉÍÓÚáéíóú]+\s*/, '')}`;
-  els.microScript.textContent = buildMoodAdjustedScript(stage.coach.microScript, mood);
-  els.toneNote.textContent = `${stage.coach.toneNote} ${mood.toneModifier}`;
-  renderList(els.advanceSignals, stage.coach.advanceSignals);
-  renderList(els.dontDo, stage.coach.dontDo);
+  const cueTail = (stage.coach?.cue || '').replace(/^[^a-zA-ZÁÉÍÓÚáéíóú]+\s*/, '');
+  els.coachCue.textContent = `${mood.cuePrefix} · ${cueTail}`;
+  els.microScript.textContent = buildMoodAdjustedScript(stage.coach?.microScript || '', mood);
+  els.toneNote.textContent = `${stage.coach?.toneNote || ''} ${mood.toneModifier}`.trim();
+  renderList(els.advanceSignals, stage.coach?.advanceSignals || []);
+  renderList(els.dontDo, stage.coach?.dontDo || []);
 }
 
 function renderStage() {
   const stage = getCurrentStage();
   const mood = getCurrentMood();
 
-  els.currentMoodPill.textContent = `Mood: ${mood.label}`;
+  els.currentMoodPill.textContent = mood.label;
+  els.currentMoodPill.title = mood.desc;
+
   els.stageTitle.textContent = stage.title;
   els.stageGoal.textContent = stage.goal;
   els.stageCounter.textContent = `${state.stageIndex + 1} / ${stages.length}`;
   els.progressFill.style.width = `${((state.stageIndex + 1) / stages.length) * 100}%`;
 
-  renderList(els.checklist, stage.checklist);
-  renderObjections(stage.objections);
-  renderTabs(stage);
   renderArgumentCards(stage);
   renderCoach(stage, mood);
+  renderList(els.checklist, stage.checklist || []);
+  renderObjections(stage.objections || []);
 
   const nextStage = stages[state.stageIndex + 1];
   els.nextStageLabel.textContent = nextStage ? nextStage.title : 'Fin del flujo';
   els.nextStageBtn.disabled = !nextStage;
-  els.nextStageBtn.style.opacity = nextStage ? '1' : '.5';
   els.prevStageBtn.disabled = state.stageIndex === 0;
-  els.prevStageBtn.style.opacity = state.stageIndex === 0 ? '.5' : '1';
 }
 
 function flash(el) {
@@ -597,7 +587,6 @@ function escapeHtml(text) {
 els.nextStageBtn.addEventListener('click', () => {
   if (state.stageIndex < stages.length - 1) {
     state.stageIndex += 1;
-    state.currentTab = null;
     renderStage();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -606,7 +595,6 @@ els.nextStageBtn.addEventListener('click', () => {
 els.prevStageBtn.addEventListener('click', () => {
   if (state.stageIndex > 0) {
     state.stageIndex -= 1;
-    state.currentTab = null;
     renderStage();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -615,7 +603,6 @@ els.prevStageBtn.addEventListener('click', () => {
 els.resetBtn.addEventListener('click', () => {
   state.stageIndex = 0;
   state.currentMoodId = 'neutral';
-  state.currentTab = null;
   renderMoodButtons();
   renderStage();
 });
