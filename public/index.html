@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Copiloto de Cold Calling WSP</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="top-bar card">
+      <div class="brand">
+        <div class="brand-badge">⚡</div>
+        <div>
+          <h1>Copiloto de Cold Calling</h1>
+          <p>Venta consultiva de bots inteligentes de WhatsApp ($180)</p>
+        </div>
+      </div>
+      <div class="session-controls">
+        <button id="resetBtn" class="ghost-btn">Reiniciar llamada</button>
+      </div>
+    </header>
+
+    <section class="moods-panel card">
+      <div class="section-head">
+        <h2>Estados / Moods (arriba)</h2>
+        <span id="currentMoodPill" class="pill">Mood: Neutro profesional</span>
+      </div>
+      <div id="moodButtons" class="mood-grid"></div>
+    </section>
+
+    <main class="main-grid">
+      <section class="stage-panel card">
+        <div class="section-head stage-head">
+          <div>
+            <div class="eyebrow">ETAPA ACTUAL</div>
+            <h2 id="stageTitle">Apertura</h2>
+            <p id="stageGoal" class="muted"></p>
+          </div>
+          <div class="stage-progress-wrap">
+            <div id="stageCounter" class="stage-counter">1 / 7</div>
+            <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+          </div>
+        </div>
+
+        <div class="argument-layout">
+          <aside class="left-column">
+            <div class="mini-card">
+              <h3>Checklist de ejecución</h3>
+              <ul id="checklist"></ul>
+            </div>
+            <div class="mini-card">
+              <h3>Objeciones rápidas</h3>
+              <div id="objectionsList" class="objections-list"></div>
+            </div>
+          </aside>
+
+          <section class="center-column">
+            <div class="argument-header">
+              <h3>Argumentos sugeridos (centro)</h3>
+              <div class="tabs" id="argumentTabs"></div>
+            </div>
+            <div id="argumentCards" class="argument-cards"></div>
+          </section>
+        </div>
+      </section>
+
+      <aside class="coach-panel card">
+        <div class="section-head">
+          <h2>Coach en vivo</h2>
+          <span class="pill soft">Modo guía</span>
+        </div>
+        <div id="coachCue" class="coach-cue">Di esto sonriendo 😄</div>
+
+        <div class="coach-block">
+          <h3>Micro-guion recomendado</h3>
+          <blockquote id="microScript"></blockquote>
+        </div>
+
+        <div class="coach-block">
+          <h3>Tono y energía</h3>
+          <p id="toneNote"></p>
+        </div>
+
+        <div class="coach-block">
+          <h3>Señales para avanzar</h3>
+          <ul id="advanceSignals"></ul>
+        </div>
+
+        <div class="coach-block warning-block">
+          <h3>No hagas esto</h3>
+          <ul id="dontDo"></ul>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="bottom-nav card">
+      <div class="nav-left">
+        <div class="next-label">Siguiente etapa</div>
+        <div id="nextStageLabel" class="next-stage-label">Identificación de autoridad</div>
+      </div>
+      <div class="nav-actions">
+        <button id="prevStageBtn" class="secondary-btn">← Etapa anterior</button>
+        <button id="nextStageBtn" class="primary-btn">Pasar a la siguiente etapa →</button>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
