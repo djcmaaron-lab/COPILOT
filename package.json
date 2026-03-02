@@ -1,0 +1,13 @@
+{
+  "name": "wsp-coldcall-copilot",
+  "version": "1.0.0",
+  "description": "Copiloto interactivo para cold calling de bots de WhatsApp",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["sales", "cold-calling", "whatsapp", "copilot"],
+  "author": "OpenAI",
+  "license": "MIT"
+}
