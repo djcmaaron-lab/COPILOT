@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Copiloto · Sykes AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0e0c;
+  --card:#1a1916;
+  --border:#2a2825;
+  --text:#f2efe8;
+  --muted:#6b6760;
+  --orange:#ff6b2b;
+  --orange-dim:rgba(255,107,43,0.12);
+  --orange-glow:rgba(255,107,43,0.25);
+  --green:#2dca72;
+  --red:#ff4444;
+  --yellow:#f5c842;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;overflow:hidden}
+
+/* ── SCREEN SYSTEM ── */
+.screen{display:none;height:100vh;flex-direction:column}
+.screen.active{display:flex}
+
+/* ══════════════════════════════
+   PANTALLA 0 — INICIO
+══════════════════════════════ */
+#screen-start{
+  align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 60% 40%, rgba(255,107,43,0.08) 0%, transparent 65%), var(--bg);
+}
+.start-inner{text-align:center;max-width:480px;padding:40px}
+.start-logo{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--orange);margin-bottom:40px}
+.start-title{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;line-height:1.15;margin-bottom:12px}
+.start-sub{font-size:14px;color:var(--muted);margin-bottom:56px;line-height:1.6}
+.start-question{font-size:18px;font-weight:600;color:var(--text);margin-bottom:24px}
+.start-btns{display:flex;gap:12px;justify-content:center}
+.btn-yes{
+  padding:16px 40px;border-radius:12px;border:none;
+  background:var(--orange);color:#fff;
+  font-family:'Syne',sans-serif;font-size:16px;font-weight:700;
+  cursor:pointer;transition:.15s;
+  box-shadow:0 0 30px var(--orange-glow);
+}
+.btn-yes:hover{transform:translateY(-1px);box-shadow:0 0 40px var(--orange-glow)}
+.btn-no{
+  padding:16px 40px;border-radius:12px;
+  border:1.5px solid var(--border);background:transparent;color:var(--muted);
+  font-family:'Syne',sans-serif;font-size:16px;font-weight:700;
+  cursor:pointer;transition:.15s;
+}
+.btn-no:hover{border-color:var(--muted);color:var(--text)}
+
+/* ══════════════════════════════
+   PANTALLA 0B — NO ES EL DUEÑO
+══════════════════════════════ */
+#screen-notowner{
+  align-items:center;justify-content:center;
+  background:var(--bg);
+}
+.notowner-box{max-width:500px;padding:40px;text-align:center}
+.notowner-icon{font-size:40px;margin-bottom:20px}
+.notowner-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:16px}
+.notowner-script{
+  background:var(--card);border:1.5px solid var(--border);border-radius:16px;
+  padding:24px;font-size:15px;line-height:1.8;color:var(--text);
+  margin-bottom:24px;text-align:left;
+  border-left:3px solid var(--orange);
+}
+.notowner-btns{display:flex;gap:10px;justify-content:center}
+.btn-secondary{
+  padding:12px 28px;border-radius:10px;
+  border:1.5px solid var(--border);background:transparent;color:var(--muted);
+  font-family:'Inter',sans-serif;font-size:14px;font-weight:600;
+  cursor:pointer;transition:.15s;
+}
+.btn-secondary:hover{border-color:var(--muted);color:var(--text)}
+.btn-primary{
+  padding:12px 28px;border-radius:10px;border:none;
+  background:var(--orange);color:#fff;
+  font-family:'Inter',sans-serif;font-size:14px;font-weight:600;
+  cursor:pointer;transition:.15s;
+}
+.btn-primary:hover{opacity:.88}
+
+/* ══════════════════════════════
+   PANTALLA PRINCIPAL (FASES)
+══════════════════════════════ */
+#screen-main{background:var(--bg)}
+
+/* TOP BAR */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 20px;border-bottom:1px solid var(--border);
+  background:var(--bg);gap:16px;flex-shrink:0;
+}
+.tb-brand{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--orange);cursor:pointer}
+
+/* PHASE DOTS */
+.phase-dots{display:flex;gap:6px;align-items:center}
+.pdot{
+  height:6px;border-radius:99px;background:var(--border);
+  cursor:pointer;transition:.25s;
+}
+.pdot.done{background:var(--orange);width:24px}
+.pdot.active{background:var(--orange);width:32px;box-shadow:0 0 8px var(--orange-glow)}
+.pdot.todo{width:18px}
+
+/* MOODS */
+.moods-bar{
+  display:flex;align-items:center;gap:6px;
+  padding:7px 20px;border-bottom:1px solid var(--border);
+  flex-shrink:0;overflow-x:auto;scrollbar-width:none;
+}
+.moods-bar::-webkit-scrollbar{display:none}
+.mood-lbl{font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);white-space:nowrap;margin-right:6px}
+.mood-btn{
+  padding:5px 14px;border-radius:99px;border:1.5px solid var(--border);
+  background:transparent;color:var(--muted);
+  font-family:'Inter',sans-serif;font-size:12px;font-weight:500;
+  cursor:pointer;transition:.15s;white-space:nowrap;
+}
+.mood-btn:hover{border-color:#555;color:var(--text)}
+.mood-btn.active{background:var(--orange);border-color:transparent;color:#fff;font-weight:600}
+
+/* MAIN CONTENT */
+.main-content{
+  display:grid;grid-template-columns:1fr 320px;
+  gap:0;flex:1;overflow:hidden;
+}
+
+/* LEFT: SPEECH */
+.speech-col{
+  padding:20px;display:flex;flex-direction:column;gap:14px;
+  overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent;
+  border-right:1px solid var(--border);
+}
+.speech-col::-webkit-scrollbar{width:4px}
+.speech-col::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+
+.phase-label{
+  display:flex;align-items:center;gap:10px;
+}
+.phase-num{
+  font-family:'Syne',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;color:var(--orange);
+}
+.phase-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;line-height:1.2}
+.phase-meta{font-size:12px;color:var(--muted)}
+
+/* SPEECH CARD — THE MAIN THING */
+.speech-card{
+  background:var(--card);
+  border:1.5px solid var(--border);
+  border-radius:16px;
+  padding:24px;
+  border-left:3px solid var(--orange);
+  position:relative;
+  box-shadow:0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03);
+}
+.speech-card::before{
+  content:'';position:absolute;inset:0;border-radius:14px;
+  background:radial-gradient(ellipse at top left, rgba(255,107,43,0.04) 0%, transparent 60%);
+  pointer-events:none;
+}
+.speech-tag{
+  font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  color:var(--orange);margin-bottom:10px;
+}
+.speech-title{
+  font-family:'Syne',sans-serif;font-size:15px;font-weight:700;
+  margin-bottom:12px;color:var(--text);
+}
+.speech-text{
+  font-size:14.5px;line-height:1.8;color:#ddd8ce;
+  white-space:pre-line;
+}
+
+/* VARIATIONS */
+.vars-title{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.var-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.var-card{
+  background:var(--card);border:1.5px solid var(--border);border-radius:12px;
+  padding:14px;cursor:pointer;transition:.15s;
+}
+.var-card:hover{border-color:var(--orange);box-shadow:0 0 12px var(--orange-dim)}
+.var-card.selected{border-color:var(--orange);background:rgba(255,107,43,0.06)}
+.var-card-label{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin-bottom:6px}
+.var-card-label.pain{color:#ff6b6b}
+.var-card-label.story{color:#a78bfa}
+.var-card-label.data{color:#60a5fa}
+.var-card-label.close{color:var(--green)}
+.var-card-title{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:6px}
+.var-card-preview{font-size:11.5px;color:var(--muted);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+
+/* RIGHT: SIDEBAR */
+.sidebar-col{
+  padding:16px;display:flex;flex-direction:column;gap:12px;
+  overflow-y:auto;scrollbar-width:none;
+}
+.sidebar-col::-webkit-scrollbar{display:none}
+
+.sb-block{
+  background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px;
+}
+.sb-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+
+/* COACH */
+.coach-cue{font-size:13px;font-weight:600;color:var(--text);line-height:1.5;margin-bottom:6px}
+.coach-tone{font-size:11.5px;color:var(--muted);line-height:1.5}
+
+/* OBJECIONES */
+.obj-item{margin-bottom:10px}
+.obj-item:last-child{margin-bottom:0}
+.obj-q{font-size:12px;font-weight:600;color:var(--yellow);margin-bottom:4px}
+.obj-a{font-size:11.5px;color:#ccc;line-height:1.55}
+
+/* REGLAS */
+.rule-item{
+  font-size:12px;color:#ccc;line-height:1.5;padding:6px 0 6px 14px;
+  border-left:2px solid var(--border);margin-bottom:4px;position:relative;
+}
+.rule-item.do::before{content:'✓';position:absolute;left:-1px;color:var(--green);font-size:11px}
+.rule-item.dont::before{content:'✕';position:absolute;left:-1px;color:var(--red);font-size:11px}
+
+/* BOTTOM NAV */
+.bottom-nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;border-top:1px solid var(--border);
+  background:var(--bg);flex-shrink:0;gap:16px;
+}
+.nav-back{
+  padding:11px 22px;border-radius:10px;border:1.5px solid var(--border);
+  background:transparent;color:var(--muted);
+  font-family:'Inter',sans-serif;font-size:13px;font-weight:600;
+  cursor:pointer;transition:.15s;
+}
+.nav-back:hover:not(:disabled){border-color:#555;color:var(--text)}
+.nav-back:disabled{opacity:.25;cursor:default}
+.nav-center{text-align:center;flex:1}
+.nav-center-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+.nav-center-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text)}
+.nav-next{
+  padding:11px 36px;border-radius:10px;border:none;
+  background:var(--orange);color:#fff;
+  font-family:'Syne',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;transition:.15s;
+  box-shadow:0 0 20px var(--orange-dim);
+}
+.nav-next:hover:not(:disabled){opacity:.88;transform:translateY(-1px)}
+.nav-next:disabled{opacity:.3;cursor:default;box-shadow:none}
+
+/* BADGE pill */
+.pill{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:2px 8px;border-radius:99px;margin-right:4px}
+.pill.orange{background:rgba(255,107,43,.15);color:var(--orange)}
+.pill.green{background:rgba(45,202,114,.12);color:var(--green)}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.fade{animation:fadeIn .2s ease-out}
+</style>
+</head>
+<body>
+
+<!-- ════════ PANTALLA 0: INICIO ════════ -->
+<div id="screen-start" class="screen active">
+  <div class="start-inner">
+    <div class="start-logo">⚡ Sykes AI · Copiloto</div>
+    <div class="start-title">¿Estás hablando<br>con el dueño?</div>
+    <div class="start-sub">Antes de empezar confirma quién está al otro lado.<br>El flujo cambia según la respuesta.</div>
+    <div class="start-btns">
+      <button class="btn-yes" onclick="goMain()">Sí, es el dueño →</button>
+      <button class="btn-no" onclick="goNotOwner()">No, es recepcionista</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ PANTALLA 0B: NO ES EL DUEÑO ════════ -->
+<div id="screen-notowner" class="screen">
+  <div class="notowner-box">
+    <div class="notowner-icon">🚧</div>
+    <div class="notowner-title">Pide ser transferido</div>
+    <div class="notowner-script">"Es un tema comercial breve. ¿Me comunica con el encargado o dueño?"
+
+Si dicen que no pasan comerciales:
+
+"No es una venta. Es un análisis que hicimos de la zona. El encargado va a querer escuchar esto."</div>
+    <div class="notowner-btns">
+      <button class="btn-secondary" onclick="goStart()">← Reiniciar</button>
+      <button class="btn-primary" onclick="goMain()">Lo pasaron → Empezar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ PANTALLA PRINCIPAL ════════ -->
+<div id="screen-main" class="screen">
+
+  <!-- TOP -->
+  <div class="topbar">
+    <span class="tb-brand" onclick="goStart()">⚡ Sykes AI</span>
+    <div class="phase-dots" id="phaseDots"></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span id="phaseCounter" style="font-size:11px;color:var(--muted)"></span>
+    </div>
+  </div>
+
+  <!-- MOODS -->
+  <div class="moods-bar">
+    <span class="mood-lbl">Mood</span>
+    <div id="moodBtns" style="display:flex;gap:6px"></div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="main-content">
+
+    <!-- LEFT -->
+    <div class="speech-col" id="speechCol"></div>
+
+    <!-- RIGHT -->
+    <div class="sidebar-col" id="sidebarCol"></div>
+
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="bottom-nav">
+    <button class="nav-back" id="btnBack" onclick="prevPhase()">← Atrás</button>
+    <div class="nav-center">
+      <div class="nav-center-lbl">siguiente fase</div>
+      <div class="nav-center-name" id="nextPhaseName"></div>
+    </div>
+    <button class="nav-next" id="btnNext" onclick="nextPhase()">Siguiente →</button>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// MOODS
+// ═══════════════════════════════════════════
+const MOODS = [
+  { id:'neutro',    e:'🧠', label:'Neutro',    hint:'Consultor calmado. Pausa y control.',         mod: s => s },
+  { id:'amable',    e:'😄', label:'Amable',    hint:'Sonríe de verdad. Ligero y cercano.',          mod: s => s.replace(/^Mire,/m, 'Oye,').replace(/^Le hago/m, 'Te hago') },
+  { id:'dominante', e:'🦅', label:'Dominante', hint:'Menos palabras, más certeza. Pausas cortas.',  mod: s => s.replace(/^Buenas tardes/m,'Buenas').replace(/^Le cuento/m,'Directo:') },
+  { id:'urgencia',  e:'⚠️', label:'Urgencia',  hint:'Sube energía 15%. Enfatiza el costo de no actuar.', mod: s => s },
+  { id:'rescate',   e:'🛟', label:'Rescate',   hint:'Cliente tenso. Baja, valida, redirige.',       mod: s => s.replace(/^Ese/m, 'Entiendo, y ese') },
+];
+
+// ═══════════════════════════════════════════
+// FASES
+// ═══════════════════════════════════════════
+const PHASES = [
+
+  // ─── FASE 1: INTRODUCCIÓN ───
+  {
+    num: 'F1', title: 'Introducción',
+    meta: '⏱ 15 segundos · Llegar al decisor sin revelar el producto',
+    speech: {
+      tag: 'SCRIPT EXACTO',
+      title: 'Apertura de 15 segundos',
+      text: '"Hola, buenas tardes. Estoy comunicándome con [NOMBRE NEGOCIO]? Perfecto. Mi nombre es [TU NOMBRE], soy parte de Sykes AI. ¿Me comunica con la persona a cargo, por favor?"',
+    },
+    variants: [
+      { type:'story', label:'Historia', title:'Si ya es el decisor', text:'"Perfecto [NOMBRE], justo quería hablar con usted. Tengo algo puntual sobre su clínica que le va a llamar la atención."', note:'' },
+      { type:'pain',  label:'Rescate',  title:'Si no pasan comerciales', text:'"No es una venta. Es un análisis que hicimos de la zona. El encargado va a querer escuchar esto."', note:'' },
+    ],
+    coach: {
+      cue: 'Proyecta autoridad desde la primera palabra. Voz firme, sin dudar.',
+      tone: 'No reveles el producto todavía. Tu único objetivo: llegar al decisor.'
+    },
+    objections: [
+      { q:'"¿De qué se trata?"', a:'"Es un análisis que hicimos de clínicas de la zona. Solo 15 minutos con el encargado."' },
+      { q:'Recepcionista defensiva', a:'"No es venta. El dueño va a querer escucharlo. ¿En qué horario lo ubico?"' },
+    ],
+    rules: {
+      do:   ['Menos de 15 segundos', 'Confirmar nombre del negocio', 'Adaptar tono al perfil de quien atiende'],
+      dont: ['Mencionar el producto', 'Dar precio', 'Explicar demasiado'],
+    }
+  },
+
+  // ─── FASE 2: BÚSQUEDA DEL DOLOR ───
+  {
+    num: 'F2', title: 'Búsqueda del dolor',
+    meta: '⏱ 1-2 minutos · Que el cliente confiese el problema en voz alta',
+    speech: {
+      tag: 'SECUENCIA DE DIAGNÓSTICO',
+      title: 'El anzuelo de las 8 PM',
+      text: '"Mire, hemos estado haciendo un análisis en el distrito de [ZONA]. Unas 138 clínicas analizadas. Y encontramos un patrón que me llamó la atención.\n\n¿Le hago una pregunta directa? ¿Tiene personal que responda mensajes de WhatsApp después de las 8 de la noche?"',
+    },
+    variants: [
+      { type:'data',  label:'Datos',   title:'Amplificar con estadística', text:'"El 78% de los pacientes que escribe a una clínica por la noche contacta a más de una al mismo tiempo. El primero que responde agenda. Si su clínica responde al día siguiente, ese paciente ya tiene cita en otro lado.\n\nEso está pasando en su clínica ahora mismo, ¿verdad?"', note:'Citar cifras exactas genera autoridad.' },
+      { type:'pain',  label:'Dolor',   title:'Si dice que sí tienen cobertura', text:'"Qué bien. ¿En cuántos minutos responden normalmente? Porque lo que encontramos es que después de los primeros 10 minutos sin respuesta, el 60% ya eligió otra clínica."', note:'Siempre hay un hueco. Encuéntralo.' },
+      { type:'story', label:'Historia',title:'Pregunta del cuello de botella', text:'"Esta asistente tiene un horario y sale a una hora. Cuando se va... ¿quién responde los mensajes?"', note:'La pausa antes de la pregunta es clave.' },
+      { type:'data',  label:'Corte',   title:'Si se desvía', text:'"Exacto, y justamente de eso quería hablarle."', note:'Corte estratégico. Elegante y directo.' },
+    ],
+    coach: {
+      cue: 'NO expliques nada todavía. Tu único objetivo: que el cliente admita el problema.',
+      tone: 'El dolor que el cliente nombra vale 10 veces más que el que tú describes.'
+    },
+    objections: [
+      { q:'"Respondemos bien"', a:'"¿En cuántos minutos? Porque después de 10 minutos sin respuesta, el 60% ya eligió a la competencia."' },
+      { q:'"Tenemos WhatsApp activo"', a:'"¿Activo a las 11 de la noche, los domingos, los feriados? [pausa] Ahí está el hueco."' },
+    ],
+    rules: {
+      do:   ['Preguntar por horario específico, no por "problemas"', 'Usar datos exactos: 78%, 10 minutos, 60%', 'Dejar que el cliente hable y confirme'],
+      dont: ['Explicar el producto', 'Monólogos de más de 20 segundos', 'Preguntar "¿tiene problemas?"'],
+    }
+  },
+
+  // ─── FASE 3: DESARROLLO ───
+  {
+    num: 'F3', title: 'Presentar solución',
+    meta: '⏱ 1.5-2 minutos · Vende el resultado, no la tecnología',
+    speech: {
+      tag: 'RELATO PERSUASIVO',
+      title: 'Conectar dolor con resultado',
+      text: '"Ese tiempo muerto que tiene desde las 8 PM hasta la mañana siguiente tiene un costo real. Cada paciente que no recibe respuesta en ese horario es una cita que no ocurre.\n\nLe cuento lo que pasó con una clínica en Chorrillos. Tenían exactamente el mismo problema. Al primer mes dejaron de perder esas consultas nocturnas. Un mes después, uno de sus recepcionistas ya no era necesario para responder mensajes. Eso fue 800 soles de ahorro más un 5% de aumento en citas agendadas."',
+    },
+    variants: [
+      { type:'close', label:'Resultado', title:'Descripción visual del sistema', text:'"Lo que instalamos hace una sola cosa: asegura que ningún paciente que le escriba quede sin respuesta. A las 2 AM le escriben, en 20 segundos tienen respuesta completa, y si quieren cita la agenda sola. Usted se despierta al día siguiente con citas confirmadas que no existían la noche anterior."', note:'Imagen visual. Nada técnico.' },
+      { type:'story', label:'Personalización', title:'Mostrar sacrificio personal', text:'"Yo revisé el análisis de su zona específicamente porque me llamó la atención la cantidad de clínicas que están perdiendo lo mismo que usted."', note:'Genera reciprocidad sin pedirla.' },
+      { type:'pain',  label:'Puente', title:'Pregunta de micro-cierre', text:'"¿Tiene sentido lo que le estoy describiendo para su situación actual?"', note:'Si dice sí, ya está mentalmente adentro.' },
+    ],
+    coach: {
+      cue: 'Vende citas perdidas, no tecnología. Nunca menciones Gmail, Sheets, APIs.',
+      tone: 'Un paciente prefiere eficiencia inmediata que halagos distantes.'
+    },
+    objections: [
+      { q:'"¿Qué tecnología usa?"', a:'"Lo que importa no es cómo funciona sino qué hace: ningún paciente sin respuesta, nunca más."' },
+      { q:'"¿Se nota que es un bot?"', a:'"El 90% de nuestros clientes reporta que sus pacientes ni preguntan si es bot. Preguntan cuándo es la cita."' },
+    ],
+    rules: {
+      do:   ['Bloques de 20 segundos máximo, luego pausa', 'Caso real con números concretos', 'Terminar con pregunta de confirmación'],
+      dont: ['Mencionar Gmail, Sheets o APIs', 'Presentar como "tecnología"', 'Monólogo sin pausa'],
+    }
+  },
+
+  // ─── FASE 4: OFERTA ───
+  {
+    num: 'F4', title: 'Lanzar precio',
+    meta: '⏱ 45 segundos · Anclar el precio contra el costo de un recepcionista',
+    speech: {
+      tag: 'SCRIPT DE OFERTA',
+      title: '$180 anclado contra sueldo',
+      text: '"El servicio tiene un valor de 180 dólares al mes. Para que tenga referencia: contratar a una persona que cubra solo el horario nocturno le costaría mínimo 1,200 soles de sueldo básico. Con nosotros son 180 dólares —aproximadamente 680 soles— y tiene cobertura las 24 horas, no solo las nocturnas.\n\nFunciona así: usted hace el pago, en 5 días instalamos todo, al sexto día empieza su mes. Si a los 15 días no está satisfecho, se retira y le devolvemos la mitad proporcional. Sin permanencia forzada."',
+    },
+    variants: [
+      { type:'close', label:'Cierre directo', title:'Cerrar en llamada', text:'"¿Le parece si lo iniciamos hoy mismo? Le paso los datos de pago y en 5 días está funcionando."', note:'Asume que avanza. No pregunta si quiere.' },
+      { type:'close', label:'Meet', title:'Cerrar por reunión', text:'"Lo que propongo es esto: mañana hacemos una reunión de 20 minutos por Meet, le muestro el sistema en vivo, y si le convence lo activamos ahí mismo. ¿A qué hora tiene disponibilidad mañana?"', note:'Ofrecer 2 horarios concretos, nunca "¿cuándo puede?".' },
+      { type:'data',  label:'Refuerzo', title:'Si pide más justificación', text:'"Con 2 o 3 citas extra al mes el sistema ya se pagó solo. El resto es ganancia neta."', note:'Matemática simple. No negociar el precio.' },
+    ],
+    coach: {
+      cue: 'El precio es 180. Siempre. Sin descuentos, sin "normalmente vale 400".',
+      tone: '180 USD vs 1,200 soles de sueldo. Esa es la única comparación.'
+    },
+    objections: [
+      { q:'"Es muy caro"', a:'"¿Caro comparado con qué? Un recepcionista nocturno son 1,200 soles. Nosotros somos 680. Y con 3 citas extra al mes ya se pagó solo."' },
+      { q:'"No tengo presupuesto"', a:'"La pregunta no es si puede pagarlo. Es si puede seguir perdiendo pacientes sin él."' },
+    ],
+    rules: {
+      do:   ['Anclar siempre contra el sueldo del recepcionista', 'Presentar con seguridad, sin titubear', 'Ofrecer la garantía de 15 días'],
+      dont: ['Decir "normalmente vale 400 pero..."', 'Bajar el precio sin necesidad', 'Pedir disculpas por el precio'],
+    }
+  },
+
+  // ─── FASE 5: OBJECIONES ───
+  {
+    num: 'F5', title: 'Manejar objeciones',
+    meta: '⏱ Sin límite · Cada objeción es una señal de interés',
+    speech: {
+      tag: 'REGLA MENTAL',
+      title: 'El cliente que objeta está interesado',
+      text: '"El cliente que objeta está interesado. El que cuelga, no.\n\nCada objeción tiene una técnica asignada. No improvises: ejecuta.\n\nNunca te disculpes ni justifiques al recibir una objeción. Valida brevemente y aplica la técnica."',
+    },
+    variants: [
+      { type:'pain',  label:'Analítico', title:'Cliente que debate datos', text:'"No me crea el porcentaje. Dígame una sola cosa: ¿tiene mensajes sin responder de anoche ahora mismo en su WhatsApp? [pausa] Eso es lo único que importa."', note:'Corta el debate. Regresa al dolor.' },
+      { type:'story', label:'Escéptico', title:'Cauteloso pero sigue en llamada', text:'"Me alegra que sea así de preciso. Los clientes que preguntan bien son los que mejor trabajan con nosotros después. Por eso le propongo que lo vea usted mismo antes de decidir."', note:'Convierte la objeción en cualidad.' },
+      { type:'close', label:'Socio/esposo', title:'"Déjame consultarlo"', text:'"Perfecto. Le propongo esto: mañana hacemos una llamada de 15 minutos con los dos. Les muestro el sistema en vivo. Si convence, arrancamos. ¿A qué hora los tengo juntos mañana?"', note:'Cierre incremental. Avanza igual.' },
+      { type:'data',  label:'Bot',  title:'"No confío en los bots"', text:'"Un paciente con dolor a las 10 PM no quiere calidez. Quiere respuesta inmediata. El 90% de nuestros clientes reporta que sus pacientes ni preguntan si es bot. Preguntan cuándo es la cita."', note:'Reencuadra: el paciente quiere rapidez.' },
+    ],
+    coach: {
+      cue: 'No improvises. Cada objeción tiene su técnica. Ejecuta.',
+      tone: 'Nunca te pongas defensivo. Valida brevemente, luego aplica.'
+    },
+    objections: [
+      { q:'"Ya tengo alguien que responde"', a:'"¿Esa persona responde a las 11 de la noche, los domingos, los feriados, en menos de 20 segundos? [pausa] Si no, hay un hueco. Y ese hueco lo está aprovechando su competencia."' },
+      { q:'"Quiero ver resultados primero"', a:'"Por eso ofrecemos 15 días de prueba. Si no ve mejora en citas agendadas fuera de horario, se retira y le devolvemos la mitad proporcional."' },
+      { q:'"Necesito pensarlo"', a:'"¿Qué es específicamente lo que necesita resolver para tomar la decisión? [escuchar] Si esa duda la resolvemos ahora, no tiene que esperar."' },
+    ],
+    rules: {
+      do:   ['Validar brevemente antes de responder', 'Usar la técnica asignada a cada objeción', 'Mantener calma y ritmo'],
+      dont: ['Ponerse defensivo', 'Improvisar sin técnica', 'Entrar en debate de números'],
+    }
+  },
+
+  // ─── FASE 6: CIERRE ───
+  {
+    num: 'F6', title: 'Cierre',
+    meta: '⏱ 30 segundos · Cerrar pago o confirmar Meet con fecha y hora exacta',
+    speech: {
+      tag: 'REGLA DE ORO',
+      title: 'El cierre se conduce, no se pide',
+      text: '"Ofrece dos opciones. Ambas son avanzar.\n\nNunca: ¿qué le parece? / ¿le interesaría?\n\nSiempre: ¿mañana a las 2 o prefiere las 4?"',
+    },
+    variants: [
+      { type:'close', label:'Pago directo', title:'Cierre en llamada', text:'"Perfecto. Lo iniciamos hoy. Le paso los datos de pago ahora mismo, en 5 días está instalado, al sexto día comienza su mes. ¿Le envío los datos por WhatsApp o prefiere por correo?"', note:'Asume que avanza. No pide permiso.' },
+      { type:'close', label:'Meet', title:'Agendar reunión', text:'"Hacemos esto: mañana a las [HORA] nos vemos 20 minutos por Meet, le muestro el sistema funcionando en vivo, y si le convence lo activamos ahí mismo. ¿Mañana a las 2 o prefiere las 4?"', note:'Dos horarios concretos, nunca pregunta abierta.' },
+      { type:'story', label:'Resistencia', title:'Cierre incremental', text:'"No le pido que decida ahora. Solo le pido 20 minutos mañana para que lo vea con sus propios ojos. Si no le convence, no hay problema. ¿Mañana a las 2?"', note:'Baja la fricción sin bajar el precio.' },
+      { type:'data',  label:'Confirmación', title:'Antes de colgar', text:'"Perfecto [NOMBRE]. Le confirmo la reunión del [DÍA] a las [HORA] por WhatsApp en los próximos minutos. Muchas gracias y hasta mañana."', note:'Confirmar: fecha, hora, canal. Siempre.' },
+    ],
+    coach: {
+      cue: 'El desapego es poder. Si no cierras hoy, cierras mañana. Nunca lo necesites.',
+      tone: 'Termina siempre con acción concreta: fecha, hora, canal. Nunca "le espero".'
+    },
+    objections: [
+      { q:'"Déjame pensarlo"', a:'"Perfecto. ¿Te parece si mañana te muestro 15 minutos cómo quedaría en tu caso y lo evalúas con base real? ¿A las 2 o a las 4?"' },
+      { q:'"Llámame la próxima semana"', a:'"Claro. ¿El lunes a las 10 o el martes a las 3?" — Nunca dejes el cierre abierto.' },
+    ],
+    rules: {
+      do:   ['Dos opciones de horario, siempre concretas', 'Confirmar por WhatsApp antes de colgar', 'Asumir que avanza'],
+      dont: ['Preguntar "¿qué le parece?"', 'Terminar sin acción concreta', 'Bajar precio en el último momento'],
+    }
+  },
+];
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+let phase = 0;
+let mood  = 'neutro';
+let selVar = 0;
+
+// ═══════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════
+function goStart(){ showScreen('screen-start'); phase=0; mood='neutro'; }
+function goNotOwner(){ showScreen('screen-notowner'); }
+function goMain(){ showScreen('screen-main'); phase=0; selVar=0; renderAll(); }
+function nextPhase(){ if(phase < PHASES.length-1){ phase++; selVar=0; renderAll(); } }
+function prevPhase(){ if(phase > 0){ phase--; selVar=0; renderAll(); } }
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ═══════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════
+function getMood(){ return MOODS.find(m=>m.id===mood); }
+function applyMood(text){ return getMood().mod(text); }
+
+function renderAll(){
+  renderDots();
+  renderMoods();
+  renderSpeech();
+  renderSidebar();
+  renderNav();
+}
+
+function renderDots(){
+  const cont = document.getElementById('phaseDots');
+  cont.innerHTML = '';
+  PHASES.forEach((_,i)=>{
+    const d = document.createElement('div');
+    d.className = 'pdot ' + (i < phase ? 'done' : i === phase ? 'active' : 'todo');
+    d.title = PHASES[i].title;
+    d.onclick = () => { phase=i; selVar=0; renderAll(); };
+    cont.appendChild(d);
+  });
+  document.getElementById('phaseCounter').textContent = `${phase+1} / ${PHASES.length}`;
+}
+
+function renderMoods(){
+  const cont = document.getElementById('moodBtns');
+  cont.innerHTML = '';
+  MOODS.forEach(m => {
+    const b = document.createElement('button');
+    b.className = 'mood-btn' + (m.id===mood ? ' active' : '');
+    b.textContent = `${m.e} ${m.label}`;
+    b.onclick = () => { mood=m.id; renderAll(); };
+    cont.appendChild(b);
+  });
+}
+
+function renderSpeech(){
+  const p = PHASES[phase];
+  const m = getMood();
+  const col = document.getElementById('speechCol');
+
+  // Build variant cards HTML
+  const varHTML = p.variants.map((v,i)=>`
+    <div class="var-card ${i===selVar?'selected':''}" onclick="selectVar(${i})">
+      <div class="var-card-label ${v.type}">${v.label}</div>
+      <div class="var-card-title">${esc(v.title)}</div>
+      <div class="var-card-preview">${esc(applyMood(v.text))}</div>
+    </div>`).join('');
+
+  col.innerHTML = `
+    <div class="phase-label fade">
+      <span class="phase-num">${p.num}</span>
+      <span class="phase-title">${p.title}</span>
+    </div>
+    <div class="phase-meta">${p.meta}</div>
+
+    <div class="speech-card fade">
+      <div class="speech-tag">${p.speech.tag}</div>
+      <div class="speech-title">${p.speech.title}</div>
+      <div class="speech-text">${esc(applyMood(p.speech.text))}</div>
+    </div>
+
+    ${p.variants.length ? `
+    <div class="vars-title">VARIANTES · elige según la reacción del cliente</div>
+    <div class="var-cards">${varHTML}</div>
+    ` : ''}
+  `;
+}
+
+function selectVar(i){
+  selVar = i;
+  renderSpeech();
+}
+
+function renderSidebar(){
+  const p = PHASES[phase];
+  const m = getMood();
+
+  // Coach block
+  const coachHTML = `
+    <div class="sb-block">
+      <div class="sb-label">🧠 Coach en vivo</div>
+      <div class="coach-cue">${esc(p.coach.cue)}</div>
+      <div class="coach-tone" style="margin-top:6px">${esc(p.coach.tone)} — <em>${m.hint}</em></div>
+    </div>`;
+
+  // Selected variant full text (if selected)
+  const v = p.variants[selVar];
+  const varDetailHTML = v ? `
+    <div class="sb-block" style="border-color:var(--orange);background:rgba(255,107,43,0.05)">
+      <div class="sb-label" style="color:var(--orange)">📋 Script seleccionado</div>
+      <div style="font-size:13px;line-height:1.7;color:var(--text);white-space:pre-line">${esc(getMood().mod(v.text))}</div>
+      ${v.note ? `<div style="font-size:11px;color:var(--muted);margin-top:8px;font-style:italic">${esc(v.note)}</div>` : ''}
+    </div>` : '';
+
+  // Objections
+  const objHTML = `
+    <div class="sb-block">
+      <div class="sb-label">💬 Objeciones</div>
+      ${p.objections.map(o=>`
+        <div class="obj-item">
+          <div class="obj-q">${esc(o.q)}</div>
+          <div class="obj-a">${esc(o.a)}</div>
+        </div>`).join('')}
+    </div>`;
+
+  // Rules
+  const rulesHTML = `
+    <div class="sb-block">
+      <div class="sb-label">✅ Haz / 🚫 No hagas</div>
+      ${p.rules.do.map(r=>`<div class="rule-item do">${esc(r)}</div>`).join('')}
+      ${p.rules.dont.map(r=>`<div class="rule-item dont">${esc(r)}</div>`).join('')}
+    </div>`;
+
+  document.getElementById('sidebarCol').innerHTML = coachHTML + varDetailHTML + objHTML + rulesHTML;
+}
+
+function renderNav(){
+  const next = PHASES[phase+1];
+  document.getElementById('nextPhaseName').textContent = next ? `${next.num} · ${next.title}` : '— Fin del flujo —';
+  document.getElementById('btnNext').disabled = !next;
+  document.getElementById('btnBack').disabled = phase === 0;
+}
+
+function esc(t){ return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+</script>
+</body>
+</html>
