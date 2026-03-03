@@ -2,678 +2,448 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Copiloto · Sykes AI</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0f0e0c;
-  --card:#1a1916;
-  --border:#2a2825;
-  --text:#f2efe8;
-  --muted:#6b6760;
-  --orange:#ff6b2b;
-  --orange-dim:rgba(255,107,43,0.12);
-  --orange-glow:rgba(255,107,43,0.25);
-  --green:#2dca72;
-  --red:#ff4444;
-  --yellow:#f5c842;
-}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;overflow:hidden}
-
-/* ── SCREEN SYSTEM ── */
+body{font-family:'Bricolage Grotesque',sans-serif;height:100vh;overflow:hidden;background:linear-gradient(145deg,#fff7ed 0%,#ffedd5 50%,#fed7aa 100%);color:#1c0a00}
 .screen{display:none;height:100vh;flex-direction:column}
 .screen.active{display:flex}
 
-/* ══════════════════════════════
-   PANTALLA 0 — INICIO
-══════════════════════════════ */
-#screen-start{
-  align-items:center;justify-content:center;
-  background:radial-gradient(ellipse at 60% 40%, rgba(255,107,43,0.08) 0%, transparent 65%), var(--bg);
-}
-.start-inner{text-align:center;max-width:480px;padding:40px}
-.start-logo{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--orange);margin-bottom:40px}
-.start-title{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;line-height:1.15;margin-bottom:12px}
-.start-sub{font-size:14px;color:var(--muted);margin-bottom:56px;line-height:1.6}
-.start-question{font-size:18px;font-weight:600;color:var(--text);margin-bottom:24px}
-.start-btns{display:flex;gap:12px;justify-content:center}
-.btn-yes{
-  padding:16px 40px;border-radius:12px;border:none;
-  background:var(--orange);color:#fff;
-  font-family:'Syne',sans-serif;font-size:16px;font-weight:700;
-  cursor:pointer;transition:.15s;
-  box-shadow:0 0 30px var(--orange-glow);
-}
-.btn-yes:hover{transform:translateY(-1px);box-shadow:0 0 40px var(--orange-glow)}
-.btn-no{
-  padding:16px 40px;border-radius:12px;
-  border:1.5px solid var(--border);background:transparent;color:var(--muted);
-  font-family:'Syne',sans-serif;font-size:16px;font-weight:700;
-  cursor:pointer;transition:.15s;
-}
-.btn-no:hover{border-color:var(--muted);color:var(--text)}
+/* INICIO */
+#s0{align-items:center;justify-content:center}
+.s0w{text-align:center;max-width:420px;padding:32px}
+.logo{font-size:11px;font-weight:800;letter-spacing:4px;text-transform:uppercase;color:#ea580c;margin-bottom:40px}
+.title{font-size:56px;font-weight:800;line-height:1.05;margin-bottom:12px;color:#1c0a00}
+.sub{font-size:14px;color:#92400e;line-height:1.65;margin-bottom:48px}
+.btns{display:flex;gap:12px;justify-content:center}
+.byes{padding:16px 40px;border-radius:14px;border:none;cursor:pointer;background:linear-gradient(135deg,#f97316,#dc2626);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:800;box-shadow:0 8px 28px rgba(234,88,12,.45);transition:.15s}
+.byes:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(234,88,12,.55)}
+.bno{padding:16px 28px;border-radius:14px;cursor:pointer;border:2px solid rgba(234,88,12,.3);background:rgba(255,255,255,.7);color:#92400e;font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;transition:.15s}
+.bno:hover{border-color:#ea580c;background:rgba(255,255,255,.95)}
 
-/* ══════════════════════════════
-   PANTALLA 0B — NO ES EL DUEÑO
-══════════════════════════════ */
-#screen-notowner{
-  align-items:center;justify-content:center;
-  background:var(--bg);
-}
-.notowner-box{max-width:500px;padding:40px;text-align:center}
-.notowner-icon{font-size:40px;margin-bottom:20px}
-.notowner-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:16px}
-.notowner-script{
-  background:var(--card);border:1.5px solid var(--border);border-radius:16px;
-  padding:24px;font-size:15px;line-height:1.8;color:var(--text);
-  margin-bottom:24px;text-align:left;
-  border-left:3px solid var(--orange);
-}
-.notowner-btns{display:flex;gap:10px;justify-content:center}
-.btn-secondary{
-  padding:12px 28px;border-radius:10px;
-  border:1.5px solid var(--border);background:transparent;color:var(--muted);
-  font-family:'Inter',sans-serif;font-size:14px;font-weight:600;
-  cursor:pointer;transition:.15s;
-}
-.btn-secondary:hover{border-color:var(--muted);color:var(--text)}
-.btn-primary{
-  padding:12px 28px;border-radius:10px;border:none;
-  background:var(--orange);color:#fff;
-  font-family:'Inter',sans-serif;font-size:14px;font-weight:600;
-  cursor:pointer;transition:.15s;
-}
-.btn-primary:hover{opacity:.88}
+/* NO DUEÑO */
+#s1{align-items:center;justify-content:center}
+.s1w{max-width:460px;padding:36px;text-align:center}
+.s1ic{font-size:40px;margin-bottom:16px}
+.s1t{font-size:28px;font-weight:800;margin-bottom:20px}
+.s1c{background:rgba(255,255,255,.8);border:2px solid rgba(234,88,12,.2);border-left:4px solid #f97316;border-radius:16px;padding:22px;font-size:14px;line-height:1.85;color:#431407;text-align:left;margin-bottom:22px;box-shadow:0 4px 20px rgba(234,88,12,.1)}
+.s1b{display:flex;gap:10px;justify-content:center}
+.bgh{padding:11px 24px;border-radius:10px;border:2px solid rgba(234,88,12,.25);background:transparent;color:#92400e;cursor:pointer;font-family:'Bricolage Grotesque',sans-serif;font-size:13px;font-weight:700;transition:.15s}
+.bgh:hover{border-color:#ea580c}
+.bso{padding:11px 24px;border-radius:10px;border:none;background:linear-gradient(135deg,#f97316,#ea580c);color:#fff;cursor:pointer;font-family:'Bricolage Grotesque',sans-serif;font-size:13px;font-weight:800;box-shadow:0 4px 16px rgba(234,88,12,.35);transition:.15s}
+.bso:hover{opacity:.9;transform:translateY(-1px)}
 
-/* ══════════════════════════════
-   PANTALLA PRINCIPAL (FASES)
-══════════════════════════════ */
-#screen-main{background:var(--bg)}
-
-/* TOP BAR */
-.topbar{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:10px 20px;border-bottom:1px solid var(--border);
-  background:var(--bg);gap:16px;flex-shrink:0;
-}
-.tb-brand{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--orange);cursor:pointer}
-
-/* PHASE DOTS */
-.phase-dots{display:flex;gap:6px;align-items:center}
-.pdot{
-  height:6px;border-radius:99px;background:var(--border);
-  cursor:pointer;transition:.25s;
-}
-.pdot.done{background:var(--orange);width:24px}
-.pdot.active{background:var(--orange);width:32px;box-shadow:0 0 8px var(--orange-glow)}
-.pdot.todo{width:18px}
+/* MAIN */
+#s2{background:linear-gradient(160deg,#fff7ed 0%,#ffedd5 60%,#fed7aa 100%)}
+.topbar{display:flex;align-items:center;gap:14px;padding:10px 22px;background:rgba(255,255,255,.7);backdrop-filter:blur(12px);border-bottom:1.5px solid rgba(234,88,12,.15);flex-shrink:0}
+.brand{font-size:13px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:#ea580c;cursor:pointer;flex-shrink:0}
+.track{display:flex;gap:5px;align-items:center;flex:1}
+.pd{height:5px;border-radius:99px;background:rgba(234,88,12,.18);cursor:pointer;transition:.25s;flex-shrink:0}
+.pd.past{background:#f97316;width:22px}
+.pd.now{background:linear-gradient(90deg,#f97316,#dc2626);width:34px;box-shadow:0 0 10px rgba(249,115,22,.5)}
+.pd.nxt{width:16px}
 
 /* MOODS */
-.moods-bar{
-  display:flex;align-items:center;gap:6px;
-  padding:7px 20px;border-bottom:1px solid var(--border);
-  flex-shrink:0;overflow-x:auto;scrollbar-width:none;
-}
-.moods-bar::-webkit-scrollbar{display:none}
-.mood-lbl{font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);white-space:nowrap;margin-right:6px}
-.mood-btn{
-  padding:5px 14px;border-radius:99px;border:1.5px solid var(--border);
-  background:transparent;color:var(--muted);
-  font-family:'Inter',sans-serif;font-size:12px;font-weight:500;
-  cursor:pointer;transition:.15s;white-space:nowrap;
-}
-.mood-btn:hover{border-color:#555;color:var(--text)}
-.mood-btn.active{background:var(--orange);border-color:transparent;color:#fff;font-weight:600}
+.moods{display:flex;gap:8px;flex-shrink:0}
+.mp{display:flex;align-items:center;gap:6px;padding:8px 18px;border-radius:99px;cursor:pointer;border:2.5px solid rgba(0,0,0,.08);font-family:'Bricolage Grotesque',sans-serif;font-size:13px;font-weight:700;transition:.18s;white-space:nowrap;background:rgba(255,255,255,.55);color:#78350f}
+.mp:hover{background:rgba(255,255,255,.9);border-color:rgba(0,0,0,.18)}
+.mp.active{color:#fff;border-color:transparent;box-shadow:0 4px 18px rgba(0,0,0,.22)}
+.mp[data-m=animado].active   {background:linear-gradient(135deg,#16a34a,#15803d)}
+.mp[data-m=agresivo].active  {background:linear-gradient(135deg,#dc2626,#b91c1c)}
+.mp[data-m=viejo].active     {background:linear-gradient(135deg,#7c3aed,#6d28d9)}
+.mp[data-m=inteligente].active{background:linear-gradient(135deg,#0284c7,#0369a1)}
 
-/* MAIN CONTENT */
-.main-content{
-  display:grid;grid-template-columns:1fr 320px;
-  gap:0;flex:1;overflow:hidden;
-}
+/* PHASE HEAD */
+.ph{padding:12px 22px 6px;flex-shrink:0;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.phn{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#ea580c}
+.pht{font-size:26px;font-weight:800;color:#1c0a00;line-height:1}
+.phm{font-size:11.5px;color:#92400e;margin-left:auto}
 
-/* LEFT: SPEECH */
-.speech-col{
-  padding:20px;display:flex;flex-direction:column;gap:14px;
-  overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent;
-  border-right:1px solid var(--border);
-}
-.speech-col::-webkit-scrollbar{width:4px}
-.speech-col::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+/* LAYOUT */
+.lay{display:grid;grid-template-columns:1fr 286px;flex:1;overflow:hidden}
+.left{padding:0 22px 14px;overflow-y:auto;display:flex;flex-direction:column;gap:13px;scrollbar-width:thin;scrollbar-color:rgba(234,88,12,.2) transparent}
 
-.phase-label{
-  display:flex;align-items:center;gap:10px;
-}
-.phase-num{
-  font-family:'Syne',sans-serif;font-size:11px;font-weight:700;
-  letter-spacing:2px;text-transform:uppercase;color:var(--orange);
-}
-.phase-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;line-height:1.2}
-.phase-meta{font-size:12px;color:var(--muted)}
+/* SPEECH */
+.speech{background:linear-gradient(135deg,rgba(255,255,255,.92),rgba(255,237,213,.8));border:2px solid rgba(234,88,12,.18);border-left:4px solid #f97316;border-radius:16px;padding:20px 22px;box-shadow:0 6px 28px rgba(234,88,12,.1),0 2px 6px rgba(0,0,0,.05)}
+.sptag{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#ea580c;margin-bottom:7px}
+.sptit{font-size:15px;font-weight:800;color:#1c0a00;margin-bottom:10px}
+.sptxt{font-size:13.5px;line-height:1.85;color:#431407;white-space:pre-line}
 
-/* SPEECH CARD — THE MAIN THING */
-.speech-card{
-  background:var(--card);
-  border:1.5px solid var(--border);
-  border-radius:16px;
-  padding:24px;
-  border-left:3px solid var(--orange);
-  position:relative;
-  box-shadow:0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03);
-}
-.speech-card::before{
-  content:'';position:absolute;inset:0;border-radius:14px;
-  background:radial-gradient(ellipse at top left, rgba(255,107,43,0.04) 0%, transparent 60%);
-  pointer-events:none;
-}
-.speech-tag{
-  font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
-  color:var(--orange);margin-bottom:10px;
-}
-.speech-title{
-  font-family:'Syne',sans-serif;font-size:15px;font-weight:700;
-  margin-bottom:12px;color:var(--text);
-}
-.speech-text{
-  font-size:14.5px;line-height:1.8;color:#ddd8ce;
-  white-space:pre-line;
-}
+.clbl{font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:#92400e}
 
-/* VARIATIONS */
-.vars-title{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-.var-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.var-card{
-  background:var(--card);border:1.5px solid var(--border);border-radius:12px;
-  padding:14px;cursor:pointer;transition:.15s;
-}
-.var-card:hover{border-color:var(--orange);box-shadow:0 0 12px var(--orange-dim)}
-.var-card.selected{border-color:var(--orange);background:rgba(255,107,43,0.06)}
-.var-card-label{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin-bottom:6px}
-.var-card-label.pain{color:#ff6b6b}
-.var-card-label.story{color:#a78bfa}
-.var-card-label.data{color:#60a5fa}
-.var-card-label.close{color:var(--green)}
-.var-card-title{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:6px}
-.var-card-preview{font-size:11.5px;color:var(--muted);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+/* 4 CARDS */
+.cgrid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:10px}
+.card{background:linear-gradient(145deg,rgba(255,255,255,.93),rgba(255,247,237,.8));border:2px solid rgba(234,88,12,.14);border-radius:14px;padding:16px;cursor:pointer;display:flex;flex-direction:column;gap:8px;transition:transform .18s,box-shadow .18s,border-color .18s;box-shadow:0 1px 0 rgba(255,255,255,.95) inset,0 6px 20px rgba(234,88,12,.08),0 2px 6px rgba(0,0,0,.06);position:relative;overflow:hidden;transform-style:preserve-3d}
+.card::after{content:'';position:absolute;inset:0;border-radius:12px;background:linear-gradient(145deg,rgba(255,255,255,.45) 0%,transparent 50%);pointer-events:none}
+.card:hover{transform:translateY(-4px) rotateX(3deg);border-color:rgba(234,88,12,.4);box-shadow:0 1px 0 rgba(255,255,255,.95) inset,0 16px 40px rgba(234,88,12,.18),0 6px 14px rgba(0,0,0,.1)}
+.card.sel{border-color:#f97316;background:linear-gradient(145deg,rgba(255,247,237,.98),rgba(254,215,170,.65));transform:translateY(-3px);box-shadow:0 1px 0 rgba(255,255,255,.95) inset,0 12px 32px rgba(234,88,12,.24),0 0 0 3px rgba(249,115,22,.14)}
+.cbadge{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;padding:3px 9px;border-radius:99px;width:fit-content}
+.cbadge.pain  {background:rgba(220,38,38,.12);color:#dc2626}
+.cbadge.data  {background:rgba(2,132,199,.1);color:#0284c7}
+.cbadge.story {background:rgba(124,58,237,.1);color:#7c3aed}
+.cbadge.close {background:rgba(22,163,74,.1);color:#16a34a}
+.cbadge.cut   {background:rgba(234,88,12,.12);color:#ea580c}
+.ctit{font-size:13px;font-weight:800;color:#1c0a00;line-height:1.3}
+.ctxt{font-size:11.5px;line-height:1.65;color:#78350f;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.card.sel .ctxt{-webkit-line-clamp:unset}
 
-/* RIGHT: SIDEBAR */
-.sidebar-col{
-  padding:16px;display:flex;flex-direction:column;gap:12px;
-  overflow-y:auto;scrollbar-width:none;
-}
-.sidebar-col::-webkit-scrollbar{display:none}
+/* SIDEBAR */
+.right{border-left:1.5px solid rgba(234,88,12,.15);padding:13px 15px;display:flex;flex-direction:column;gap:9px;overflow-y:auto;scrollbar-width:none;background:rgba(255,255,255,.2)}
+.right::-webkit-scrollbar{display:none}
+.sb{background:rgba(255,255,255,.78);border:1.5px solid rgba(234,88,12,.14);border-radius:12px;padding:13px;flex-shrink:0;box-shadow:0 2px 8px rgba(234,88,12,.06)}
+.sblbl{font-size:9px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:#ea580c;margin-bottom:8px}
+.ccue{font-size:13px;font-weight:700;color:#1c0a00;line-height:1.5;margin-bottom:4px}
+.chint{font-size:11.5px;color:#78350f;line-height:1.5}
+.as{border:2px solid #f97316;border-radius:12px;padding:13px;flex-shrink:0;background:linear-gradient(135deg,rgba(255,247,237,.95),rgba(254,215,170,.5));box-shadow:0 4px 18px rgba(249,115,22,.15)}
+.aslbl{font-size:9px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:#ea580c;margin-bottom:7px}
+.astit{font-size:12px;font-weight:800;color:#1c0a00;margin-bottom:6px}
+.astxt{font-size:12px;line-height:1.8;color:#431407;white-space:pre-line}
+.oi{margin-bottom:9px}.oi:last-child{margin-bottom:0}
+.oq{font-size:11.5px;font-weight:700;color:#b45309;margin-bottom:3px}
+.oa{font-size:11px;color:#78350f;line-height:1.55}
+.rule{font-size:11px;line-height:1.5;padding:3px 0 3px 14px;position:relative;color:#431407}
+.rule.do::before{content:'✓';position:absolute;left:0;color:#16a34a;font-weight:800}
+.rule.no::before{content:'✕';position:absolute;left:0;color:#dc2626;font-weight:800}
 
-.sb-block{
-  background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px;
-}
-.sb-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
-
-/* COACH */
-.coach-cue{font-size:13px;font-weight:600;color:var(--text);line-height:1.5;margin-bottom:6px}
-.coach-tone{font-size:11.5px;color:var(--muted);line-height:1.5}
-
-/* OBJECIONES */
-.obj-item{margin-bottom:10px}
-.obj-item:last-child{margin-bottom:0}
-.obj-q{font-size:12px;font-weight:600;color:var(--yellow);margin-bottom:4px}
-.obj-a{font-size:11.5px;color:#ccc;line-height:1.55}
-
-/* REGLAS */
-.rule-item{
-  font-size:12px;color:#ccc;line-height:1.5;padding:6px 0 6px 14px;
-  border-left:2px solid var(--border);margin-bottom:4px;position:relative;
-}
-.rule-item.do::before{content:'✓';position:absolute;left:-1px;color:var(--green);font-size:11px}
-.rule-item.dont::before{content:'✕';position:absolute;left:-1px;color:var(--red);font-size:11px}
-
-/* BOTTOM NAV */
-.bottom-nav{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:12px 20px;border-top:1px solid var(--border);
-  background:var(--bg);flex-shrink:0;gap:16px;
-}
-.nav-back{
-  padding:11px 22px;border-radius:10px;border:1.5px solid var(--border);
-  background:transparent;color:var(--muted);
-  font-family:'Inter',sans-serif;font-size:13px;font-weight:600;
-  cursor:pointer;transition:.15s;
-}
-.nav-back:hover:not(:disabled){border-color:#555;color:var(--text)}
-.nav-back:disabled{opacity:.25;cursor:default}
-.nav-center{text-align:center;flex:1}
-.nav-center-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
-.nav-center-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text)}
-.nav-next{
-  padding:11px 36px;border-radius:10px;border:none;
-  background:var(--orange);color:#fff;
-  font-family:'Syne',sans-serif;font-size:14px;font-weight:700;
-  cursor:pointer;transition:.15s;
-  box-shadow:0 0 20px var(--orange-dim);
-}
-.nav-next:hover:not(:disabled){opacity:.88;transform:translateY(-1px)}
-.nav-next:disabled{opacity:.3;cursor:default;box-shadow:none}
-
-/* BADGE pill */
-.pill{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:2px 8px;border-radius:99px;margin-right:4px}
-.pill.orange{background:rgba(255,107,43,.15);color:var(--orange)}
-.pill.green{background:rgba(45,202,114,.12);color:var(--green)}
-
-@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-.fade{animation:fadeIn .2s ease-out}
+/* BOTTOM */
+.bot{display:flex;align-items:center;justify-content:space-between;padding:11px 22px;background:rgba(255,255,255,.7);backdrop-filter:blur(12px);border-top:1.5px solid rgba(234,88,12,.15);flex-shrink:0;gap:14px}
+.bbk{padding:10px 20px;border-radius:10px;border:2px solid rgba(234,88,12,.25);background:rgba(255,255,255,.6);color:#92400e;cursor:pointer;font-family:'Bricolage Grotesque',sans-serif;font-size:13px;font-weight:700;transition:.15s}
+.bbk:hover:not(:disabled){border-color:#ea580c;background:rgba(255,255,255,.95)}
+.bbk:disabled{opacity:.25;cursor:default}
+.nm{text-align:center;flex:1}
+.nml{font-size:9px;color:#b45309;text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.nmn{font-size:15px;font-weight:800;color:#1c0a00}
+.bnx{padding:11px 36px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(135deg,#f97316,#dc2626);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:800;box-shadow:0 6px 22px rgba(234,88,12,.4);transition:.15s}
+.bnx:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 30px rgba(234,88,12,.55)}
+.bnx:disabled{opacity:.25;cursor:default;box-shadow:none}
 </style>
 </head>
 <body>
 
-<!-- ════════ PANTALLA 0: INICIO ════════ -->
-<div id="screen-start" class="screen active">
-  <div class="start-inner">
-    <div class="start-logo">⚡ Sykes AI · Copiloto</div>
-    <div class="start-title">¿Estás hablando<br>con el dueño?</div>
-    <div class="start-sub">Antes de empezar confirma quién está al otro lado.<br>El flujo cambia según la respuesta.</div>
-    <div class="start-btns">
-      <button class="btn-yes" onclick="goMain()">Sí, es el dueño →</button>
-      <button class="btn-no" onclick="goNotOwner()">No, es recepcionista</button>
+<div id="s0" class="screen active">
+  <div class="s0w">
+    <div class="logo">⚡ Sykes AI · Copiloto</div>
+    <div class="title">¿Hablas con<br>el dueño?</div>
+    <div class="sub">Confirma quién está al otro lado.<br>El flujo cambia según la respuesta.</div>
+    <div class="btns">
+      <button class="byes" id="bOw">Sí, es el dueño →</button>
+      <button class="bno"  id="bRe">No, es recepcionista</button>
     </div>
   </div>
 </div>
 
-<!-- ════════ PANTALLA 0B: NO ES EL DUEÑO ════════ -->
-<div id="screen-notowner" class="screen">
-  <div class="notowner-box">
-    <div class="notowner-icon">🚧</div>
-    <div class="notowner-title">Pide ser transferido</div>
-    <div class="notowner-script">"Es un tema comercial breve. ¿Me comunica con el encargado o dueño?"
-
-Si dicen que no pasan comerciales:
-
-"No es una venta. Es un análisis que hicimos de la zona. El encargado va a querer escuchar esto."</div>
-    <div class="notowner-btns">
-      <button class="btn-secondary" onclick="goStart()">← Reiniciar</button>
-      <button class="btn-primary" onclick="goMain()">Lo pasaron → Empezar</button>
+<div id="s1" class="screen">
+  <div class="s1w">
+    <div class="s1ic">🚧</div>
+    <div class="s1t">Pide ser transferido</div>
+    <div class="s1c">
+      <strong>"Es un tema comercial breve. ¿Me comunica con el encargado o dueño?"</strong><br><br>
+      Si dicen que no pasan comerciales:<br><br>
+      <strong>"No es una venta. Es un análisis de la zona. El encargado va a querer escuchar esto."</strong>
+    </div>
+    <div class="s1b">
+      <button class="bgh" id="bB0">← Reiniciar</button>
+      <button class="bso" id="bGo">Lo pasaron → Empezar</button>
     </div>
   </div>
 </div>
 
-<!-- ════════ PANTALLA PRINCIPAL ════════ -->
-<div id="screen-main" class="screen">
-
-  <!-- TOP -->
+<div id="s2" class="screen">
   <div class="topbar">
-    <span class="tb-brand" onclick="goStart()">⚡ Sykes AI</span>
-    <div class="phase-dots" id="phaseDots"></div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <span id="phaseCounter" style="font-size:11px;color:var(--muted)"></span>
-    </div>
+    <span class="brand" id="bRst">⚡ SYKES AI</span>
+    <div class="track" id="trk"></div>
+    <div class="moods" id="mds"></div>
   </div>
-
-  <!-- MOODS -->
-  <div class="moods-bar">
-    <span class="mood-lbl">Mood</span>
-    <div id="moodBtns" style="display:flex;gap:6px"></div>
+  <div class="ph">
+    <span class="phn" id="phn"></span>
+    <span class="pht" id="pht"></span>
+    <span class="phm" id="phm"></span>
   </div>
-
-  <!-- CONTENT -->
-  <div class="main-content">
-
-    <!-- LEFT -->
-    <div class="speech-col" id="speechCol"></div>
-
-    <!-- RIGHT -->
-    <div class="sidebar-col" id="sidebarCol"></div>
-
+  <div class="lay">
+    <div class="left" id="lft"></div>
+    <div class="right" id="rgt"></div>
   </div>
-
-  <!-- BOTTOM -->
-  <div class="bottom-nav">
-    <button class="nav-back" id="btnBack" onclick="prevPhase()">← Atrás</button>
-    <div class="nav-center">
-      <div class="nav-center-lbl">siguiente fase</div>
-      <div class="nav-center-name" id="nextPhaseName"></div>
-    </div>
-    <button class="nav-next" id="btnNext" onclick="nextPhase()">Siguiente →</button>
+  <div class="bot">
+    <button class="bbk" id="bBk">← Atrás</button>
+    <div class="nm"><div class="nml">siguiente fase</div><div class="nmn" id="nxn"></div></div>
+    <button class="bnx" id="bNx">Siguiente →</button>
   </div>
-
 </div>
 
 <script>
-// ═══════════════════════════════════════════
-// MOODS
-// ═══════════════════════════════════════════
-const MOODS = [
-  { id:'neutro',    e:'🧠', label:'Neutro',    hint:'Consultor calmado. Pausa y control.',         mod: s => s },
-  { id:'amable',    e:'😄', label:'Amable',    hint:'Sonríe de verdad. Ligero y cercano.',          mod: s => s.replace(/^Mire,/m, 'Oye,').replace(/^Le hago/m, 'Te hago') },
-  { id:'dominante', e:'🦅', label:'Dominante', hint:'Menos palabras, más certeza. Pausas cortas.',  mod: s => s.replace(/^Buenas tardes/m,'Buenas').replace(/^Le cuento/m,'Directo:') },
-  { id:'urgencia',  e:'⚠️', label:'Urgencia',  hint:'Sube energía 15%. Enfatiza el costo de no actuar.', mod: s => s },
-  { id:'rescate',   e:'🛟', label:'Rescate',   hint:'Cliente tenso. Baja, valida, redirige.',       mod: s => s.replace(/^Ese/m, 'Entiendo, y ese') },
+const M={
+  animado:    {e:'😃',l:'Animado',    c:'#16a34a',h:'Receptivo. Cierra rápido antes de que enfríe.'},
+  agresivo:   {e:'😤',l:'Agresivo',   c:'#dc2626',h:'Interrumpe. Valida, no pelees. Redirige al dolor.'},
+  viejo:      {e:'👴',l:'Mayor',      c:'#7c3aed',h:'Simple y pausado. Sin jerga. Una idea a la vez.'},
+  inteligente:{e:'🧠',l:'Analítico',  c:'#0284c7',h:'Pide datos reales. Cifras exactas y casos concretos.'}
+};
+const P=[
+{n:'F1',t:'Introducción',m:'15 seg · Llegar al decisor sin revelar el producto',
+sp:{tag:'SCRIPT EXACTO · 15 SEGUNDOS',tit:'Apertura de entrada',b:{
+  animado:'"Hola! Estoy comunicándome con [NEGOCIO]? Perfecto, soy [NOMBRE] de Sykes AI. ¿Me comunicas rápido con la persona a cargo?"',
+  agresivo:'"Hola, [NEGOCIO]? Soy [NOMBRE] de Sykes AI. Necesito 15 segundos con el encargado."',
+  viejo:'"Hola, buenas tardes. ¿Estoy hablando con [NEGOCIO]? Mi nombre es [NOMBRE]. ¿Podría hablar con el dueño, por favor?"',
+  inteligente:'"Hola, [NEGOCIO]? [NOMBRE] de Sykes AI. Tengo un análisis de su zona que le va a interesar. ¿Me comunica con el responsable?"'
+}},
+cards:[
+  {tp:'cut',bg:'¿De qué se trata?',tit:'Corte estratégico',b:{
+    animado:'"Es sobre captación de pacientes por WhatsApp. 15 minutos con el dueño y listo."',
+    agresivo:'"Un análisis de su zona. El dueño va a querer escuchar esto, se lo garantizo."',
+    viejo:'"Es algo sobre su clínica. No le robo tiempo, solo quiero hablar con el dueño."',
+    inteligente:'"Detectamos un patrón de pérdida de pacientes en clínicas de su distrito. Datos concretos."'
+  }},
+  {tp:'cut',bg:'No pasan comerciales',tit:'Rescate del gatekeeper',b:{
+    animado:'"No es venta, es un análisis. El dueño me lo agradeció en otras clínicas."',
+    agresivo:'"No es venta. Si el dueño pierde pacientes por esto, es problema suyo, no mío."',
+    viejo:'"No le voy a vender nada, tranquila. Solo quiero mostrarle algo al dueño."',
+    inteligente:'"Analizamos 138 clínicas del distrito. El patrón aplica a la mayoría. El gerente va a querer verlo."'
+  }},
+  {tp:'story',bg:'Ya es el decisor',tit:'Ir directo a F2',b:{
+    animado:'"Perfecto [NOMBRE]! Tengo algo que te va a llamar la atención sobre tu clínica."',
+    agresivo:'"Bien. Directo al punto: ¿tiene cobertura de WhatsApp después de las 8 PM?"',
+    viejo:'"Qué bueno hablar con usted directamente. Le quiero hacer una pregunta sencilla."',
+    inteligente:'"Excelente. Hicimos un análisis de clínicas en [ZONA]. ¿Tiene un minuto?"'
+  }},
+  {tp:'cut',bg:'Adaptar tono',tit:'Eco conversacional',b:{
+    animado:'Energía alta, ritmo rápido. Espejea su entusiasmo. Habla como colega.',
+    agresivo:'Voz firme, sin nervios. Pocas palabras. Pausa larga después de cada frase.',
+    viejo:'Voz clara y pausada. Sin abreviaciones. Confirma: "¿me expliqué bien?"',
+    inteligente:'Tono consultivo. Sonás a analista, no a vendedor.'
+  }}
+],
+coach:{animado:'Energía alta. Cierra rápido el paso al dueño.',agresivo:'Firme y breve. No te justifiques. El silencio es tuyo.',viejo:'Voz clara, pausada. Sin prisa. Una cosa a la vez.',inteligente:'Tono analítico. Eres un consultor, no un vendedor.'},
+objs:[{q:'"¿Me puede dar más información?"',a:'"Claro, por eso necesito 15 minutos con el encargado. ¿Me lo comunica?"'},{q:'"Estamos ocupados"',a:'"Perfecto, ¿a qué hora llamo para que el encargado tenga 15 minutos?"'}],
+rules:{do:['Menos de 15 segundos','Confirmar nombre del negocio','No revelar el producto'],no:['Mencionar "bot" o precio','Explicar demasiado','Sonar a vendedor']}
+},
+{n:'F2',t:'Buscar el dolor',m:'1-2 min · Que el cliente lo confiese él solo',
+sp:{tag:'ANZUELO · LA PREGUNTA DE LAS 8 PM',tit:'El anzuelo que siempre funciona',b:{
+  animado:'"Oye [NOMBRE], pregunta rápida: ¿tienes personal respondiendo WhatsApp después de las 8 de la noche?"',
+  agresivo:'"Le hago una pregunta directa: ¿tiene personal respondiendo WhatsApp a las 11 de la noche?"',
+  viejo:'"Le quiero hacer una pregunta sencilla: cuando su clínica cierra en la noche, ¿alguien responde los mensajes de WhatsApp?"',
+  inteligente:'"Analizamos 138 clínicas en [ZONA]. El 78% no tiene cobertura nocturna. ¿Cómo están ustedes en ese indicador?"'
+}},
+cards:[
+  {tp:'data',bg:'Dato duro',tit:'Amplificar con estadística',b:{
+    animado:'"El 78% de pacientes que escribe de noche contacta varias clínicas. El primero que responde, agenda. ¿Les pasa que se quedan sin responder algunos?"',
+    agresivo:'"78% de pacientes nocturnos elige la primera clínica que responde. Si responden al día siguiente, ese paciente ya tiene cita en otro lado."',
+    viejo:'"Muchos pacientes escriben de noche. Si nadie responde, ese paciente llama a otra clínica. ¿Le ha pasado eso?"',
+    inteligente:'"Después de 10 minutos sin respuesta, el 60% ya eligió otra clínica. ¿Cuál es su tiempo promedio de respuesta fuera de horario?"'
+  }},
+  {tp:'pain',bg:'Dicen que tienen cobertura',tit:'Destruir la falsa cobertura',b:{
+    animado:'"¡Qué bien! ¿Y los domingos y feriados también? ¿En cuánto tiempo responden normalmente?"',
+    agresivo:'"¿En cuántos minutos? Después de 10 minutos el 60% ya eligió a la competencia."',
+    viejo:'"¿Y cuando esa persona descansa, hay alguien más? ¿O queda sin atención?"',
+    inteligente:'"¿Tienen métricas de tiempo de respuesta fuera de horario laboral? ¿Qué promedio manejan?"'
+  }},
+  {tp:'story',bg:'La pregunta que lo hace confesar',tit:'Historia de la asistente',b:{
+    animado:'"¿Y cuando tu equipo está con pacientes y entra un WhatsApp, quién lo atiende en ese momento?"',
+    agresivo:'"Esa asistente tiene horario y sale a una hora. Cuando se va, ¿quién responde los mensajes?"',
+    viejo:'"Cuando su personal está ocupado atendiendo y llega un mensaje... ¿quién lo responde?"',
+    inteligente:'"¿Tienen un protocolo para mensajes fuera del horario laboral? ¿Cómo lo manejan?"'
+  }},
+  {tp:'cut',bg:'Se desvía del tema',tit:'Corte estratégico',b:{
+    animado:'"Sí sí! Y justamente de eso te quería hablar."',
+    agresivo:'"Exacto. Y justo por eso le llamo."',
+    viejo:'"Sí, entiendo. Y mire, justamente eso es lo que quería comentarle."',
+    inteligente:'"Correcto. Y ese es precisamente el patrón que identificamos."'
+  }}
+],
+coach:{animado:'Ritmo rápido. Confirma con energía. Llega al dolor.',agresivo:'No expliques. Pregunta y calla. El silencio lo incomoda a él.',viejo:'Una pregunta a la vez. Espera que termine. Sin interrupciones.',inteligente:'Datos primero. Diagnóstico, no venta.'},
+objs:[{q:'"Respondemos bien"',a:'"¿En cuántos minutos? Después de 10 minutos el 60% ya eligió otra clínica."'},{q:'"Tenemos WhatsApp activo"',a:'"¿Activo a las 11 de la noche, los domingos? [pausa] Ahí está el hueco."'}],
+rules:{do:['Preguntar por horario, no por "problemas"','Usar el silencio','Dejar que el cliente hable'],no:['Explicar el producto todavía','Monólogos de más de 20 seg','Preguntar "¿tiene problemas?"']}
+},
+{n:'F3',t:'Presentar solución',m:'1.5 min · Vende el resultado, no la tecnología',
+sp:{tag:'RELATO PERSUASIVO',tit:'Conectar el dolor con el resultado',b:{
+  animado:'"Ese hueco nocturno tiene un costo real. Mira lo que pasó con una clínica en Chorrillos: en un mes dejaron de perder consultas nocturnas y ahorraron el sueldo de un recepcionista."',
+  agresivo:'"Ese tiempo muerto cuesta dinero. Clínica en Chorrillos: mes 1, cero pacientes perdidos por horario, 800 soles menos en planilla."',
+  viejo:'"Lo que instalamos hace que ningún paciente quede sin respuesta, aunque sean las 2 de la madrugada. Usted se despierta con citas confirmadas."',
+  inteligente:'"Benchmark en clínicas similares: 23% de aumento en citas fuera de horario en el primer mes. Clínica Chorrillos: 800 soles/mes menos en recepción."'
+}},
+cards:[
+  {tp:'close',bg:'Imagen del resultado',tit:'Lo que ve el cliente',b:{
+    animado:'"A las 2 AM le escriben, en 20 segundos respuesta completa, agenda la cita sola. Te despiertas con citas que no existían la noche anterior."',
+    agresivo:'"Ningún paciente sin respuesta. Nunca más. 24 horas, 7 días. Sin sueldo adicional."',
+    viejo:'"Es como tener a alguien contestando el WhatsApp toda la noche, pero sin pagarle sueldo."',
+    inteligente:'"SLA de respuesta: menos de 20 segundos. Conversión chat→cita: 34%-41%. Sin intervención humana en el flujo inicial."'
+  }},
+  {tp:'story',bg:'Caso real',tit:'La clínica de Chorrillos',b:{
+    animado:'"Una clínica igual que la tuya pensaba que necesitaba más publicidad. El problema era WhatsApp. Al primer mes: +5% en citas."',
+    agresivo:'"Clínica Díaz, Chorrillos. Mismo problema. Mes 1: cero pérdidas nocturnas, 800 soles menos en planilla."',
+    viejo:'"Le cuento lo que le pasó a otra clínica. Tenían el mismo problema. Al mes siguiente tenían más citas sin contratar a nadie nuevo."',
+    inteligente:'"Caso documentado: clínica 12 sillones, Chorrillos. Post-implementación mes 1: 38% de consultas nocturnas convertidas a cita. ROI en semana 3."'
+  }},
+  {tp:'pain',bg:'Micro-cierre',tit:'Puente antes de la oferta',b:{
+    animado:'"¿Tiene sentido para tu clínica? Porque si sí, el siguiente paso es muy simple."',
+    agresivo:'"¿Tiene mensajes sin responder de anoche ahora mismo? Eso es lo único que importa."',
+    viejo:'"¿Le parece útil lo que le estoy describiendo? ¿Tiene sentido para su clínica?"',
+    inteligente:'"Basado en su perfil, ¿encaja con el problema que me describió? ¿Lo validamos con números?"'
+  }},
+  {tp:'story',bg:'Personalización',tit:'Mostrar esfuerzo previo',b:{
+    animado:'"Antes de llamarte revisé tu zona. Por eso te contacté, creo que hay una oportunidad real aquí."',
+    agresivo:'"Revisé su zona antes de llamar. No llamo a todos. Llamé porque vi que aplica."',
+    viejo:'"No llamo a todas las clínicas. Revisé su zona específicamente y por eso le contacté."',
+    inteligente:'"El análisis segmentó 138 clínicas. La suya califica por zona, tamaño y densidad competitiva."'
+  }}
+],
+coach:{animado:'Energía controlada. Cierra el puente rápido. No dejes que se enfríe.',agresivo:'Corto y directo. Números concretos. Sin adornos.',viejo:'Habla despacio. Una idea por vez. Repite el beneficio si no reacciona.',inteligente:'Datos, caso documentado, porcentajes. Nada emocional.'},
+objs:[{q:'"¿Qué tecnología usa?"',a:'"Lo que importa no es cómo funciona sino qué hace: ningún paciente sin respuesta, nunca más."'},{q:'"¿Se nota que es un bot?"',a:'"El 90% de clientes reporta que los pacientes ni preguntan si es bot. Preguntan cuándo es la cita."'}],
+rules:{do:['Bloques de 20 seg máximo','Caso real con números','Terminar con pregunta de confirmación'],no:['Mencionar Gmail, Sheets, APIs','Decir "tecnología" o "sistema"','Monólogo sin pausa']}
+},
+{n:'F4',t:'Lanzar precio',m:'45 seg · Anclar contra el sueldo del recepcionista',
+sp:{tag:'OFERTA · $180 USD / MES',tit:'El precio siempre anclado',b:{
+  animado:'"Son 180 dólares al mes. Un recepcionista nocturno son mínimo 1,200 soles. Nosotros somos 680 soles y tienes cobertura 24/7. Con 2 citas extra al mes ya se pagó solo."',
+  agresivo:'"180 dólares. Recepcionista nocturno: 1,200 soles. Nosotros: 680. No falta, no se enferma, no cobra extras."',
+  viejo:'"El costo es 180 dólares al mes. Pagarle a alguien solo para contestar WhatsApp de noche costaría más de 1,200 soles. Nosotros somos mucho menos y cubre todo el día."',
+  inteligente:'"OPEX mensual: 180 USD (~680 soles). Alternativa humana: mínimo 1,200 soles + ESSALUD + beneficios. Break-even: 2 citas adicionales a ticket promedio $90."'
+}},
+cards:[
+  {tp:'close',bg:'Cerrar en llamada',tit:'Pago directo hoy',b:{
+    animado:'"¿Lo iniciamos hoy? Te paso los datos ahora, en 5 días está instalado y el sexto día empieza tu mes."',
+    agresivo:'"¿Lo iniciamos hoy o mañana? Le paso los datos de pago ahora."',
+    viejo:'"Si le parece bien, podemos empezar hoy. Le mando los datos por WhatsApp y en 5 días está listo."',
+    inteligente:'"Para proceder: pago inicial, instalación 5 días hábiles, inicio del SLA al día 6. ¿Iniciamos hoy?"'
+  }},
+  {tp:'close',bg:'Agendar Meet',tit:'Demo de 20 minutos',b:{
+    animado:'"¿Qué tal si mañana te muestro el sistema en vivo, 20 minutos por Meet? Si te convence lo activamos ahí. ¿A las 2 o a las 4?"',
+    agresivo:'"Mañana, 20 minutos por Meet. ¿A las 2 o las 4?"',
+    viejo:'"¿Qué le parece si mañana le muestro cómo funciona por videollamada? Son 20 minutitos. ¿Puede a las 2?"',
+    inteligente:'"Demo técnica: dashboard, flujos y métricas en tiempo real. ¿Mañana a las 2 o las 4?"'
+  }},
+  {tp:'data',bg:'Pide más justificación',tit:'ROI simple',b:{
+    animado:'"Con solo 2 pacientes extra al mes ya se pagó. El resto es ganancia pura."',
+    agresivo:'"2 citas extra al mes y ya se pagó. ¿Cuántos mensajes sin respuesta tiene ahora mismo?"',
+    viejo:'"Si solo 2 pacientes más agendan cita gracias a esto, el sistema ya se pagó. Todo lo demás es ganancia."',
+    inteligente:'"ROI conservador: si convierte el 30% de consultas nocturnas perdidas, el payback es menor a 2 semanas."'
+  }},
+  {tp:'pain',bg:'Garantía 15 días',tit:'Eliminar el riesgo',b:{
+    animado:'"Y si en 15 días no ves resultados, te devolvemos la mitad proporcional. Sin permanencia, sin letra chica."',
+    agresivo:'"15 días. Sin resultados: retiro y devolución proporcional. Sin permanencia forzada."',
+    viejo:'"Si en 15 días no está contento, puede retirarse y le devolvemos parte del pago. Sin compromiso."',
+    inteligente:'"Garantía proporcional a 15 días. Sin cláusula de permanencia. Exit con 5 días de preaviso."'
+  }}
+],
+coach:{animado:'Cierra rápido. Dos opciones, ambas son avanzar.',agresivo:'Precio sin disculpas. Silencio después del número.',viejo:'Explica la comparación despacio. Más barato que contratar a alguien.',inteligente:'Números exactos. ROI calculado. Decisión financiera obvia.'},
+objs:[{q:'"Es muy caro"',a:'"¿Caro comparado con qué? Recepcionista nocturno: 1,200 soles. Nosotros: 680. Y con 3 citas extra ya se pagó."'},{q:'"No tengo presupuesto"',a:'"La pregunta no es si puede pagarlo. Es si puede seguir perdiendo pacientes sin él."'}],
+rules:{do:['Anclar siempre contra el sueldo','Presentar con seguridad','Ofrecer garantía de 15 días'],no:['Decir "normalmente vale 400 pero..."','Bajar el precio','Pedir disculpas por el precio']}
+},
+{n:'F5',t:'Manejar objeciones',m:'Sin límite · El que objeta está interesado',
+sp:{tag:'REGLA MENTAL',tit:'El que objeta está interesado. El que cuelga, no.',b:{
+  animado:'"Entiendo perfectamente. Déjame mostrarte algo rápido que va a resolver esa duda."',
+  agresivo:'"Entendido. [pausa] ¿Tiene mensajes sin responder de anoche en su WhatsApp ahora mismo?"',
+  viejo:'"Claro que sí, entiendo su preocupación. Permítame explicarle eso con más calma."',
+  inteligente:'"Válido. ¿Qué dato específico necesita para tomar la decisión? Trabajemos sobre eso."'
+}},
+cards:[
+  {tp:'pain',bg:'Ya tienen quien responde',tit:'Destruir la falsa cobertura',b:{
+    animado:'"¿Esa persona responde a las 11 de la noche, los domingos, en menos de 20 segundos? Si no, hay un hueco. Y ese hueco lo aprovecha tu competencia."',
+    agresivo:'"¿Responde a las 11 PM los domingos en menos de 20 segundos? [silencio] Ese hueco lo aprovecha la competencia."',
+    viejo:'"¿Y cuando esa persona descansa o es domingo? ¿Quién responde? Ahí es donde se pierden los pacientes."',
+    inteligente:'"¿Cuál es el SLA de respuesta fuera de horario laboral? ¿Tienen datos de cobertura en fines de semana?"'
+  }},
+  {tp:'story',bg:'No confía en bots',tit:'Reencuadrar la confianza',b:{
+    animado:'"Te entiendo! Pero el 90% de nuestros clientes dice que los pacientes ni preguntan si es bot. Preguntan cuándo es la cita."',
+    agresivo:'"Un paciente con dolor a las 10 PM no quiere calidez. Quiere respuesta. El 90% ni pregunta si es bot."',
+    viejo:'"Los mensajes suenan completamente naturales, como si fuera una persona. Sus pacientes no van a notar diferencia."',
+    inteligente:'"Tasa de detección de automatización: menos del 4% en nuestros deployments."'
+  }},
+  {tp:'close',bg:'Déjame consultarlo',tit:'Cierre incremental',b:{
+    animado:'"Perfecto! ¿Qué tal si mañana hacemos una llamada con los dos? 15 minutos en vivo. ¿A qué hora los tengo juntos?"',
+    agresivo:'"Mañana, 15 minutos, los dos. ¿A las 2 o las 4?"',
+    viejo:'"Con mucho gusto. ¿Qué le parece si mañana los llamo a los dos? Solo 15 minutos."',
+    inteligente:'"Sesión de 15 minutos con ambos decisores. Demo + preguntas técnicas. ¿Mañana a las 2 o las 4?"'
+  }},
+  {tp:'data',bg:'Debate de datos',tit:'Cortar, volver al dolor',b:{
+    animado:'"Olvida los porcentajes. Una pregunta: ¿tienes mensajes sin responder de anoche? Eso es todo lo que importa."',
+    agresivo:'"No me crea el dato. Solo dígame: ¿tiene mensajes sin responder de anoche? [pausa] Eso es lo único que importa."',
+    viejo:'"Dejemos los números. ¿Cree que se le han escapado algunos pacientes por no responder a tiempo?"',
+    inteligente:'"¿Prefiere que corramos un piloto de 15 días con datos de su clínica específica?"'
+  }}
+],
+coach:{animado:'Mantén la energía. Valida rápido y redirige.',agresivo:'No pelees. Valida con una palabra y regresa al dolor.',viejo:'Paciencia total. Valida antes de responder.',inteligente:'No improvises datos. Propón piloto o caso documentado.'},
+objs:[{q:'"Quiero ver resultados primero"',a:'"Por eso son 15 días de prueba con devolución proporcional."'},{q:'"Necesito pensarlo"',a:'"¿Qué necesita resolver para decidir? Si lo resolvemos ahora, no tiene que esperar."'}],
+rules:{do:['Validar antes de responder','Regresar al dolor','Técnica específica para cada objeción'],no:['Ponerse defensivo','Entrar en debate de datos','Improvisar']}
+},
+{n:'F6',t:'Cierre',m:'30 seg · Pago hoy o Meet con hora exacta',
+sp:{tag:'REGLA DE ORO',tit:'El cierre se conduce. Nunca se pide.',b:{
+  animado:'"Perfecto! Te paso los datos de pago ahora por WhatsApp. ¿Al mismo número o a otro?"',
+  agresivo:'"Bien. Datos de pago ahora. ¿WhatsApp o correo?"',
+  viejo:'"Le mando la información de pago por WhatsApp, usted lo revisa con calma, y en 5 días está todo listo."',
+  inteligente:'"Le envío el contrato de servicio y datos de pago. Revisión del SLA incluida antes de la firma. ¿WhatsApp o correo?"'
+}},
+cards:[
+  {tp:'close',bg:'Pago directo',tit:'Cerrar hoy mismo',b:{
+    animado:'"Te mando los datos ahora mismo. En 5 días instalado, al 6to día empieza tu mes. ¡Vamos!"',
+    agresivo:'"Datos de pago ahora. 5 días instalación. Día 6 empieza. ¿WhatsApp o correo?"',
+    viejo:'"Le mando los datos por WhatsApp ahora mismo. Cuando quiera hacer el pago, me avisa."',
+    inteligente:'"Envío contrato, términos de SLA y datos de pago. ¿Revisión por correo o firma digital hoy?"'
+  }},
+  {tp:'close',bg:'Agendar Meet',tit:'Dos horarios concretos',b:{
+    animado:'"Mañana 20 minutos por Meet, te muestro en vivo y si te convence lo activamos ahí. ¿A las 2 o a las 4?"',
+    agresivo:'"Mañana Meet. 20 minutos. ¿2 PM o 4 PM?"',
+    viejo:'"¿Qué le parece si mañana hacemos una videollamada de 20 minutos? ¿Puede a las 2 o mejor a las 4?"',
+    inteligente:'"Demo técnica mañana. ¿2 PM o 4 PM?"'
+  }},
+  {tp:'story',bg:'Hay resistencia',tit:'Cierre incremental',b:{
+    animado:'"No te pido que decidas ahora. Solo 20 minutos mañana para verlo con tus propios ojos. ¿A las 2?"',
+    agresivo:'"No le pido decisión. 20 minutos mañana. Si no convence, listo. ¿2 o 4?"',
+    viejo:'"No tiene que decidir nada hoy. Solo 20 minutos mañana para verlo. Sin ningún compromiso."',
+    inteligente:'"Demo de 20 minutos sin compromiso. Suficiente para evaluar fit técnico y comercial."'
+  }},
+  {tp:'data',bg:'Antes de colgar',tit:'Confirmación final',b:{
+    animado:'"Perfecto! Te confirmo la reunión del [DÍA] a las [HORA] por WhatsApp ahora mismo."',
+    agresivo:'"Confirmo por WhatsApp ahora. [DÍA], [HORA]. Hasta entonces."',
+    viejo:'"Le mando la confirmación por WhatsApp para que la tenga anotada. Hasta mañana."',
+    inteligente:'"Confirmación: [DÍA] [HORA], 20 min, Meet. Agenda incluida."'
+  }}
+],
+coach:{animado:'Cierra rápido con entusiasmo. Dos opciones, ambas son avanzar.',agresivo:'Frases cortas. Dos opciones. Silencio después de la pregunta.',viejo:'Sin presión. Dos opciones claras.',inteligente:'Cierre técnico. Contrato, SLA, datos claros.'},
+objs:[{q:'"Déjame pensarlo"',a:'"¿Mañana a las 2 o a las 4? Solo 20 minutos para verlo con datos reales."'},{q:'"Llámame la próxima semana"',a:'"Claro. ¿El lunes a las 10 o el martes a las 3?" — Nunca sin fecha concreta.'}],
+rules:{do:['Dos horarios concretos siempre','Confirmar por WhatsApp antes de colgar','Terminar con acción concreta'],no:['Preguntar "¿qué le parece?"','Terminar sin fecha','Bajar precio al final']}
+}
 ];
 
-// ═══════════════════════════════════════════
-// FASES
-// ═══════════════════════════════════════════
-const PHASES = [
+let ph=0,mood='animado',sel=0;
+const gm=()=>M[mood];
+const gs=b=>b[mood]||Object.values(b)[0];
+const esc=t=>String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+function selC(i){sel=i;render()}
 
-  // ─── FASE 1: INTRODUCCIÓN ───
-  {
-    num: 'F1', title: 'Introducción',
-    meta: '⏱ 15 segundos · Llegar al decisor sin revelar el producto',
-    speech: {
-      tag: 'SCRIPT EXACTO',
-      title: 'Apertura de 15 segundos',
-      text: '"Hola, buenas tardes. Estoy comunicándome con [NOMBRE NEGOCIO]? Perfecto. Mi nombre es [TU NOMBRE], soy parte de Sykes AI. ¿Me comunica con la persona a cargo, por favor?"',
-    },
-    variants: [
-      { type:'story', label:'Historia', title:'Si ya es el decisor', text:'"Perfecto [NOMBRE], justo quería hablar con usted. Tengo algo puntual sobre su clínica que le va a llamar la atención."', note:'' },
-      { type:'pain',  label:'Rescate',  title:'Si no pasan comerciales', text:'"No es una venta. Es un análisis que hicimos de la zona. El encargado va a querer escuchar esto."', note:'' },
-    ],
-    coach: {
-      cue: 'Proyecta autoridad desde la primera palabra. Voz firme, sin dudar.',
-      tone: 'No reveles el producto todavía. Tu único objetivo: llegar al decisor.'
-    },
-    objections: [
-      { q:'"¿De qué se trata?"', a:'"Es un análisis que hicimos de clínicas de la zona. Solo 15 minutos con el encargado."' },
-      { q:'Recepcionista defensiva', a:'"No es venta. El dueño va a querer escucharlo. ¿En qué horario lo ubico?"' },
-    ],
-    rules: {
-      do:   ['Menos de 15 segundos', 'Confirmar nombre del negocio', 'Adaptar tono al perfil de quien atiende'],
-      dont: ['Mencionar el producto', 'Dar precio', 'Explicar demasiado'],
-    }
-  },
+document.getElementById('bOw').onclick=()=>{show('s2');ph=0;sel=0;render()};
+document.getElementById('bRe').onclick=()=>show('s1');
+document.getElementById('bB0').onclick=()=>show('s0');
+document.getElementById('bGo').onclick=()=>{show('s2');ph=0;sel=0;render()};
+document.getElementById('bRst').onclick=()=>show('s0');
+document.getElementById('bBk').onclick=()=>{if(ph>0){ph--;sel=0;render()}};
+document.getElementById('bNx').onclick=()=>{if(ph<P.length-1){ph++;sel=0;render()}};
 
-  // ─── FASE 2: BÚSQUEDA DEL DOLOR ───
-  {
-    num: 'F2', title: 'Búsqueda del dolor',
-    meta: '⏱ 1-2 minutos · Que el cliente confiese el problema en voz alta',
-    speech: {
-      tag: 'SECUENCIA DE DIAGNÓSTICO',
-      title: 'El anzuelo de las 8 PM',
-      text: '"Mire, hemos estado haciendo un análisis en el distrito de [ZONA]. Unas 138 clínicas analizadas. Y encontramos un patrón que me llamó la atención.\n\n¿Le hago una pregunta directa? ¿Tiene personal que responda mensajes de WhatsApp después de las 8 de la noche?"',
-    },
-    variants: [
-      { type:'data',  label:'Datos',   title:'Amplificar con estadística', text:'"El 78% de los pacientes que escribe a una clínica por la noche contacta a más de una al mismo tiempo. El primero que responde agenda. Si su clínica responde al día siguiente, ese paciente ya tiene cita en otro lado.\n\nEso está pasando en su clínica ahora mismo, ¿verdad?"', note:'Citar cifras exactas genera autoridad.' },
-      { type:'pain',  label:'Dolor',   title:'Si dice que sí tienen cobertura', text:'"Qué bien. ¿En cuántos minutos responden normalmente? Porque lo que encontramos es que después de los primeros 10 minutos sin respuesta, el 60% ya eligió otra clínica."', note:'Siempre hay un hueco. Encuéntralo.' },
-      { type:'story', label:'Historia',title:'Pregunta del cuello de botella', text:'"Esta asistente tiene un horario y sale a una hora. Cuando se va... ¿quién responde los mensajes?"', note:'La pausa antes de la pregunta es clave.' },
-      { type:'data',  label:'Corte',   title:'Si se desvía', text:'"Exacto, y justamente de eso quería hablarle."', note:'Corte estratégico. Elegante y directo.' },
-    ],
-    coach: {
-      cue: 'NO expliques nada todavía. Tu único objetivo: que el cliente admita el problema.',
-      tone: 'El dolor que el cliente nombra vale 10 veces más que el que tú describes.'
-    },
-    objections: [
-      { q:'"Respondemos bien"', a:'"¿En cuántos minutos? Porque después de 10 minutos sin respuesta, el 60% ya eligió a la competencia."' },
-      { q:'"Tenemos WhatsApp activo"', a:'"¿Activo a las 11 de la noche, los domingos, los feriados? [pausa] Ahí está el hueco."' },
-    ],
-    rules: {
-      do:   ['Preguntar por horario específico, no por "problemas"', 'Usar datos exactos: 78%, 10 minutos, 60%', 'Dejar que el cliente hable y confirme'],
-      dont: ['Explicar el producto', 'Monólogos de más de 20 segundos', 'Preguntar "¿tiene problemas?"'],
-    }
-  },
+function render(){
+  const tr=document.getElementById('trk');tr.innerHTML='';
+  P.forEach((_,i)=>{const d=document.createElement('div');d.className='pd '+(i<ph?'past':i===ph?'now':'nxt');d.onclick=()=>{ph=i;sel=0;render()};tr.appendChild(d)});
 
-  // ─── FASE 3: DESARROLLO ───
-  {
-    num: 'F3', title: 'Presentar solución',
-    meta: '⏱ 1.5-2 minutos · Vende el resultado, no la tecnología',
-    speech: {
-      tag: 'RELATO PERSUASIVO',
-      title: 'Conectar dolor con resultado',
-      text: '"Ese tiempo muerto que tiene desde las 8 PM hasta la mañana siguiente tiene un costo real. Cada paciente que no recibe respuesta en ese horario es una cita que no ocurre.\n\nLe cuento lo que pasó con una clínica en Chorrillos. Tenían exactamente el mismo problema. Al primer mes dejaron de perder esas consultas nocturnas. Un mes después, uno de sus recepcionistas ya no era necesario para responder mensajes. Eso fue 800 soles de ahorro más un 5% de aumento en citas agendadas."',
-    },
-    variants: [
-      { type:'close', label:'Resultado', title:'Descripción visual del sistema', text:'"Lo que instalamos hace una sola cosa: asegura que ningún paciente que le escriba quede sin respuesta. A las 2 AM le escriben, en 20 segundos tienen respuesta completa, y si quieren cita la agenda sola. Usted se despierta al día siguiente con citas confirmadas que no existían la noche anterior."', note:'Imagen visual. Nada técnico.' },
-      { type:'story', label:'Personalización', title:'Mostrar sacrificio personal', text:'"Yo revisé el análisis de su zona específicamente porque me llamó la atención la cantidad de clínicas que están perdiendo lo mismo que usted."', note:'Genera reciprocidad sin pedirla.' },
-      { type:'pain',  label:'Puente', title:'Pregunta de micro-cierre', text:'"¿Tiene sentido lo que le estoy describiendo para su situación actual?"', note:'Si dice sí, ya está mentalmente adentro.' },
-    ],
-    coach: {
-      cue: 'Vende citas perdidas, no tecnología. Nunca menciones Gmail, Sheets, APIs.',
-      tone: 'Un paciente prefiere eficiencia inmediata que halagos distantes.'
-    },
-    objections: [
-      { q:'"¿Qué tecnología usa?"', a:'"Lo que importa no es cómo funciona sino qué hace: ningún paciente sin respuesta, nunca más."' },
-      { q:'"¿Se nota que es un bot?"', a:'"El 90% de nuestros clientes reporta que sus pacientes ni preguntan si es bot. Preguntan cuándo es la cita."' },
-    ],
-    rules: {
-      do:   ['Bloques de 20 segundos máximo, luego pausa', 'Caso real con números concretos', 'Terminar con pregunta de confirmación'],
-      dont: ['Mencionar Gmail, Sheets o APIs', 'Presentar como "tecnología"', 'Monólogo sin pausa'],
-    }
-  },
+  const mb=document.getElementById('mds');mb.innerHTML='';
+  Object.entries(M).forEach(([id,m])=>{const b=document.createElement('button');b.className='mp'+(id===mood?' active':'');b.setAttribute('data-m',id);b.textContent=`${m.e} ${m.l}`;b.onclick=()=>{mood=id;render()};mb.appendChild(b)});
 
-  // ─── FASE 4: OFERTA ───
-  {
-    num: 'F4', title: 'Lanzar precio',
-    meta: '⏱ 45 segundos · Anclar el precio contra el costo de un recepcionista',
-    speech: {
-      tag: 'SCRIPT DE OFERTA',
-      title: '$180 anclado contra sueldo',
-      text: '"El servicio tiene un valor de 180 dólares al mes. Para que tenga referencia: contratar a una persona que cubra solo el horario nocturno le costaría mínimo 1,200 soles de sueldo básico. Con nosotros son 180 dólares —aproximadamente 680 soles— y tiene cobertura las 24 horas, no solo las nocturnas.\n\nFunciona así: usted hace el pago, en 5 días instalamos todo, al sexto día empieza su mes. Si a los 15 días no está satisfecho, se retira y le devolvemos la mitad proporcional. Sin permanencia forzada."',
-    },
-    variants: [
-      { type:'close', label:'Cierre directo', title:'Cerrar en llamada', text:'"¿Le parece si lo iniciamos hoy mismo? Le paso los datos de pago y en 5 días está funcionando."', note:'Asume que avanza. No pregunta si quiere.' },
-      { type:'close', label:'Meet', title:'Cerrar por reunión', text:'"Lo que propongo es esto: mañana hacemos una reunión de 20 minutos por Meet, le muestro el sistema en vivo, y si le convence lo activamos ahí mismo. ¿A qué hora tiene disponibilidad mañana?"', note:'Ofrecer 2 horarios concretos, nunca "¿cuándo puede?".' },
-      { type:'data',  label:'Refuerzo', title:'Si pide más justificación', text:'"Con 2 o 3 citas extra al mes el sistema ya se pagó solo. El resto es ganancia neta."', note:'Matemática simple. No negociar el precio.' },
-    ],
-    coach: {
-      cue: 'El precio es 180. Siempre. Sin descuentos, sin "normalmente vale 400".',
-      tone: '180 USD vs 1,200 soles de sueldo. Esa es la única comparación.'
-    },
-    objections: [
-      { q:'"Es muy caro"', a:'"¿Caro comparado con qué? Un recepcionista nocturno son 1,200 soles. Nosotros somos 680. Y con 3 citas extra al mes ya se pagó solo."' },
-      { q:'"No tengo presupuesto"', a:'"La pregunta no es si puede pagarlo. Es si puede seguir perdiendo pacientes sin él."' },
-    ],
-    rules: {
-      do:   ['Anclar siempre contra el sueldo del recepcionista', 'Presentar con seguridad, sin titubear', 'Ofrecer la garantía de 15 días'],
-      dont: ['Decir "normalmente vale 400 pero..."', 'Bajar el precio sin necesidad', 'Pedir disculpas por el precio'],
-    }
-  },
+  const p=P[ph],m=gm();
+  document.getElementById('phn').textContent=p.n;
+  document.getElementById('pht').textContent=p.t;
+  document.getElementById('phm').textContent=p.m;
 
-  // ─── FASE 5: OBJECIONES ───
-  {
-    num: 'F5', title: 'Manejar objeciones',
-    meta: '⏱ Sin límite · Cada objeción es una señal de interés',
-    speech: {
-      tag: 'REGLA MENTAL',
-      title: 'El cliente que objeta está interesado',
-      text: '"El cliente que objeta está interesado. El que cuelga, no.\n\nCada objeción tiene una técnica asignada. No improvises: ejecuta.\n\nNunca te disculpes ni justifiques al recibir una objeción. Valida brevemente y aplica la técnica."',
-    },
-    variants: [
-      { type:'pain',  label:'Analítico', title:'Cliente que debate datos', text:'"No me crea el porcentaje. Dígame una sola cosa: ¿tiene mensajes sin responder de anoche ahora mismo en su WhatsApp? [pausa] Eso es lo único que importa."', note:'Corta el debate. Regresa al dolor.' },
-      { type:'story', label:'Escéptico', title:'Cauteloso pero sigue en llamada', text:'"Me alegra que sea así de preciso. Los clientes que preguntan bien son los que mejor trabajan con nosotros después. Por eso le propongo que lo vea usted mismo antes de decidir."', note:'Convierte la objeción en cualidad.' },
-      { type:'close', label:'Socio/esposo', title:'"Déjame consultarlo"', text:'"Perfecto. Le propongo esto: mañana hacemos una llamada de 15 minutos con los dos. Les muestro el sistema en vivo. Si convence, arrancamos. ¿A qué hora los tengo juntos mañana?"', note:'Cierre incremental. Avanza igual.' },
-      { type:'data',  label:'Bot',  title:'"No confío en los bots"', text:'"Un paciente con dolor a las 10 PM no quiere calidez. Quiere respuesta inmediata. El 90% de nuestros clientes reporta que sus pacientes ni preguntan si es bot. Preguntan cuándo es la cita."', note:'Reencuadra: el paciente quiere rapidez.' },
-    ],
-    coach: {
-      cue: 'No improvises. Cada objeción tiene su técnica. Ejecuta.',
-      tone: 'Nunca te pongas defensivo. Valida brevemente, luego aplica.'
-    },
-    objections: [
-      { q:'"Ya tengo alguien que responde"', a:'"¿Esa persona responde a las 11 de la noche, los domingos, los feriados, en menos de 20 segundos? [pausa] Si no, hay un hueco. Y ese hueco lo está aprovechando su competencia."' },
-      { q:'"Quiero ver resultados primero"', a:'"Por eso ofrecemos 15 días de prueba. Si no ve mejora en citas agendadas fuera de horario, se retira y le devolvemos la mitad proporcional."' },
-      { q:'"Necesito pensarlo"', a:'"¿Qué es específicamente lo que necesita resolver para tomar la decisión? [escuchar] Si esa duda la resolvemos ahora, no tiene que esperar."' },
-    ],
-    rules: {
-      do:   ['Validar brevemente antes de responder', 'Usar la técnica asignada a cada objeción', 'Mantener calma y ritmo'],
-      dont: ['Ponerse defensivo', 'Improvisar sin técnica', 'Entrar en debate de números'],
-    }
-  },
+  const cards=p.cards.map((c,i)=>`<div class="card${i===sel?' sel':''}" onclick="selC(${i})"><span class="cbadge ${c.tp}">${esc(c.bg)}</span><div class="ctit">${esc(c.tit)}</div><div class="ctxt">${esc(gs(c.b))}</div></div>`).join('');
+  document.getElementById('lft').innerHTML=`<div class="speech"><div class="sptag">${p.sp.tag}</div><div class="sptit">${p.sp.tit}</div><div class="sptxt">${esc(gs(p.sp.b))}</div></div><div class="clbl">ELIGE SEGÚN LA REACCIÓN DEL CLIENTE</div><div class="cgrid">${cards}</div>`;
 
-  // ─── FASE 6: CIERRE ───
-  {
-    num: 'F6', title: 'Cierre',
-    meta: '⏱ 30 segundos · Cerrar pago o confirmar Meet con fecha y hora exacta',
-    speech: {
-      tag: 'REGLA DE ORO',
-      title: 'El cierre se conduce, no se pide',
-      text: '"Ofrece dos opciones. Ambas son avanzar.\n\nNunca: ¿qué le parece? / ¿le interesaría?\n\nSiempre: ¿mañana a las 2 o prefiere las 4?"',
-    },
-    variants: [
-      { type:'close', label:'Pago directo', title:'Cierre en llamada', text:'"Perfecto. Lo iniciamos hoy. Le paso los datos de pago ahora mismo, en 5 días está instalado, al sexto día comienza su mes. ¿Le envío los datos por WhatsApp o prefiere por correo?"', note:'Asume que avanza. No pide permiso.' },
-      { type:'close', label:'Meet', title:'Agendar reunión', text:'"Hacemos esto: mañana a las [HORA] nos vemos 20 minutos por Meet, le muestro el sistema funcionando en vivo, y si le convence lo activamos ahí mismo. ¿Mañana a las 2 o prefiere las 4?"', note:'Dos horarios concretos, nunca pregunta abierta.' },
-      { type:'story', label:'Resistencia', title:'Cierre incremental', text:'"No le pido que decida ahora. Solo le pido 20 minutos mañana para que lo vea con sus propios ojos. Si no le convence, no hay problema. ¿Mañana a las 2?"', note:'Baja la fricción sin bajar el precio.' },
-      { type:'data',  label:'Confirmación', title:'Antes de colgar', text:'"Perfecto [NOMBRE]. Le confirmo la reunión del [DÍA] a las [HORA] por WhatsApp en los próximos minutos. Muchas gracias y hasta mañana."', note:'Confirmar: fecha, hora, canal. Siempre.' },
-    ],
-    coach: {
-      cue: 'El desapego es poder. Si no cierras hoy, cierras mañana. Nunca lo necesites.',
-      tone: 'Termina siempre con acción concreta: fecha, hora, canal. Nunca "le espero".'
-    },
-    objections: [
-      { q:'"Déjame pensarlo"', a:'"Perfecto. ¿Te parece si mañana te muestro 15 minutos cómo quedaría en tu caso y lo evalúas con base real? ¿A las 2 o a las 4?"' },
-      { q:'"Llámame la próxima semana"', a:'"Claro. ¿El lunes a las 10 o el martes a las 3?" — Nunca dejes el cierre abierto.' },
-    ],
-    rules: {
-      do:   ['Dos opciones de horario, siempre concretas', 'Confirmar por WhatsApp antes de colgar', 'Asumir que avanza'],
-      dont: ['Preguntar "¿qué le parece?"', 'Terminar sin acción concreta', 'Bajar precio en el último momento'],
-    }
-  },
-];
+  const card=p.cards[sel];
+  const objs=p.objs.map(o=>`<div class="oi"><div class="oq">${esc(o.q)}</div><div class="oa">${esc(o.a)}</div></div>`).join('');
+  const rules=p.rules.do.map(r=>`<div class="rule do">${esc(r)}</div>`).join('')+p.rules.no.map(r=>`<div class="rule no">${esc(r)}</div>`).join('');
+  document.getElementById('rgt').innerHTML=`<div class="sb"><div class="sblbl">🧠 COACH · ${m.e} ${m.l}</div><div class="ccue">${esc(p.coach[mood])}</div><div class="chint">${esc(m.h)}</div></div><div class="as"><div class="aslbl">▶ Script activo</div><div class="astit">${esc(card.tit)}</div><div class="astxt">${esc(gs(card.b))}</div></div><div class="sb"><div class="sblbl">💬 Objeciones</div>${objs}</div><div class="sb"><div class="sblbl">✅ Haz · 🚫 No hagas</div>${rules}</div>`;
 
-// ═══════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════
-let phase = 0;
-let mood  = 'neutro';
-let selVar = 0;
-
-// ═══════════════════════════════════════════
-// NAVIGATION
-// ═══════════════════════════════════════════
-function goStart(){ showScreen('screen-start'); phase=0; mood='neutro'; }
-function goNotOwner(){ showScreen('screen-notowner'); }
-function goMain(){ showScreen('screen-main'); phase=0; selVar=0; renderAll(); }
-function nextPhase(){ if(phase < PHASES.length-1){ phase++; selVar=0; renderAll(); } }
-function prevPhase(){ if(phase > 0){ phase--; selVar=0; renderAll(); } }
-
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const nx=P[ph+1];
+  document.getElementById('nxn').textContent=nx?`${nx.n} · ${nx.t}`:'— Fin del flujo —';
+  document.getElementById('bNx').disabled=!nx;
+  document.getElementById('bBk').disabled=ph===0;
 }
-
-// ═══════════════════════════════════════════
-// RENDER
-// ═══════════════════════════════════════════
-function getMood(){ return MOODS.find(m=>m.id===mood); }
-function applyMood(text){ return getMood().mod(text); }
-
-function renderAll(){
-  renderDots();
-  renderMoods();
-  renderSpeech();
-  renderSidebar();
-  renderNav();
-}
-
-function renderDots(){
-  const cont = document.getElementById('phaseDots');
-  cont.innerHTML = '';
-  PHASES.forEach((_,i)=>{
-    const d = document.createElement('div');
-    d.className = 'pdot ' + (i < phase ? 'done' : i === phase ? 'active' : 'todo');
-    d.title = PHASES[i].title;
-    d.onclick = () => { phase=i; selVar=0; renderAll(); };
-    cont.appendChild(d);
-  });
-  document.getElementById('phaseCounter').textContent = `${phase+1} / ${PHASES.length}`;
-}
-
-function renderMoods(){
-  const cont = document.getElementById('moodBtns');
-  cont.innerHTML = '';
-  MOODS.forEach(m => {
-    const b = document.createElement('button');
-    b.className = 'mood-btn' + (m.id===mood ? ' active' : '');
-    b.textContent = `${m.e} ${m.label}`;
-    b.onclick = () => { mood=m.id; renderAll(); };
-    cont.appendChild(b);
-  });
-}
-
-function renderSpeech(){
-  const p = PHASES[phase];
-  const m = getMood();
-  const col = document.getElementById('speechCol');
-
-  // Build variant cards HTML
-  const varHTML = p.variants.map((v,i)=>`
-    <div class="var-card ${i===selVar?'selected':''}" onclick="selectVar(${i})">
-      <div class="var-card-label ${v.type}">${v.label}</div>
-      <div class="var-card-title">${esc(v.title)}</div>
-      <div class="var-card-preview">${esc(applyMood(v.text))}</div>
-    </div>`).join('');
-
-  col.innerHTML = `
-    <div class="phase-label fade">
-      <span class="phase-num">${p.num}</span>
-      <span class="phase-title">${p.title}</span>
-    </div>
-    <div class="phase-meta">${p.meta}</div>
-
-    <div class="speech-card fade">
-      <div class="speech-tag">${p.speech.tag}</div>
-      <div class="speech-title">${p.speech.title}</div>
-      <div class="speech-text">${esc(applyMood(p.speech.text))}</div>
-    </div>
-
-    ${p.variants.length ? `
-    <div class="vars-title">VARIANTES · elige según la reacción del cliente</div>
-    <div class="var-cards">${varHTML}</div>
-    ` : ''}
-  `;
-}
-
-function selectVar(i){
-  selVar = i;
-  renderSpeech();
-}
-
-function renderSidebar(){
-  const p = PHASES[phase];
-  const m = getMood();
-
-  // Coach block
-  const coachHTML = `
-    <div class="sb-block">
-      <div class="sb-label">🧠 Coach en vivo</div>
-      <div class="coach-cue">${esc(p.coach.cue)}</div>
-      <div class="coach-tone" style="margin-top:6px">${esc(p.coach.tone)} — <em>${m.hint}</em></div>
-    </div>`;
-
-  // Selected variant full text (if selected)
-  const v = p.variants[selVar];
-  const varDetailHTML = v ? `
-    <div class="sb-block" style="border-color:var(--orange);background:rgba(255,107,43,0.05)">
-      <div class="sb-label" style="color:var(--orange)">📋 Script seleccionado</div>
-      <div style="font-size:13px;line-height:1.7;color:var(--text);white-space:pre-line">${esc(getMood().mod(v.text))}</div>
-      ${v.note ? `<div style="font-size:11px;color:var(--muted);margin-top:8px;font-style:italic">${esc(v.note)}</div>` : ''}
-    </div>` : '';
-
-  // Objections
-  const objHTML = `
-    <div class="sb-block">
-      <div class="sb-label">💬 Objeciones</div>
-      ${p.objections.map(o=>`
-        <div class="obj-item">
-          <div class="obj-q">${esc(o.q)}</div>
-          <div class="obj-a">${esc(o.a)}</div>
-        </div>`).join('')}
-    </div>`;
-
-  // Rules
-  const rulesHTML = `
-    <div class="sb-block">
-      <div class="sb-label">✅ Haz / 🚫 No hagas</div>
-      ${p.rules.do.map(r=>`<div class="rule-item do">${esc(r)}</div>`).join('')}
-      ${p.rules.dont.map(r=>`<div class="rule-item dont">${esc(r)}</div>`).join('')}
-    </div>`;
-
-  document.getElementById('sidebarCol').innerHTML = coachHTML + varDetailHTML + objHTML + rulesHTML;
-}
-
-function renderNav(){
-  const next = PHASES[phase+1];
-  document.getElementById('nextPhaseName').textContent = next ? `${next.num} · ${next.title}` : '— Fin del flujo —';
-  document.getElementById('btnNext').disabled = !next;
-  document.getElementById('btnBack').disabled = phase === 0;
-}
-
-function esc(t){ return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 </script>
 </body>
 </html>
