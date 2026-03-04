@@ -1,789 +1,1165 @@
-<!doctype html>
-<html lang="es">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>COPILOT PSY</title>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{
-  height:100%;overflow:hidden;
-  font-family:'Bricolage Grotesque',sans-serif;
-  background:linear-gradient(150deg,#0a1628 0%,#0d1f42 40%,#0a1a3a 70%,#071228 100%);
-  color:#fff;
-  -webkit-font-smoothing:antialiased;
-}
-.screen{display:none;height:100vh;flex-direction:column}
-.screen.active{display:flex}
+import { useState, useEffect } from "react";
 
-/* ══ SPLASH ══ */
-#s0{align-items:center;justify-content:center;position:relative;overflow:hidden}
-#s0::before{
-  content:'';position:absolute;
-  width:700px;height:700px;border-radius:50%;
-  background:radial-gradient(circle,rgba(37,99,235,0.22) 0%,transparent 65%);
-  top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;
-}
-.splash{text-align:center;position:relative;z-index:1;max-width:460px;padding:40px}
-.sp-eye{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:5px;color:#60a5fa;text-transform:uppercase;margin-bottom:36px}
-.sp-h1{font-size:62px;font-weight:800;line-height:0.95;letter-spacing:-2px;margin-bottom:16px}
-.sp-h1 em{font-style:normal;background:linear-gradient(135deg,#3b82f6 0%,#60a5fa 50%,#93c5fd 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.sp-sub{font-size:15px;color:rgba(255,255,255,0.5);line-height:1.7;margin-bottom:44px}
-.sp-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-
-.btn-main{
-  padding:15px 36px;border-radius:12px;border:none;cursor:pointer;
-  background:linear-gradient(135deg,#1d4ed8,#2563eb,#3b82f6);
-  color:#fff;font-family:'Bricolage Grotesque',sans-serif;
-  font-size:15px;font-weight:700;
-  box-shadow:0 8px 28px rgba(37,99,235,0.45),0 0 0 1px rgba(96,165,250,0.3);
-  transition:all .18s;
-}
-.btn-main:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(37,99,235,0.55),0 0 0 1px rgba(96,165,250,0.5)}
-.btn-sec{
-  padding:15px 28px;border-radius:12px;cursor:pointer;
-  border:2px solid rgba(96,165,250,0.25);background:rgba(255,255,255,0.06);
-  color:rgba(255,255,255,0.65);font-family:'Bricolage Grotesque',sans-serif;
-  font-size:15px;font-weight:600;transition:all .18s;
-}
-.btn-sec:hover{border-color:rgba(96,165,250,0.5);background:rgba(255,255,255,0.1);color:#fff}
-
-/* ══ GATE ══ */
-#s1{align-items:center;justify-content:center}
-.gate{max-width:500px;padding:40px;text-align:center}
-.gate-icon{font-size:44px;margin-bottom:20px}
-.gate-title{font-size:34px;font-weight:800;margin-bottom:22px;letter-spacing:-0.5px}
-.gate-card{
-  background:rgba(255,255,255,0.06);
-  border:1.5px solid rgba(96,165,250,0.2);
-  border-left:4px solid #3b82f6;
-  border-radius:14px;padding:22px 24px;text-align:left;margin-bottom:26px;
-  font-size:14px;line-height:1.9;color:rgba(255,255,255,0.8);
-}
-.gate-card strong{color:#93c5fd;font-weight:700}
-.gate-btns{display:flex;gap:12px;justify-content:center}
-
-/* ══ HUD ══ */
-#s2{background:transparent}
-
-.topbar{
-  display:flex;align-items:center;gap:14px;
-  padding:0 20px;height:52px;
-  background:rgba(0,0,0,0.3);
-  backdrop-filter:blur(20px);
-  border-bottom:1px solid rgba(255,255,255,0.08);
-  flex-shrink:0;
-}
-.brand{display:flex;flex-direction:column;gap:1px;cursor:pointer;flex-shrink:0}
-.brand-n{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;letter-spacing:3px;color:#60a5fa;line-height:1}
-.brand-s{font-family:'IBM Plex Mono',monospace;font-size:8px;color:rgba(255,255,255,0.25);letter-spacing:2px}
-
-.ptrack{flex:1;display:flex;align-items:center;gap:5px;overflow:hidden;padding:0 8px}
-.pip{height:4px;border-radius:99px;cursor:pointer;transition:all .25s;flex-shrink:0}
-.pip.done{width:18px;background:#1d4ed8;opacity:0.6}
-.pip.now{width:40px;background:linear-gradient(90deg,#1d4ed8,#60a5fa);box-shadow:0 0 12px rgba(96,165,250,0.7)}
-.pip.next{width:12px;background:rgba(255,255,255,0.12)}
-.pip:hover{opacity:1!important}
-
-.mbar{display:flex;gap:6px;flex-shrink:0}
-.mbtn{
-  padding:5px 14px;border-radius:99px;cursor:pointer;
-  border:1.5px solid rgba(255,255,255,0.1);background:transparent;
-  color:rgba(255,255,255,0.4);font-family:'Bricolage Grotesque',sans-serif;
-  font-size:11.5px;font-weight:700;transition:all .15s;white-space:nowrap;
-}
-.mbtn:hover{border-color:rgba(255,255,255,0.25);color:rgba(255,255,255,0.7)}
-.mbtn.on{border-color:transparent;color:#fff}
-.mbtn[data-m="receptivo"].on{background:linear-gradient(135deg,#059669,#047857);box-shadow:0 4px 16px rgba(5,150,105,0.4)}
-.mbtn[data-m="esceptico"].on{background:linear-gradient(135deg,#1d4ed8,#1e40af);box-shadow:0 4px 16px rgba(29,78,216,0.4)}
-.mbtn[data-m="agresivo"].on {background:linear-gradient(135deg,#dc2626,#b91c1c);box-shadow:0 4px 16px rgba(220,38,38,0.4)}
-.mbtn[data-m="analitico"].on{background:linear-gradient(135deg,#7c3aed,#6d28d9);box-shadow:0 4px 16px rgba(124,58,237,0.4)}
-.mbtn[data-m="indeciso"].on {background:linear-gradient(135deg,#d97706,#b45309);box-shadow:0 4px 16px rgba(217,119,6,0.4)}
-
-.phdr{
-  display:flex;align-items:center;gap:12px;
-  padding:10px 20px;
-  border-bottom:1px solid rgba(255,255,255,0.06);
-  flex-shrink:0;
-  background:rgba(0,0,0,0.15);
-}
-.ph-id{
-  font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;
-  color:#60a5fa;letter-spacing:2px;
-  padding:3px 10px;border:1px solid rgba(96,165,250,0.3);
-  border-radius:5px;background:rgba(96,165,250,0.08);flex-shrink:0;
-}
-.ph-title{font-size:22px;font-weight:800;letter-spacing:-0.3px}
-.ph-meta{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(255,255,255,0.3);white-space:nowrap}
-
-.hud{flex:1;display:grid;grid-template-columns:1fr 270px;overflow:hidden;min-height:0}
-
-.col-left{
-  display:flex;flex-direction:column;
-  padding:14px 16px 12px;gap:10px;
-  overflow-y:auto;min-height:0;
-  scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.1) transparent;
-}
-
-/* SCRIPT BOX */
-.sbox{
-  flex-shrink:0;
-  background:rgba(255,255,255,0.06);
-  border:1.5px solid rgba(96,165,250,0.2);
-  border-left:4px solid #2563eb;
-  border-radius:12px;padding:14px 18px;
-  backdrop-filter:blur(10px);
-}
-.sb-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#60a5fa;margin-bottom:4px}
-.sb-tit{font-size:13px;font-weight:700;color:rgba(255,255,255,0.9);margin-bottom:8px}
-.sb-body{font-size:13.5px;line-height:1.85;color:rgba(255,255,255,0.8);white-space:pre-line;border-left:2px solid rgba(37,99,235,0.5);padding-left:13px}
-
-.clbl{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.25);flex-shrink:0}
-
-/* ══ CARDS GRID — 2×2, grandes, notorioas, 3D ══ */
-.cgrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  grid-template-rows:1fr 1fr;
-  gap:10px;
-  flex:1;min-height:0;
-}
-
-.gcard{
-  background:linear-gradient(145deg,rgba(255,255,255,0.1) 0%,rgba(255,255,255,0.04) 60%,rgba(15,40,90,0.5) 100%);
-  border:1.5px solid rgba(255,255,255,0.1);
-  border-radius:16px;
-  padding:18px 18px;
-  cursor:pointer;
-  display:flex;flex-direction:column;gap:9px;
-  position:relative;overflow:hidden;
-  transition:all .2s cubic-bezier(0.34,1.2,0.64,1);
-  box-shadow:
-    0 1px 0 rgba(255,255,255,0.12) inset,
-    0 8px 24px rgba(0,0,0,0.3),
-    0 2px 8px rgba(0,0,0,0.2);
-  transform-style:preserve-3d;
-  min-height:0;
-}
-.gcard::after{
-  content:'';position:absolute;inset:0;border-radius:15px;
-  background:linear-gradient(145deg,rgba(255,255,255,0.12) 0%,transparent 50%);
-  pointer-events:none;
-}
-.gcard:hover{
-  transform:translateY(-6px) rotateX(3deg) rotateY(-1.5deg);
-  border-color:rgba(96,165,250,0.5);
-  background:linear-gradient(145deg,rgba(96,165,250,0.15) 0%,rgba(255,255,255,0.06) 60%,rgba(15,40,90,0.6) 100%);
-  box-shadow:
-    0 1px 0 rgba(255,255,255,0.2) inset,
-    0 20px 48px rgba(0,0,0,0.4),
-    0 0 0 1px rgba(96,165,250,0.2),
-    0 8px 20px rgba(37,99,235,0.2);
-}
-.gcard.sel{
-  transform:translateY(-4px) rotateX(2deg);
-  border-color:rgba(96,165,250,0.7);
-  background:linear-gradient(145deg,rgba(96,165,250,0.18) 0%,rgba(37,99,235,0.1) 60%,rgba(15,40,90,0.6) 100%);
-  box-shadow:
-    0 1px 0 rgba(255,255,255,0.2) inset,
-    0 16px 40px rgba(0,0,0,0.35),
-    0 0 0 2px rgba(96,165,250,0.25),
-    0 6px 20px rgba(37,99,235,0.3);
-}
-
-.gc-badge{
-  font-family:'IBM Plex Mono',monospace;font-size:8.5px;font-weight:600;
-  letter-spacing:0.8px;text-transform:uppercase;
-  padding:3px 9px;border-radius:4px;width:fit-content;flex-shrink:0;
-}
-.gc-badge.pain  {background:rgba(220,38,38,0.18);color:#fca5a5;border:1px solid rgba(220,38,38,0.2)}
-.gc-badge.data  {background:rgba(37,99,235,0.18);color:#93c5fd;border:1px solid rgba(37,99,235,0.2)}
-.gc-badge.story {background:rgba(124,58,237,0.18);color:#c4b5fd;border:1px solid rgba(124,58,237,0.2)}
-.gc-badge.close {background:rgba(5,150,105,0.18);color:#6ee7b7;border:1px solid rgba(5,150,105,0.2)}
-.gc-badge.cut   {background:rgba(217,119,6,0.18);color:#fcd34d;border:1px solid rgba(217,119,6,0.2)}
-
-.gc-title{font-size:14px;font-weight:800;color:#fff;line-height:1.2;letter-spacing:-0.2px}
-.gc-text{font-size:12px;line-height:1.65;color:rgba(255,255,255,0.6);flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical}
-.gcard.sel .gc-text{-webkit-line-clamp:unset;color:rgba(255,255,255,0.75)}
-
-/* LEAD FORM */
-.lform{
-  background:rgba(0,229,160,0.05);
-  border:1.5px solid rgba(0,229,160,0.25);
-  border-top:3px solid #00e5a0;
-  border-radius:14px;padding:16px 18px;flex-shrink:0;
-}
-.lf-ttl{font-size:15px;font-weight:800;color:#fff;margin-bottom:3px}
-.lf-sub{font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:12px}
-.lf-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
-.lf-f{display:flex;flex-direction:column;gap:3px}
-.lf-f.full{grid-column:1/-1}
-.lf-lbl{font-family:'IBM Plex Mono',monospace;font-size:8.5px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:rgba(255,255,255,0.35)}
-.lf-i,.lf-s,.lf-a{
-  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
-  border-radius:8px;padding:7px 11px;color:#fff;
-  font-family:'Bricolage Grotesque',sans-serif;font-size:13px;
-  outline:none;transition:border-color .15s;width:100%;
-}
-.lf-i:focus,.lf-s:focus,.lf-a:focus{border-color:rgba(96,165,250,0.5)}
-.lf-i::placeholder,.lf-a::placeholder{color:rgba(255,255,255,0.2)}
-.lf-s option{background:#0d1f42;color:#fff}
-.lf-a{resize:vertical;min-height:54px}
-.lf-row{display:flex;align-items:center;gap:10px}
-.btn-snd{
-  flex:1;padding:9px;border-radius:8px;border:none;cursor:pointer;
-  background:linear-gradient(135deg,#059669,#047857);
-  color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-size:13px;font-weight:700;
-  transition:all .15s;
-}
-.btn-snd:hover{background:linear-gradient(135deg,#10b981,#059669);transform:translateY(-1px)}
-.btn-snd:disabled{opacity:0.4;cursor:default;transform:none}
-.sst{font-size:11px;color:rgba(255,255,255,0.4)}
-.sok{color:#6ee7b7;font-weight:700}
-.ser{color:#fca5a5}
-.spn{display:inline-block;width:11px;height:11px;border:2px solid rgba(255,255,255,0.2);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite;vertical-align:middle;margin-right:4px}
-@keyframes sp{to{transform:rotate(360deg)}}
-
-/* RIGHT PANEL */
-.col-right{
-  border-left:1px solid rgba(255,255,255,0.06);
-  display:flex;flex-direction:column;
-  overflow-y:auto;scrollbar-width:none;
-  background:rgba(0,0,0,0.2);backdrop-filter:blur(20px);
-}
-.col-right::-webkit-scrollbar{display:none}
-.rblk{padding:13px 15px;border-bottom:1px solid rgba(255,255,255,0.05);flex-shrink:0}
-.rblk-lbl{font-family:'IBM Plex Mono',monospace;font-size:8.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:8px}
-
-.coach-box{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px 12px}
-.co-name{font-size:13px;font-weight:700;color:#fff;margin-bottom:3px}
-.co-hint{font-size:11px;color:rgba(255,255,255,0.5);line-height:1.55;font-style:italic}
-.co-tip{font-size:11.5px;color:rgba(255,255,255,0.7);line-height:1.65;margin-top:7px;padding-top:7px;border-top:1px solid rgba(255,255,255,0.07)}
-
-.actbox{background:rgba(37,99,235,0.1);border:1.5px solid rgba(96,165,250,0.25);border-top:2px solid #3b82f6;border-radius:10px;padding:10px 12px}
-.act-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;letter-spacing:1.5px;color:#60a5fa;margin-bottom:3px}
-.act-tit{font-size:12px;font-weight:800;color:#fff;margin-bottom:5px}
-.act-body{font-size:11.5px;color:rgba(255,255,255,0.7);line-height:1.75;white-space:pre-line}
-
-.oi{margin-bottom:8px}.oi:last-child{margin-bottom:0}
-.oq{font-size:11px;font-weight:700;color:#fcd34d;margin-bottom:3px}
-.oa{font-size:10.5px;color:rgba(255,255,255,0.5);line-height:1.5}
-
-.rl{font-size:10.5px;line-height:1.55;padding:2px 0 2px 14px;position:relative;color:rgba(255,255,255,0.5);margin-bottom:2px}
-.rl.do::before{content:'✓';position:absolute;left:0;color:#6ee7b7;font-weight:800}
-.rl.no::before{content:'✗';position:absolute;left:0;color:#fca5a5;font-weight:800}
-
-/* BOTTOM BAR */
-.botbar{
-  height:52px;display:flex;align-items:center;justify-content:space-between;
-  padding:0 20px;gap:14px;
-  background:rgba(0,0,0,0.3);backdrop-filter:blur(20px);
-  border-top:1px solid rgba(255,255,255,0.07);flex-shrink:0;
-}
-.btn-bk{
-  padding:9px 22px;border-radius:9px;cursor:pointer;
-  border:1.5px solid rgba(255,255,255,0.12);background:transparent;
-  color:rgba(255,255,255,0.5);font-family:'Bricolage Grotesque',sans-serif;
-  font-size:13px;font-weight:600;transition:all .15s;
-}
-.btn-bk:hover:not(:disabled){border-color:rgba(96,165,250,0.5);color:rgba(255,255,255,0.9)}
-.btn-bk:disabled{opacity:0.18;cursor:default}
-
-.bm{text-align:center;flex:1}
-.bm-l{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:1px;text-transform:uppercase}
-.bm-n{font-size:14px;font-weight:700;color:rgba(255,255,255,0.8)}
-
-.btn-nx{
-  padding:9px 32px;border-radius:9px;border:none;cursor:pointer;
-  background:linear-gradient(135deg,#1d4ed8,#2563eb,#3b82f6);
-  color:#fff;font-family:'Bricolage Grotesque',sans-serif;
-  font-size:14px;font-weight:700;
-  box-shadow:0 4px 20px rgba(37,99,235,0.4),0 0 0 1px rgba(96,165,250,0.25);
-  transition:all .15s;
-}
-.btn-nx:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(37,99,235,0.5),0 0 0 1px rgba(96,165,250,0.4)}
-.btn-nx:disabled{opacity:0.18;cursor:default;box-shadow:none;transform:none}
-
-::-webkit-scrollbar{width:3px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
-</style>
-</head>
-<body>
-
-<div id="s0" class="screen active">
-  <div class="splash">
-    <div class="sp-eye">⬡ Copilot PSY · Sykes AI</div>
-    <div class="sp-h1">¿Con quién<br><em>estás<br>hablando?</em></div>
-    <div class="sp-sub">Define el punto de entrada.<br>El flujo se adapta desde el primer segundo.</div>
-    <div class="sp-btns">
-      <button class="btn-main" id="bO">Es el dueño / gerente →</button>
-      <button class="btn-sec" id="bG">Es recepcionista</button>
-    </div>
-  </div>
-</div>
-
-<div id="s1" class="screen">
-  <div class="gate">
-    <div class="gate-icon">🚧</div>
-    <div class="gate-title">Pide ser transferido</div>
-    <div class="gate-card">
-      <strong>Primer intento:</strong><br>"Es un tema comercial breve. ¿Me comunica con el encargado o dueño?"<br><br>
-      <strong>Si bloquean comerciales:</strong><br>"No es una venta. Hicimos un análisis de clínicas en su zona. El encargado va a querer escuchar esto."<br><br>
-      <strong>Si insisten:</strong><br>"¿A qué hora puedo hablar directamente con él/ella?"
-    </div>
-    <div class="gate-btns">
-      <button class="btn-sec" id="bB1">← Reiniciar</button>
-      <button class="btn-main" id="bG1">Me pasaron → Empezar</button>
-    </div>
-  </div>
-</div>
-
-<div id="s2" class="screen">
-  <div class="topbar">
-    <div class="brand" id="bR"><div class="brand-n">⬡ COPILOT PSY</div><div class="brand-s">SYKES AI · SALES HUD</div></div>
-    <div class="ptrack" id="pT"></div>
-    <div class="mbar" id="mB"></div>
-  </div>
-  <div class="phdr">
-    <span class="ph-id" id="pId"></span>
-    <span class="ph-title" id="pTt"></span>
-    <span class="ph-meta" id="pMt"></span>
-  </div>
-  <div class="hud">
-    <div class="col-left" id="cL"></div>
-    <div class="col-right" id="cR"></div>
-  </div>
-  <div class="botbar">
-    <button class="btn-bk" id="bBk">← Atrás</button>
-    <div class="bm"><div class="bm-l">siguiente fase</div><div class="bm-n" id="bNm"></div></div>
-    <button class="btn-nx" id="bNx">Siguiente →</button>
-  </div>
-</div>
-
-<script>
-const M={
-  receptivo:{e:'🟢',l:'Receptivo',h:'Cierra rápido. La energía está alta.'},
-  esceptico:{e:'🔵',l:'Escéptico',h:'Datos antes que emoción.'},
-  agresivo: {e:'🔴',l:'Agresivo', h:'Frases cortas. Mucho silencio.'},
-  analitico:{e:'🟣',l:'Analítico',h:'Métricas exactas. Tono consultor.'},
-  indeciso: {e:'🟠',l:'Indeciso', h:'Dos opciones. Eliminar el riesgo.'},
-};
-const P=[
-{id:'F1',t:'Presentación',m:'< 30 seg · Llegar al decisor sin revelar el producto',
-sp:{tag:'APERTURA · FILTRO AL DECISOR',tit:'Llegar al dueño sin sonar a vendedor',b:{
-  receptivo:'Hola! ¿[NEGOCIO]?\nSoy Aarón de Sykes AI.\n¿Estoy hablando con el encargado?\n[Esperar respuesta]',
-  esceptico:'Hola, [NEGOCIO]?\nSoy Aarón, Sykes AI.\nHicimos un análisis de su zona.\n¿Me comunica 2 minutos con el encargado?',
-  agresivo: 'Hola. ¿[NEGOCIO]?\nAarón, Sykes AI.\n¿Es usted quien toma decisiones?\n[Silencio]',
-  analitico:'Hola, [NEGOCIO]?\nSoy Aarón de Sykes AI.\nAnalizamos 138 clínicas de su distrito.\nNecesito 90 segundos con el gerente.',
-  indeciso: 'Hola! ¿[NEGOCIO]?\nSoy Aarón de Sykes AI.\nSolo necesito confirmar si estoy\nhablando con la persona a cargo.\n¿Es usted?',
-}},
-cards:[
-  {tp:'cut',bg:'¿De qué se trata?',tit:'Corte sin revelar producto',b:{
-    receptivo:'"Es sobre captación de pacientes por WhatsApp.\n2 minutos con el dueño y listo."',
-    esceptico:'"Detectamos un patrón de pérdida en clínicas de su zona.\nDatos que el gerente necesita ver. ¿Me lo comunica?"',
-    agresivo: '"Un análisis de su zona.\nEl dueño va a querer escuchar esto. ¿Me lo comunica?"',
-    analitico:'"Análisis de 138 clínicas en su distrito.\nDatos concretos para el gerente. ¿Me comunica?"',
-    indeciso: '"Es algo relacionado con su clínica.\nNo le robo tiempo.\nNecesito hablar con el dueño un momento."',
-  }},
-  {tp:'cut',bg:'No pasan comerciales',tit:'Desbloquear al gatekeeper',b:{
-    receptivo:'"No es una venta, es un análisis!\nEl dueño lo agradeció en otras clínicas.\n¿A qué hora lo ubico directamente?"',
-    esceptico:'"No es venta.\nEncontramos algo en sus datos de zona que aplica directamente.\nEl gerente va a querer saberlo."',
-    agresivo: '"No es venta. [pausa]\nSi el dueño está perdiendo pacientes, él va a querer saber.\n¿Me comunica?"',
-    analitico:'"138 clínicas analizadas en el distrito.\nEl gerente necesita ver esto antes que su competencia."',
-    indeciso: '"Tranquila, no le voy a vender nada.\nSolo quiero mostrarle algo al dueño que creo le puede ayudar."',
-  }},
-  {tp:'story',bg:'Ya es el decisor',tit:'Transición — buscar el dolor',b:{
-    receptivo:'"Perfecto, [NOMBRE]!\nTengo algo que te va a llamar la atención sobre tu clínica.\nTe hago una pregunta rápida."',
-    esceptico:'"Excelente. Voy directo:\nHicimos un análisis de clínicas en [ZONA].\n¿Tiene un minuto para revisar un dato?"',
-    agresivo: '"Bien. Directo al punto:\n¿Tiene personal respondiendo WhatsApp después de las 8 PM?"',
-    analitico:'"Perfecto. Voy directo:\nAnalizamos clínicas en [ZONA].\n¿Tiene cobertura nocturna de WhatsApp?"',
-    indeciso: '"Qué bueno hablar con usted.\nLe quiero hacer una sola pregunta, si me permite."',
-  }},
-  {tp:'cut',bg:'Espejear el tono',tit:'Eco conversacional — adaptar',b:{
-    receptivo:'PERFIL: Cliente abierto.\n\nEspejea su energía. Ritmo rápido.\nHabla como colega. Sonríe de verdad.',
-    esceptico:'PERFIL: Cliente desconfiado.\n\nTono de consultor, no de vendedor.\nDatos antes que emoción.',
-    agresivo: 'PERFIL: Cliente dominante.\n\nVoz firme, sin nervios.\nMenos palabras. Más silencio.',
-    analitico:'PERFIL: Cliente analítico.\n\nHabla en métricas.\nCasos documentados. Tono de partner.',
-    indeciso: 'PERFIL: Cliente inseguro.\n\nVoz tranquila y segura.\nUna idea a la vez.',
-  }},
-],
-coach:{receptivo:'Energía desde el primer segundo. Llega al dueño rápido. No des info de más.',esceptico:'Tono diagnóstico, no de venta. Menciona el análisis de zona como credencial.',agresivo:'Firme y breve. El silencio después de la pregunta es tuyo.',analitico:'Consultor de mercado, no vendedor. Datos concretos de entrada.',indeciso:'Voz tranquila. Una pregunta, una idea. Dale tiempo.'},
-objs:[{q:'"¿Me puede dar más información?"',a:'"Por eso necesito 2 minutos con el encargado. Es sobre la clínica específicamente."'},{q:'"Estamos muy ocupados ahora"',a:'"Perfecto. ¿A qué hora tiene 10 minutos el encargado?"'}],
-rules:{do:['Apertura < 20 segundos','Confirmar nombre del negocio al inicio','Adaptar tono al perfil en los primeros 5 seg'],no:['Mencionar bot, WhatsApp o precio','Explicar el producto en esta fase','Sonar a call center']}
-},
-{id:'F2',t:'Captar el dolor',m:'1–2 min · Anzuelo → que el cliente confiese el problema',
-sp:{tag:'ANZUELO · LA PREGUNTA DE LAS 8 PM',tit:'Una pregunta que siempre revela el hueco',b:{
-  receptivo:'Oye [NOMBRE], antes de contarte todo:\n¿Tienes personal respondiendo WhatsApp\ndespués de las 8 de la noche?\n[Esperar — no interrumpas]',
-  esceptico:'Una pregunta directa:\n¿Cuánto tiempo tarda su clínica\nen responder un WhatsApp a las 10 PM?\n[Silencio — dejar que responda]',
-  agresivo: '¿Tiene personal respondiendo WhatsApp\na las 11 de la noche?\n[Pausa larga — no llenes el silencio]',
-  analitico:'Analizamos 138 clínicas en [ZONA].\nEl 78% no tiene cobertura nocturna.\n¿Cuál es el SLA de respuesta fuera de horario?',
-  indeciso: 'Le quiero hacer una pregunta sencilla.\nCuando su clínica cierra en la noche,\n¿hay alguien que responda los mensajes de WhatsApp?',
-}},
-cards:[
-  {tp:'data',bg:'El 78% — el dato que duele',tit:'Amplificar con estadística',b:{
-    receptivo:'"¿Sabes qué hace un paciente cuando no le responden?\nContacta la siguiente clínica.\nEl primero que responde, agenda."',
-    esceptico:'"78% de pacientes que escribe de noche contacta hasta 3 clínicas al mismo tiempo.\nLa primera en responder en 20 segundos se queda con el paciente."',
-    agresivo: '"78% elige la primera clínica que responde.\nSi responde al día siguiente,\nese paciente ya tiene cita en otro lado."',
-    analitico:'"Dato sector salud Perú 2023:\ntras 10 min sin respuesta, 60% ya eligió otra clínica.\n¿Cuál es su tiempo promedio nocturno?"',
-    indeciso: '"Muchos pacientes escriben de noche.\nSi nadie responde, llaman a otra clínica al día siguiente.\n¿Le ha pasado eso?"',
-  }},
-  {tp:'pain',bg:'Dicen que tienen cobertura',tit:'Destruir la falsa cobertura',b:{
-    receptivo:'"¿Y los domingos?\n¿Y a las 11 PM?\n¿En cuánto tiempo responden?\n[Si no sabe exacto → ahí está el hueco]"',
-    esceptico:'"¿En cuántos minutos responden fuera de horario?\n[Esperar número exacto]\nDespués de 10 min el 60% ya eligió otra clínica."',
-    agresivo: '"¿En cuántos minutos?\n[Silencio]\nSi no tiene el número exacto, hay un hueco.\nEse hueco lo aprovecha la competencia."',
-    analitico:'"¿Tienen métricas de tiempo de respuesta fuera de horario?\n¿Qué promedio manejan en fines de semana y feriados?"',
-    indeciso: '"¿Y cuando esa persona descansa?\n¿O es domingo por la tarde?\n¿Hay alguien más, o queda sin atención?"',
-  }},
-  {tp:'story',bg:'La asistente que se va a las 6 PM',tit:'La pregunta que lo hace confesar',b:{
-    receptivo:'"Oye, y cuando tu equipo está atendiendo pacientes adentro,\ny en ese momento entra un WhatsApp...\n¿quién lo atiende?"',
-    esceptico:'"Esa asistente tiene horario.\nSale a las 6 PM.\nCuando se va... ¿quién responde los mensajes?"',
-    agresivo: '"Esa asistente tiene horario.\nSale a las 6 PM.\n[Pausa]\n¿Quién responde después?"',
-    analitico:'"¿Tienen protocolo definido para mensajes fuera del horario?\n¿Cómo está documentado ese flujo?"',
-    indeciso: '"Cuando su personal está ocupado atendiendo pacientes\ny llega un mensaje al WhatsApp...\n¿quién lo responde?"',
-  }},
-  {tp:'cut',bg:'Se desvía del tema',tit:'Corte estratégico elegante',b:{
-    receptivo:'"Sí totalmente entiendo!\nY justamente de eso te quería hablar,\nporque tiene que ver directo con lo que me contás."',
-    esceptico:'"Correcto, y ese es exactamente el patrón\nque identificamos en el análisis de su zona."',
-    agresivo: '"Exacto.\nY por eso le llamo.\nDéjeme hacerle una pregunta."',
-    analitico:'"Sí, y eso alinea con el patrón de las 138 clínicas del distrito."',
-    indeciso: '"Sí, entiendo perfectamente.\nY justamente eso es lo que quería comentarle,\ntiene relación directa."',
-  }},
-],
-coach:{receptivo:'Ritmo rápido con pausas. Que diga en voz alta que tiene el problema.',esceptico:'Pregunta y calla. El dato es tu credencial.',agresivo:'Una pregunta. Silencio largo. No llenes tú el espacio.',analitico:'Tono de diagnóstico. Que sienta que estás auditando.',indeciso:'Una pregunta a la vez. Espera que termine.'},
-objs:[{q:'"Respondemos bien, no hay problema"',a:'"¿En cuántos minutos? Después de 10 minutos, el 60% ya eligió otra clínica."'},{q:'"Tenemos WhatsApp Business activo"',a:'"¿Activo a las 11 de la noche, los domingos? [Pausa] Ahí está el hueco."'}],
-rules:{do:['Preguntar por horario específico','Usar el silencio como herramienta','Dejar que el cliente articule el problema solo'],no:['Mencionar el producto todavía','Monólogos de más de 20 segundos','Preguntar directamente si tiene problemas']}
-},
-{id:'F3',t:'Desarrollar el dolor',m:'2–3 min · Cuantificar la pérdida con sus propios números',
-sp:{tag:'CUANTIFICACIÓN PERSONALIZADA',tit:'Construir el número de pérdida con sus datos',b:{
-  receptivo:'¿Cuántos mensajes calculas que te llegan fuera de horario al día?\n[Esperar número]\nY si el ticket promedio es [X] soles...\n¿cuánto estás dejando ir cada mes?',
-  esceptico:'Mencionó [N] mensajes sin respuesta.\nSi el ticket promedio es [X] soles y convierte al 30%...\nson [N×X×0.3] soles que no entran.\n¿Le parece correcto ese cálculo?',
-  agresivo: '¿Cuántos mensajes sin responder tiene ahora mismo\nen su WhatsApp de anoche?\n[Esperar] Eso es lo único que importa.',
-  analitico:'Datos para calcular el impacto:\n• Mensajes diarios fuera de horario\n• Ticket promedio de tratamiento\n• Tasa de conversión actual\n¿Tiene esos números?',
-  indeciso: 'Si solo pierde 3 pacientes al mes por no responder a tiempo...\ny cada tratamiento son 300 soles...\nson 900 soles que se van.\n¿Le parece significativo eso?',
-}},
-cards:[
-  {tp:'pain',bg:'Calculadora de pérdida en vivo',tit:'Construir el número exacto',b:{
-    receptivo:'"Mensajes × días × ticket × conversión.\n\n¿Lo calculamos juntos ahora mismo?\nEse número va a sorprenderte."',
-    esceptico:'"Dame tres datos:\n1. Mensajes fuera de horario/día\n2. Ticket promedio\n3. Tasa de conversión\n\nCon eso calculo el costo real."',
-    agresivo: '"¿Cuántos mensajes sin respuesta tiene ahora mismo?\n[Silencio]\nMultiplícalo por su ticket promedio."',
-    analitico:'"Proyección conservadora al 30%:\nN mensajes × ticket × 0.3 = pérdida mensual mínima.\n¿Sus números dan similar?"',
-    indeciso: '"3 pacientes × 300 soles = 900 soles/mes.\nSon 10,800 soles al año que se van\npor no responder a tiempo."',
-  }},
-  {tp:'story',bg:'El paciente con dolor de noche',tit:'Escenario que activa urgencia',b:{
-    receptivo:'"Son las 10 PM.\nUn paciente tiene un dolor terrible.\nEscribe a tres clínicas.\n\nTú no respondes hasta mañana.\n¿A qué clínica crees que va?"',
-    esceptico:'"Escenario documentado:\nPaciente con dolor agudo, 10 PM.\nContacta 3 clínicas simultáneamente.\nPrimera respuesta en 18 segundos.\nEsa clínica agenda. Las otras dos, no."',
-    agresivo: '"Paciente con dolor. 10 PM.\nTres clínicas contactadas.\nPrimera en responder, gana.\n¿La suya responde en 20 seg a esa hora?"',
-    analitico:'"Caso documentado:\nPaciente urgente, horario nocturno.\nWindow de conversión: primeros 3 minutos.\n¿Cuál es su cobertura en ese window?"',
-    indeciso: '"Un paciente tiene un dolor y quiere cita para mañana.\nEscribe a su clínica a las 10 PM.\nNadie responde.\nAl día siguiente ya tiene cita en otro lado."',
-  }},
-  {tp:'data',bg:'El 7–10% de utilidad perdida',tit:'El porcentaje que cambia la conversación',b:{
-    receptivo:'"Ese tiempo muerto nocturno representa 7 a 10% de utilidad que se va sin que lo veas.\n\n¿Cuánto es el 10% de tu facturación mensual?"',
-    esceptico:'"138 clínicas en Lima:\nLas que cubren horario nocturno aumentan utilidad entre 7 y 10%.\nNo por más publicidad. Por responder más rápido."',
-    agresivo: '"7 a 10% de utilidad perdida.\nNo por mal servicio.\nPor no responder a tiempo.\n¿Cuánto es eso para usted al mes?"',
-    analitico:'"Portfolio de 13 clínicas implementadas:\nMejora promedio mes 1: 7.3%\nMejora promedio mes 3: 11.2%\n¿Aplica revisar ese benchmark?"',
-    indeciso: '"No le estoy diciendo que va a perder todo.\nHay un 7 a 10% que se puede recuperar con un cambio pequeño."',
-  }},
-  {tp:'close',bg:'Confirmar que el dolor aterrizó',tit:'Micro-cierre antes de la solución',b:{
-    receptivo:'"¿Tiene sentido lo que te estoy describiendo?\nPorque si sí, el siguiente paso es muy simple."',
-    esceptico:'"Basado en lo que me describió,\n¿reconoce que hay un hueco en la cobertura nocturna?\n[Esperar confirmación explícita]"',
-    agresivo: '"¿Tiene mensajes sin responder de anoche ahora mismo?\n[Silencio]\nEso es lo único que importa."',
-    analitico:'"¿El hueco nocturno que describió aplica a su operación?\n¿Lo validamos con sus números reales?"',
-    indeciso: '"¿Le parece que eso puede estar pasando en su clínica?\n[Esperar sí]\nPerfecto. Le cuento qué encontramos."',
-  }},
-],
-coach:{receptivo:'Construye el número con sus datos. Que él diga el monto en voz alta.',esceptico:'No hagas el cálculo tú solo. Pide sus datos.',agresivo:'Pregunta el número de mensajes. Silencio.',analitico:'Pide datos específicos. Calcula en vivo.',indeciso:'Pequeño y concreto. 3 pacientes × 300 soles.'},
-objs:[{q:'"No sé cuántos mensajes llegan de noche"',a:'"Revisemos: ¿cuántos tiene ahora en el WhatsApp sin leer de anoche?"'},{q:'"El porcentaje me suena exagerado"',a:'"No me crea el porcentaje. ¿Hay mensajes de anoche sin responder? Solo eso."'}],
-rules:{do:['Construir el número con datos del propio cliente','Buscar confirmación verbal del problema','Usar el silencio después de la pregunta clave'],no:['Presentar la solución antes de confirmar el dolor','Inventar números sin datos del cliente','Hablar más de 20 seg sin pausa']}
-},
-{id:'F4',t:'Presentar la solución',m:'1.5 min · Vende el resultado. Nunca la tecnología.',
-sp:{tag:'RELATO PERSUASIVO · CASO REAL',tit:'Conectar el dolor con el resultado concreto',b:{
-  receptivo:'Eso que me describiste es exactamente lo que resolvemos.\nMira lo que pasó con una clínica en Chorrillos:\nel tercer mes dejaron de perder consultas nocturnas\ny ahorraron el sueldo de un recepcionista.\n¿Te cuento exactamente qué hicimos?',
-  esceptico:'Clínica Díaz, Chorrillos.\nMismo problema exacto que el suyo.\nResultado al mes 1:\ncero pacientes perdidos por horario,\n800 soles menos en planilla.',
-  agresivo: 'Clínica Díaz, Chorrillos.\nMismo problema.\nMes 1: cero pérdidas nocturnas.\n800 soles menos en planilla.',
-  analitico:'13 clínicas implementadas en Lima.\nClínica Díaz, 12 sillones, Chorrillos:\nBaseline: 0% cobertura nocturna.\nMes 1: 38% de consultas nocturnas convertidas.\nROI positivo en semana 3.',
-  indeciso: 'Lo que instalamos hace que ningún paciente quede sin respuesta,\naunque sean las 2 de la madrugada.\nUsted se despierta con citas confirmadas\nque no existían la noche anterior.',
-}},
-cards:[
-  {tp:'close',bg:'Imagen visual del resultado',tit:'Lo que el cliente ve al despertarse',b:{
-    receptivo:'"A las 2 AM le escriben.\nEn 20 segundos: respuesta completa.\nAgenda la cita sola.\nTe despiertas con citas que no existían la noche anterior."',
-    esceptico:'"SLA de respuesta: menos de 20 seg.\nConversión chat→cita: 34 a 41%.\nSin intervención humana en el flujo de atención inicial."',
-    agresivo: '"Ningún paciente sin respuesta. Nunca más.\n24 horas, 7 días, 365 días.\nSin sueldo, sin vacaciones, sin ESSALUD."',
-    analitico:'"• Respuesta: < 20 segundos\n• Conversión nocturna: 34–41%\n• Uptime: 99.8%\n• Costo mensual: 680 soles"',
-    indeciso: '"Es como tener a alguien contestando el WhatsApp toda la noche,\npero sin pagarle sueldo.\nResponde, agenda, y usted se entera por la mañana."',
-  }},
-  {tp:'story',bg:'Caso Clínica Díaz — Chorrillos',tit:'Caso real, números reales',b:{
-    receptivo:'"Clínica igual a la tuya.\nCreía que necesitaba más publicidad.\nEl problema real era WhatsApp.\nMes 1: +5% en citas sin un sol más."',
-    esceptico:'"Clínica Díaz, Chorrillos:\n• Ticket promedio: 280 soles\n• Mensajes nocturnos perdidos: ~18/día\n• Mes 1: 7 citas adicionales/semana\n• Ahorro planilla: 800 soles/mes"',
-    agresivo: '"Clínica Díaz. Chorrillos.\nMismo problema. Mes 1:\ncero pérdidas nocturnas.\n800 soles menos en planilla."',
-    analitico:'"12 sillones, Lima Sur.\nPre: 0% cobertura nocturna.\nPost mes 1: 38% conversión.\nPost mes 3: ROI 4.2x."',
-    indeciso: '"Una clínica con el mismo problema.\nAl mes siguiente tenían más citas\nsin contratar a nadie nuevo."',
-  }},
-  {tp:'data',bg:'Personalización del bot',tit:'No es genérico — es su clínica',b:{
-    receptivo:'"No es un bot genérico.\nLo entrenamos con la identidad de tu clínica:\ntu tono, tus tratamientos, tus precios.\nSuena como tú, pero nunca se cansa."',
-    esceptico:'"Proceso:\n1. Reunión de identidad (30 min)\n2. Entrenamiento con su base\n3. Revisión y ajuste fino\n4. Go-live día 6\nDisclaimer de bot por normativa de salud."',
-    agresivo: '"Lo entrenamos con su clínica.\nSu tono, sus precios, sus tratamientos.\nDisclaimer de bot incluido."',
-    analitico:'"Pipeline:\nDía 1–2: sesión de identidad\nDía 3–4: entrenamiento\nDía 5: QA\nDía 6: producción\nMonitoreo continuo incluido."',
-    indeciso: '"Lo configuramos con el lenguaje de su clínica.\nSus pacientes no van a notar diferencia."',
-  }},
-  {tp:'pain',bg:'Micro-cierre — ¿el mensaje llegó?',tit:'Confirmar antes de avanzar',b:{
-    receptivo:'"¿Tiene sentido para tu clínica lo que te estoy describiendo?\nPorque si sí, el siguiente paso es muy simple."',
-    esceptico:'"¿Encaja con el problema que me describió?\n¿Lo validamos con los números reales?"',
-    agresivo: '"¿Tiene mensajes sin responder de anoche ahora mismo?\n[Silencio largo]\nEso es lo único que importa."',
-    analitico:'"¿El caso Díaz es suficientemente parecido a su operación\npara que el benchmark sea válido?"',
-    indeciso: '"¿Le parece útil lo que le estoy describiendo?\n¿Tiene sentido?"',
-  }},
-],
-coach:{receptivo:'Visual y rápido. Que se imagine despertándose con citas nuevas.',esceptico:'Caso real con números. Nada emocional. Tono consultor.',agresivo:'Caso en 3 líneas. Números. Micro-cierre directo.',analitico:'Datos duros, caso documentado, métricas de operación.',indeciso:'Una imagen simple y clara. Repetir si no reacciona.'},
-objs:[{q:'"¿Qué tecnología usa exactamente?"',a:'"Lo que importa es qué hace: ningún paciente sin respuesta, nunca más."'},{q:'"¿Se nota que es un robot?"',a:'"Menos del 4% de pacientes pregunta si es bot. El 96% pregunta cuándo es la cita."'}],
-rules:{do:['Presentar resultado, no funcionalidades','Caso real con números concretos','Terminar con pregunta de confirmación'],no:['Mencionar Gmail, Sheets, APIs o arquitectura','Hablar más de 40 seg sin pausa','Decir sistema o plataforma']}
-},
-{id:'F5',t:'Defender la solución',m:'Sin límite · El que objeta está interesado. El que cuelga, no.',
-sp:{tag:'REGLA MENTAL · ANTES DE RESPONDER',tit:'Valida en una frase → Redirige al dolor → Propone acción',b:{
-  receptivo:'Totalmente entendible!\nDéjame mostrarte algo rápido que creo que va a resolver esa duda.',
-  esceptico:'Válido completamente.\n¿Qué dato específico necesita para tomar la decisión?\nTrabajemos sobre eso.',
-  agresivo: 'Entendido.\n[Pausa 2 segundos]\nUna pregunta:\n¿Tiene mensajes sin responder de anoche?',
-  analitico:'Correcto.\n¿Prefiere que corramos un piloto de 15 días\ncon datos de su clínica específica?',
-  indeciso: 'Claro que sí,\nentiendo perfectamente.\nPermítame explicarle eso con más calma.',
-}},
-cards:[
-  {tp:'pain',bg:'Ya tienen quien responde',tit:'Destruir la falsa cobertura',b:{
-    receptivo:'"¿Esa persona responde a las 11 de la noche,\nlos domingos, los feriados, en < 20 segundos?\n[Pausa]\nSi no — ahí está el hueco."',
-    esceptico:'"¿Cuál es el SLA de respuesta fuera del horario laboral?\n¿Tienen datos de cobertura efectiva en fines de semana?"',
-    agresivo: '"¿A las 11 PM en < 20 segundos?\n[Silencio largo]\nEse hueco lo aprovecha la competencia. Todos los días."',
-    analitico:'"¿Tienen métricas de uptime nocturno?\n¿Cuántos mensajes quedan sin respuesta entre las 8 PM y las 8 AM?"',
-    indeciso: '"¿Y cuando esa persona descansa o es domingo por la tarde,\n¿quién responde? Ahí se pierden los pacientes."',
-  }},
-  {tp:'story',bg:'No confía en bots',tit:'El paciente quiere rapidez, no calidez',b:{
-    receptivo:'"Te entiendo, eso lo escucho seguido!\nPero el 96% de pacientes ni pregunta si es bot.\nPreguntan cuándo es la cita."',
-    esceptico:'"Tasa de detección por parte de pacientes: menos del 4%.\nScripts entrenados con lenguaje natural del sector salud peruano."',
-    agresivo: '"Un paciente con dolor a las 10 PM no quiere calidez.\nQuiere respuesta inmediata.\nEl 96% ni pregunta si es bot."',
-    analitico:'"Tasa de detección de automatización: < 4%.\nNPS post-interacción bot vs humano:\ndiferencia no significativa estadísticamente."',
-    indeciso: '"Los mensajes suenan completamente naturales.\nSus pacientes no van a notar diferencia."',
-  }},
-  {tp:'data',bg:'Ya tengo un bot',tit:'Reencuadre — responder vs convertir',b:{
-    receptivo:'"¿Y qué tan bien convierte a citas?\nHay diferencia entre responder automáticamente y convertir a cita.\nEso es lo que medimos."',
-    esceptico:'"¿Su bot agenda citas, verifica disponibilidad en tiempo real\ny envía confirmación al doctor?\nSi no — no tienen el mismo problema resuelto."',
-    agresivo: '"¿Su bot convierte a citas o solo responde preguntas?\nEsa diferencia es crítica."',
-    analitico:'"Diferenciación:\n• Bot básico: respuestas FAQ\n• Nuestro sistema: conversión completa\nverifica disponibilidad + agenda + confirma.\n¿Su solución hace todo eso?"',
-    indeciso: '"¿Ese bot que tiene convierte mensajes nocturnos en citas confirmadas?\n¿Lo hace?"',
-  }},
-  {tp:'cut',bg:'Debate de estadísticas',tit:'Corte — volver al dolor real',b:{
-    receptivo:'"Olvida los porcentajes.\nUna sola pregunta:\n¿tienes mensajes sin responder de anoche ahora mismo?\nEso es todo."',
-    esceptico:'"No me crea el dato.\nSolo dígame:\n¿tiene mensajes sin responder de anoche ahora mismo?\n[Pausa] Ese número es el único que importa."',
-    agresivo: '"No me crea nada.\nMensajes sin responder de anoche.\n¿Sí o no?"',
-    analitico:'"¿Prefiere que trabajemos con sus números específicos\nen lugar de benchmarks?\nPropongo un piloto de 15 días."',
-    indeciso: '"Dejemos los números.\n¿Cree que se le han escapado algunos pacientes\npor no responder a tiempo?"',
-  }},
-],
-coach:{receptivo:'Valida en una frase y redirige. No dejes que la objeción enfríe el impulso.',esceptico:'No improvises datos. Si no sabes algo, dilo. Propón piloto.',agresivo:'No pelees nunca. Valida con una palabra. Pausa. Regresas al dolor.',analitico:'Diferenciación técnica precisa. Oferta de piloto con datos reales.',indeciso:'Paciencia total. Elimina el riesgo con garantía 15 días.'},
-objs:[{q:'"Quiero ver resultados antes de pagar"',a:'"Por eso: 15 días de prueba con devolución proporcional. El riesgo es mínimo."'},{q:'"Es muy caro"',a:'"¿Caro vs qué? Recepcionista nocturno: 1,200 soles. Nosotros: 680. Con 3 citas extra ya se pagó."'},{q:'"Necesito pensarlo"',a:'"¿Qué necesita resolver para decidir? Si lo resolvemos ahora, no tiene que esperar."'}],
-rules:{do:['Validar brevemente antes de responder','Regresar siempre al dolor central','Piloto 15 días como desactivador de riesgo'],no:['Ponerse defensivo o justificarse','Entrar en debate de estadísticas','Improvisar respuestas']}
-},
-{id:'F6',t:'Cierre',m:'30 seg · El cierre se conduce. Nunca se pide.',
-sp:{tag:'REGLA DE ORO · DOS OPCIONES — AMBAS SON AVANZAR',tit:'Nunca preguntar qué le parece — siempre dos horarios concretos',b:{
-  receptivo:'¡Perfecto!\nTe paso los datos de pago ahora por WhatsApp,\nen 5 días está instalado y al sexto día empieza tu mes.\n¿Al mismo número o a otro?',
-  esceptico:'Le envío el contrato de servicio y datos de pago.\nRevisión del SLA técnico incluida antes de la firma.\n¿WhatsApp o correo electrónico?',
-  agresivo: 'Bien.\nDatos de pago ahora.\n¿WhatsApp o correo?',
-  analitico:'Le envío contrato, términos de SLA y datos de pago.\n¿Revisión por correo o firma digital hoy?',
-  indeciso: 'Entonces quedamos así:\nle mando la información de pago por WhatsApp,\nusted lo revisa con calma, y en 5 días está todo listo.\n¿Le parece bien?',
-}},
-cards:[
-  {tp:'close',bg:'Pago directo hoy',tit:'Cerrar en la llamada',b:{
-    receptivo:'"Te mando los datos ahora mismo.\nEn 5 días instalado, al 6to día empieza tu mes.\nLa semana que viene ya tienes citas que antes no existían."',
-    esceptico:'"Envío contrato con SLA, garantía 15 días y datos de pago.\n¿Correo o WhatsApp?"',
-    agresivo: '"Datos de pago ahora.\n5 días instalación. Día 6 empieza.\n¿WhatsApp o correo?"',
-    analitico:'"Contrato, SLA, datos de pago y agenda de implementación.\n¿Correo electrónico?"',
-    indeciso: '"Le mando los datos por WhatsApp.\nCuando quiera hacer el pago me avisa. Sin apuro."',
-  }},
-  {tp:'close',bg:'Agendar Meet — dos horarios',tit:'Demo de 20 min',b:{
-    receptivo:'"¿Qué tal si mañana te muestro el sistema en vivo, 20 minutos por Meet?\nSi te convence lo activamos ahí mismo.\n¿A las 2 o a las 4?"',
-    esceptico:'"Demo técnica 20 minutos:\ndashboard en vivo + métricas históricas de clínicas similares.\n¿Mañana a las 2 o a las 4?"',
-    agresivo: '"Mañana. Meet. 20 minutos.\n¿2 PM o 4 PM?"',
-    analitico:'"Demo técnica mañana:\narquitectura, flujos y métricas históricas.\n¿2 PM o 4 PM?"',
-    indeciso: '"¿Qué le parece si mañana hacemos una videollamada de 20 minutos?\n¿Puede a las 2 o mejor a las 4?"',
-  }},
-  {tp:'story',bg:'Hay resistencia al cierre',tit:'Cierre incremental',b:{
-    receptivo:'"No te pido que decidas ahora.\nSolo 20 minutos mañana para que lo veas con tus propios ojos.\nSi no te convence, sin problema. ¿Mañana a las 2?"',
-    esceptico:'"Demo de 20 minutos sin compromiso.\nSuficiente para evaluar el fit técnico y comercial."',
-    agresivo: '"No le pido decisión.\n20 minutos mañana. Lo ve en vivo.\nSi no convence, listo. ¿2 o 4?"',
-    analitico:'"Demo sin compromiso de 20 minutos.\nDecisión basada en datos reales."',
-    indeciso: '"No tiene que decidir nada hoy.\nSolo 20 minutos mañana para verlo funcionar. Sin compromiso."',
-  }},
-  {tp:'data',bg:'Confirmar antes de colgar',tit:'Nunca colgar sin acción concreta',b:{
-    receptivo:'"¡Perfecto [NOMBRE]!\nTe confirmo la reunión del [DÍA] a las [HORA] por WhatsApp ahora.\n¡Hasta mañana!"',
-    esceptico:'"Confirmo: [DÍA], [HORA], 20 min, Meet.\nAgenda de demo en el correo."',
-    agresivo: '"Confirmo por WhatsApp.\n[DÍA], [HORA]. Hasta entonces."',
-    analitico:'"Confirmación: [DÍA] [HORA], Meet.\nAgenda de demo incluida."',
-    indeciso: '"Le mando la confirmación por WhatsApp ahora mismo.\nHasta mañana."',
-  }},
-],
-coach:{receptivo:'Cierra rápido con entusiasmo. Dos opciones concretas, ambas son avanzar.',esceptico:'Cierre técnico. Contrato, SLA, datos claros.',agresivo:'Mínimo. Dos opciones. Silencio total después de la pregunta.',analitico:'Todo por escrito. Contrato + SLA + agenda.',indeciso:'Sin presión. Dos opciones claras. El Meet sin compromiso.'},
-objs:[{q:'"Déjame pensarlo y te llamo"',a:'"¿Mañana a las 2 o a las 4? Son 20 minutos para decidir con información real."'},{q:'"Mejor llámame la próxima semana"',a:'"Claro. ¿El lunes a las 10 o el martes a las 3?" — Nunca colgar sin fecha.'}],
-rules:{do:['Registrar datos del cliente ahora','Dos horarios concretos siempre','Confirmar por WhatsApp antes de colgar'],no:['Preguntar qué le parece o si le interesa','Colgar sin fecha confirmada','Bajar el precio al final']}
-},
-{id:'F7',t:'Despedida',m:'< 20 seg · Corto, seguro, sin reabrir conversación.',
-sp:{tag:'CIERRE FINAL · TÉCNICA DE LOS 20 SEGUNDOS',tit:'Confirmar, agradecer, colgar. Sin más.',b:{
-  receptivo:'¡Buenísimo, [NOMBRE]!\nTe confirmo todo por WhatsApp ahora mismo.\n¡Hasta mañana, que tengas un gran día!',
-  esceptico:'Perfecto.\nLe envío la confirmación por correo.\nHasta [DÍA] a las [HORA]. Que tenga buen día.',
-  agresivo: 'Confirmado.\n[DÍA], [HORA].\nBuen día.',
-  analitico:'Confirmación enviada.\n[DÍA] [HORA], Meet.\nHasta entonces.',
-  indeciso: 'Muy bien, [NOMBRE].\nLe mando todo por WhatsApp ahora.\nHasta mañana. Que tenga buen día.',
-}},
-cards:[
-  {tp:'close',bg:'Confirmación final — enviar ahora',tit:'WhatsApp de confirmación inmediato',b:{
-    receptivo:'ACCIÓN INMEDIATA:\n\n✓ Nombre de la empresa\n✓ Nombre del contacto\n✓ Día y hora de la reunión\n✓ Link de Meet\n✓ Tu número directo',
-    esceptico:'ACCIÓN INMEDIATA:\n\n✓ Email con agenda de la demo\n✓ Datos de contacto\n✓ Link de Meet\n✓ Confirmación de fecha y hora',
-    agresivo: 'ACCIÓN INMEDIATA:\n\n✓ Fecha y hora\n✓ Link de Meet\n✓ Tu nombre',
-    analitico:'ACCIÓN INMEDIATA:\n\n✓ Agenda técnica de la demo\n✓ Términos de SLA\n✓ Link Meet + calendario',
-    indeciso: 'ACCIÓN INMEDIATA:\n\n✓ Recordatorio de la fecha\n✓ Link de Meet\n✓ "Sin compromiso"',
-  }},
-  {tp:'data',bg:'Registrar cliente ahora',tit:'Captura de lead — formulario abajo',b:{
-    receptivo:'Completar el formulario:\n\n• Nombre completo\n• Clínica\n• Teléfono\n• Hora confirmada\n• Observaciones del mood\n\n→ Usar el formulario de abajo.',
-    esceptico:'Registrar:\n• Nivel de escepticismo\n• Objeciones principales\n• Datos que solicitó\n• Próximo paso acordado\n\n→ Formulario de abajo.',
-    agresivo: 'Registrar rápido:\n• Nombre + clínica\n• Hora acordada\n\n→ Formulario de abajo.',
-    analitico:'Registrar:\n• Datos técnicos solicitados\n• Benchmarks pedidos\n• Objeciones técnicas\n\n→ Formulario de abajo.',
-    indeciso: 'Registrar:\n• Nombre + clínica\n• Fecha acordada\n• Qué lo hizo avanzar\n\n→ Formulario de abajo.',
-  }},
-  {tp:'story',bg:'No cerraron reunión',tit:'Protocolo de seguimiento',b:{
-    receptivo:'"[NOMBRE], te escribo mañana por WhatsApp con la info completa.\n¿A qué hora te pillo?"',
-    esceptico:'"Le envío el análisis de su zona con datos concretos.\n¿Le parece bien mañana?"',
-    agresivo: '"Le escribo mañana con datos.\n¿Mañana o pasado?"',
-    analitico:'"Le envío el benchmark completo de las 13 clínicas.\n¿Por correo electrónico?"',
-    indeciso: '"Le mando información por WhatsApp para que la revise con calma.\n¿Le parece?"',
-  }},
-  {tp:'cut',bg:'Cliente re-abre objeción',tit:'Corte final — no reabrir nada',b:{
-    receptivo:'"Totalmente! Lo vemos todo en la demo del [DÍA] a las [HORA].\n¡Que tengas un gran día!"',
-    esceptico:'"Todo eso lo cubrimos en la demo del [DÍA].\nHasta entonces."',
-    agresivo: '"Lo vemos el [DÍA].\nHasta entonces."',
-    analitico:'"Queda incluido en la agenda de la demo del [DÍA].\nHasta entonces."',
-    indeciso: '"No se preocupe, lo vemos todo juntos el [DÍA].\nHasta entonces."',
-  }},
-],
-coach:{receptivo:'Energía hasta el último segundo. Breve y con entusiasmo real.',esceptico:'Frío y profesional. Todo queda por escrito.',agresivo:'Mínimo. Confirmado. Colgar. Sin reabrir nada.',analitico:'Todo documentado. Email de confirmación inmediato.',indeciso:'Cálido pero breve. Dejar la puerta abierta sin presión.'},
-objs:[{q:'Silencio o duda al despedirse',a:'"¡Hasta el [DÍA]!" y colgar.'},{q:'"Espera, tengo una pregunta más"',a:'"La vemos en la demo del [DÍA]. ¡Hasta entonces!"'}],
-rules:{do:['Colgar en < 20 seg desde el cierre','Enviar confirmación inmediatamente','Registrar datos en el formulario'],no:['Reabrir conversación de precio','Responder preguntas nuevas después del cierre','Dejar sin acción concreta definida']}
-}
+const MOODS = [
+  { id: "receptivo", label: "Receptivo", color: "#22c55e", emoji: "🟢" },
+  { id: "esceptico", label: "Escéptico", color: "#f59e0b", emoji: "🟡" },
+  { id: "agresivo", label: "Agresivo", color: "#ef4444", emoji: "🔴" },
+  { id: "analitico", label: "Analítico", color: "#3b82f6", emoji: "🔵" },
+  { id: "indeciso", label: "Indeciso", color: "#a855f7", emoji: "🟣" },
 ];
 
-let ph=0, mood='receptivo', sel=0;
-const gs=b=>b[mood]||Object.values(b)[0];
-const $=id=>document.getElementById(id);
-const e=t=>String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const PHASES = [
+  {
+    id: 1,
+    name: "Presentación",
+    subtitle: "Filtro al decisor",
+    timer: "< 30 seg",
+    script: {
+      receptivo: "¡Hola! ¿[NEGOCIO]?\nSoy Aarón de Sykes AI.\n¿Estoy hablando con el encargado?\n[Esperar respuesta]\n\n💡 Energía alta. Cierra rápido. Llega al dueño en el primer segundo.",
+      esceptico: "¡Hola! ¿[NEGOCIO]?\nSoy Aarón de Sykes AI.\n¿Con quién tengo el gusto?\n[Esperar respuesta]\n\n💡 Sé directo pero respetuoso. No des info de más. Solo filtra.",
+      agresivo: "¡Hola! ¿[NEGOCIO]?\nSoy Aarón, llamo de parte del área de tecnología.\n¿El encargado se encuentra?\n[Esperar respuesta]\n\n💡 Tono firme y profesional. Sin titubeos. Ve al grano.",
+      analitico: "¡Hola! ¿[NEGOCIO]?\nSoy Aarón de Sykes AI.\n¿Me comunico con el responsable de la gestión?\n[Esperar respuesta]\n\n💡 Usa palabras técnicas. Sé preciso. No adornes.",
+      indeciso: "¡Hola! ¿[NEGOCIO]?\nSoy Aarón de Sykes AI.\n¿Con quién podría hablar sobre la gestión del negocio?\n[Esperar respuesta]\n\n💡 Sé cálido y guía la conversación. No dejes espacios largos de silencio.",
+    },
+    objections: [
+      {
+        title: "¿De qué se trata?",
+        responses: {
+          receptivo: "Es sobre captación de pacientes por WhatsApp. 2 minutos con el dueño y listo.",
+          esceptico: "Es sobre un sistema de captación digital. ¿Usted es el encargado? Solo necesito 2 minutos.",
+          agresivo: "Es sobre tecnología para negocios. ¿El dueño se encuentra? Es breve.",
+          analitico: "Es sobre un sistema de automatización para captación de clientes. ¿Puedo hablar con quien toma las decisiones?",
+          indeciso: "Es algo que le puede interesar al dueño, es rápido. ¿Me lo puede comunicar?",
+        },
+      },
+      {
+        title: "No pasan comerciales",
+        responses: {
+          receptivo: "No es una venta, es un análisis. El dueño lo agradeció en otras clínicas. ¿A qué hora lo ubico?",
+          esceptico: "Entiendo. No es una llamada comercial, es una evaluación gratuita. ¿A qué hora puedo llamar?",
+          agresivo: "No es comercial. Es un análisis que ya se hizo en clínicas similares. ¿A qué hora está el encargado?",
+          analitico: "Comprendo la política. Es una evaluación técnica sin compromiso. ¿Cuál sería el mejor horario?",
+          indeciso: "Claro, lo entiendo. Solo es una consulta rápida. ¿Me puede decir a qué hora está disponible?",
+        },
+      },
+      {
+        title: "Ya es el decisor",
+        responses: {
+          receptivo: "¡Perfecto, [NOMBRE]! Tengo algo que te va a llamar la atención sobre tu clínica. Te hago una pregunta rápida.",
+          esceptico: "Perfecto. Seré breve y directo. Tengo una pregunta sobre cómo manejan la captación actualmente.",
+          agresivo: "Bien, [NOMBRE]. Voy al grano. ¿Cómo están captando clientes nuevos hoy?",
+          analitico: "Excelente. Permítame hacerle una consulta puntual sobre su proceso actual de captación de clientes.",
+          indeciso: "Qué bueno que hablo contigo. Mira, te cuento algo rápido que puede ayudarte. ¿Tienes un minuto?",
+        },
+      },
+      {
+        title: "Espejear el tono",
+        responses: {
+          receptivo: "PERFIL: Cliente abierto. Espejea su energía. Ritmo rápido. Habla como colega. Sonríe de verdad.",
+          esceptico: "PERFIL: Cliente cauteloso. Baja la energía. Sé factual. No exageres. Gana credibilidad.",
+          agresivo: "PERFIL: Cliente confrontativo. No te achiques. Sé firme pero respetuoso. No discutas, redirige.",
+          analitico: "PERFIL: Cliente metódico. Usa datos. Sé estructurado. No uses jerga emocional. Hechos > opiniones.",
+          indeciso: "PERFIL: Cliente dudoso. Sé guía. Toma la iniciativa. Haz preguntas cerradas. Facilita decisiones.",
+        },
+      },
+    ],
+  },
+  {
+    id: 2,
+    name: "Cantar el dolor",
+    subtitle: "Encontrar la necesidad",
+    timer: "30-60 seg",
+    script: {
+      receptivo: "[NOMBRE], te hago una pregunta directa:\n¿Cómo están captando pacientes nuevos hoy?\n[Esperar respuesta]\n\n¿Y qué tal les funciona? ¿Llegan solos o tienen que buscarlos?\n\n💡 Escucha activa. Deja que hable. Usa sus palabras después.",
+      esceptico: "[NOMBRE], una consulta rápida:\n¿Actualmente tienen algún sistema para atraer pacientes nuevos?\n[Esperar respuesta]\n\n¿Sienten que es suficiente o hay meses flojos?\n\n💡 No asumas dolor. Pregunta y deja que lo descubra solo.",
+      agresivo: "[NOMBRE], directo al punto:\n¿De dónde vienen sus pacientes nuevos hoy?\n[Esperar respuesta]\n\n¿Y eso les alcanza para crecer?\n\n💡 Sé breve. Preguntas cortas. No lo hagas sentir interrogado.",
+      analitico: "[NOMBRE], me gustaría entender su operación:\n¿Qué canales utilizan actualmente para captación?\n[Esperar respuesta]\n\n¿Tienen métricas de cuántos pacientes nuevos entran al mes?\n\n💡 Habla en datos. Si da números, úsalos a tu favor después.",
+      indeciso: "[NOMBRE], cuéntame un poco:\n¿Cómo les va con la llegada de pacientes nuevos?\n[Esperar respuesta]\n\nA veces cuesta mantener el flujo, ¿verdad?\n\n💡 Valida lo que diga. Hazlo sentir entendido. Guía suavemente.",
+    },
+    objections: [
+      {
+        title: "Ya tenemos suficientes clientes",
+        responses: {
+          receptivo: "¡Qué bien! ¿Y si pudieras tener aún más sin esfuerzo extra? Solo para que elijas a los mejores.",
+          esceptico: "Me alegra. ¿Tienen capacidad para más? Porque lo que hacemos es optimizar, no saturar.",
+          agresivo: "Perfecto. Hablemos de calidad, no cantidad. ¿Todos los que llegan son el tipo que quieren?",
+          analitico: "Interesante. ¿Cuál es su tasa de ocupación actual? Muchas clínicas creen estar llenas pero tienen huecos.",
+          indeciso: "Qué bueno. ¿Siempre es así o hay temporadas donde baja? Porque ahí es donde esto ayuda.",
+        },
+      },
+      {
+        title: "No tengo tiempo ahora",
+        responses: {
+          receptivo: "Totalmente, ¿a qué hora te queda mejor? Te llamo en 2 minutos exactos.",
+          esceptico: "Entiendo. ¿Cuándo sería un buen momento? Solo necesito 2 minutos de su tiempo.",
+          agresivo: "Sin problema. Dime un horario y te llamo puntual. Son 2 minutos.",
+          analitico: "Comprendo. ¿Le parece si agendamos una llamada de 5 minutos cuando tenga disponibilidad?",
+          indeciso: "Claro, no hay prisa. ¿Te parece si te llamo mañana en la mañana? ¿O prefieres en la tarde?",
+        },
+      },
+      {
+        title: "¿Esto es publicidad?",
+        responses: {
+          receptivo: "No exactamente. Es un diagnóstico gratuito. Te digo en 1 minuto si aplica para tu negocio.",
+          esceptico: "No. Es una evaluación sin costo. Si no aplica, yo mismo se lo digo.",
+          agresivo: "No. Es un análisis directo. Sin compromiso. Si no te sirve, lo dejamos ahí.",
+          analitico: "Es una evaluación técnica de su proceso de captación. No es publicidad, es un diagnóstico basado en datos.",
+          indeciso: "No, para nada. Solo quiero hacerte unas preguntas para ver si te podemos ayudar. Sin compromiso.",
+        },
+      },
+      {
+        title: "Ya tenemos marketing",
+        responses: {
+          receptivo: "¡Genial! Esto complementa lo que ya hacen. Es un canal adicional que trabaja solo.",
+          esceptico: "Bien. ¿Están satisfechos con los resultados? Porque esto trabaja diferente al marketing tradicional.",
+          agresivo: "Perfecto. ¿Cuántos pacientes nuevos les genera al mes? Esto es medible desde el día 1.",
+          analitico: "Excelente. ¿Qué ROI están viendo? Lo que ofrecemos se mide paciente por paciente.",
+          indeciso: "Qué bien. ¿Sienten que funciona bien o a veces no ven resultados claros?",
+        },
+      },
+    ],
+  },
+  {
+    id: 3,
+    name: "Propuesta de valor",
+    subtitle: "Presentar la solución",
+    timer: "45-90 seg",
+    script: {
+      receptivo: "Mira [NOMBRE], te cuento rápido:\n\nInstalamos un sistema de WhatsApp automatizado que capta pacientes por ti.\n\nEl paciente te escribe, el bot lo atiende, califica y agenda.\nTú solo llegas a la cita.\n\n¿Te imaginas tener eso funcionando 24/7?\n\n💡 Pinta el cuadro. Hazlo visual. Que se vea usando el sistema.",
+      esceptico: "[NOMBRE], le explico brevemente:\n\nTenemos un sistema que automatiza la captación por WhatsApp.\n\nFunciona así: el paciente llega por anuncio, el bot lo atiende, lo califica y agenda.\n\nNo requiere nada manual.\n\n¿Le gustaría saber cómo funciona técnicamente?\n\n💡 Sé concreto. Explica el cómo. No vendas el sueño, vende el proceso.",
+      agresivo: "[NOMBRE], voy al punto:\n\nSistema de captación por WhatsApp. Automático.\nPaciente llega → Bot atiende → Agenda cita.\n\nSin que toques nada. Resultados desde la primera semana.\n\n¿Cuántos pacientes nuevos necesitas al mes?\n\n💡 Números y resultados. Sin floreos. Directo.",
+      analitico: "[NOMBRE], permítame explicarle el sistema:\n\n1. Campañas segmentadas que atraen prospectos\n2. Bot de WhatsApp que califica automáticamente\n3. Agenda integrada que programa citas\n4. Dashboard con métricas en tiempo real\n\nTodo medible, todo automatizado.\n\n💡 Estructura la info. Pasos claros. Datos medibles.",
+      indeciso: "[NOMBRE], te explico de forma sencilla:\n\nNosotros nos encargamos de que te lleguen pacientes nuevos por WhatsApp.\n\nTodo es automático. Tú no tienes que hacer nada.\nSolo atender las citas que se agenden.\n\n¿Suena bien o tienes alguna duda?\n\n💡 Simplifica al máximo. Quita complejidad. Pregunta si tiene dudas.",
+    },
+    objections: [
+      {
+        title: "¿Cuánto cuesta?",
+        responses: {
+          receptivo: "Depende del plan, pero con 2-3 pacientes nuevos ya se paga solo. ¿Quieres ver los números?",
+          esceptico: "Antes del precio, déjeme mostrarle el retorno. Con los números claros, el precio se justifica solo.",
+          agresivo: "La inversión se recupera con 2 pacientes. ¿Quieres que te haga los números?",
+          analitico: "Los planes van desde X. Pero lo importante es el ROI: costo por paciente vs valor de vida del paciente.",
+          indeciso: "Es una inversión accesible. Pero primero déjame mostrarte cómo funciona para que veas si hace sentido.",
+        },
+      },
+      {
+        title: "Necesito pensarlo",
+        responses: {
+          receptivo: "¡Claro! ¿Qué te parece si te mando un resumen y hablamos mañana? Así lo piensas con info fresca.",
+          esceptico: "Entiendo. ¿Qué información adicional necesitaría para tomar la decisión?",
+          agresivo: "Bien. ¿Qué necesitas pensar exactamente? Quizás puedo resolverlo ahora.",
+          analitico: "Comprendo. ¿Le sería útil un documento con casos de estudio y métricas detalladas?",
+          indeciso: "Claro, tómate tu tiempo. ¿Te parece si agendamos para el jueves? Así lo platicamos con calma.",
+        },
+      },
+      {
+        title: "¿Tienen resultados comprobables?",
+        responses: {
+          receptivo: "¡Sí! Tenemos clínicas que pasaron de 5 a 30 pacientes nuevos al mes. Te puedo mostrar.",
+          esceptico: "Sí. Tenemos métricas reales de clínicas similares. ¿Le gustaría ver los números?",
+          agresivo: "Sí, resultados medibles. Clínica X pasó de 8 a 35 en 60 días. ¿Quieres ver más?",
+          analitico: "Tenemos un track record documentado. Puedo compartirle un reporte con métricas de rendimiento.",
+          indeciso: "Sí, muchas clínicas ya lo usan y están contentas. Te puedo mostrar testimonios.",
+        },
+      },
+      {
+        title: "Suena a estafa / MLM",
+        responses: {
+          receptivo: "Jaja, te entiendo. Pero es tecnología real. Te puedo mostrar el sistema funcionando ahora mismo.",
+          esceptico: "Comprendo la duda. Le invito a ver una demo en vivo. Sin compromiso.",
+          agresivo: "Entiendo. No hay red, no hay multinivel. Es un servicio directo. ¿Quieres ver la demo?",
+          analitico: "Es una preocupación válida. Somos empresa de tecnología con clientes verificables. Puedo enviar referencias.",
+          indeciso: "Es normal dudarlo. ¿Qué te parece si te muestro cómo funciona? Así lo ves con tus propios ojos.",
+        },
+      },
+    ],
+  },
+  {
+    id: 4,
+    name: "Prueba social",
+    subtitle: "Generar confianza",
+    timer: "30-45 seg",
+    script: {
+      receptivo: "[NOMBRE], te cuento un caso real:\n\nUna clínica dental como la tuya tenía 8 pacientes nuevos al mes.\n\nEn 60 días llegaron a 35. Sin hacer nada manual.\n\nHoy el dueño dice que fue la mejor decisión del año.\n\n¿Te gustaría tener resultados similares?\n\n💡 Cuenta la historia con emoción. Hazlo vivir el resultado.",
+      esceptico: "[NOMBRE], le comparto datos concretos:\n\nClínica similar: 8 pacientes/mes → 35 en 60 días.\nCosto por paciente: reducido en un 60%.\nTasa de agendamiento: 73%.\n\nSon números auditables.\n\n💡 Datos duros. Sin emociones. Deja que los números hablen.",
+      agresivo: "[NOMBRE], sin rodeos:\n\nClínica dental → 8 a 35 pacientes/mes en 60 días.\nOtra clínica estética → triplicó consultas en 45 días.\n\nFunciona. Punto.\n\n¿Cuántos pacientes necesitas para que valga la pena?\n\n💡 Resultados rápidos. Sin historia larga. Impacto directo.",
+      analitico: "[NOMBRE], estos son nuestros benchmarks:\n\n• Promedio de aumento: 3.2x en pacientes nuevos\n• Tiempo medio de resultados: 45-60 días\n• Tasa de agendamiento: 68-75%\n• ROI promedio: 4.7x en 90 días\n\n¿Quiere ver el desglose por industria?\n\n💡 Benchmarks y promedios. Habla en métricas de industria.",
+      indeciso: "[NOMBRE], muchos dueños tenían las mismas dudas.\n\nPero después de probar, dicen lo mismo: \"¿Por qué no lo hice antes?\"\n\nUna clínica como la tuya pasó de 8 a 35 pacientes.\n\nY lo mejor: no tuvieron que hacer nada complicado.\n\n💡 Normaliza la duda. Muestra que otros también dudaron y les fue bien.",
+    },
+    objections: [
+      {
+        title: "Eso funciona en otros rubros, no el mío",
+        responses: {
+          receptivo: "Te entiendo, pero justamente tenemos casos en tu rubro. ¿Quieres que te muestre uno?",
+          esceptico: "Es una duda válida. ¿En qué rubro está? Tengo datos específicos para varios sectores.",
+          agresivo: "Funciona en cualquier negocio que atienda citas. ¿Cuál es tu rubro? Te doy el caso.",
+          analitico: "Tenemos datos segmentados por industria. ¿Me indica su rubro para compartirle métricas?",
+          indeciso: "Muchos pensaron lo mismo. ¿Me dices tu rubro? Te muestro si tenemos algo similar.",
+        },
+      },
+      {
+        title: "Los bots no funcionan",
+        responses: {
+          receptivo: "Antes sí eran malos. Pero este es diferente: usa IA real. Los pacientes ni se dan cuenta.",
+          esceptico: "Entiendo. Este bot usa IA conversacional avanzada. El 89% no detecta que es bot.",
+          agresivo: "Este no es un bot cualquiera. Es IA que convierte. 73% tasa de agendamiento.",
+          analitico: "Los bots tradicionales fallan, correcto. Este usa NLP con 89% satisfacción en interacción.",
+          indeciso: "Es normal pensar eso. Pero este es muy diferente. ¿Te gustaría probarlo tú mismo?",
+        },
+      },
+      {
+        title: "Mi paciente no usa WhatsApp",
+        responses: {
+          receptivo: "¡Te sorprenderías! El 93% de adultos en LATAM usa WhatsApp. Es donde están tus pacientes.",
+          esceptico: "Las estadísticas dicen que el 93% usa WhatsApp. Incluso el segmento 50+.",
+          agresivo: "93% de penetración en LATAM. Tu paciente sí lo usa. ¿Llegas a él primero?",
+          analitico: "La penetración de WhatsApp en LATAM es del 93%. En segmento 35-65, supera el 88%.",
+          indeciso: "Casi todos usan WhatsApp hoy, incluso los mayores. ¿Te preocupa un segmento en particular?",
+        },
+      },
+      {
+        title: "Conozco a alguien que intentó y no le funcionó",
+        responses: {
+          receptivo: "Puede pasar si no se implementa bien. Nosotros acompañamos todo el proceso.",
+          esceptico: "¿Sabe qué sistema usaron? Muchos fallan por mala implementación. Nosotros garantizamos setup.",
+          agresivo: "Hay muchos que lo hacen mal. Nosotros tenemos resultados comprobados. ¿Quieres ver?",
+          analitico: "El 70% de fracasos son por mala configuración. Nosotros hacemos setup completo y optimización.",
+          indeciso: "Es posible que no tuvieran buen soporte. Nosotros acompañamos paso a paso.",
+        },
+      },
+    ],
+  },
+  {
+    id: 5,
+    name: "Cierre tentativo",
+    subtitle: "Proponer siguiente paso",
+    timer: "30-45 seg",
+    script: {
+      receptivo: "[NOMBRE], esto es lo que te propongo:\n\nHacemos una demo de 15 minutos donde te muestro el sistema con tu negocio.\n\nSin compromiso. Si te gusta, avanzamos. Si no, aquí no pasó nada.\n\n¿Te queda mejor hoy en la tarde o mañana en la mañana?\n\n💡 Alternativa de cierre. No preguntes SI quiere, pregunta CUÁNDO.",
+      esceptico: "[NOMBRE], le propongo lo siguiente:\n\nUna sesión de diagnóstico de 15 minutos. Sin costo.\n\nLe muestro exactamente cómo funcionaría en su caso.\n\nSi no le convence, no hay compromiso alguno.\n\n¿Tiene disponibilidad esta semana?\n\n💡 Quita el riesgo. Hazlo sentir en control. Sin presión.",
+      agresivo: "[NOMBRE], siguiente paso:\n\nDemo de 15 minutos. Te muestro resultados reales para tu rubro.\n\nSi no te convence en 5 minutos, cortamos.\n\n¿Hoy o mañana?\n\n💡 Directo. Ahorra tiempo. Dale control sobre el tiempo.",
+      analitico: "[NOMBRE], el siguiente paso lógico sería:\n\n1. Demo personalizada de 15 minutos\n2. Diagnóstico específico para su operación\n3. Proyección de resultados basada en sus datos\n\nTodo sin compromiso. ¿Qué día le funciona?\n\n💡 Estructura el paso. Hazlo ver como proceso lógico.",
+      indeciso: "[NOMBRE], mira, lo que podemos hacer es esto:\n\nTe muestro el sistema en 15 minutos. Solo es ver cómo funciona.\n\nSi te gusta, genial. Si no, no pasa absolutamente nada.\n\n¿Qué te parece? ¿Mañana te queda bien?\n\n💡 Facilita la decisión. Quita presión. Ofrece opción fácil.",
+    },
+    objections: [
+      {
+        title: "Mándame info por WhatsApp",
+        responses: {
+          receptivo: "¡Claro! Te la mando ahora. Pero en 15 min te explico mejor que cualquier PDF. ¿A qué hora?",
+          esceptico: "Se la envío. Pero en 15 minutos le resuelvo todas las dudas. ¿Agendamos también?",
+          agresivo: "Te la mando. Pero la info real está en la demo. 15 minutos. ¿Cuándo?",
+          analitico: "Le envío el material con casos de estudio. ¿Agendamos también una sesión para profundizar?",
+          indeciso: "Sí, te la mando. Y si quieres, agendamos llamadita corta para explicarte mejor. ¿Te parece?",
+        },
+      },
+      {
+        title: "Tengo que consultarlo con mi socio",
+        responses: {
+          receptivo: "¡Perfecto! ¿Y si hacemos la demo con los dos? Así resolvemos dudas de una vez.",
+          esceptico: "Entiendo. ¿Agendamos con ambos? Así la información llega de primera mano.",
+          agresivo: "Agenda con tu socio para la demo. Los dos ven lo mismo. ¿Qué día pueden?",
+          analitico: "Lógico. ¿Programamos sesión conjunta? Puedo preparar material para ambos decisores.",
+          indeciso: "Claro, es importante. ¿Agendamos cuando puedan los dos? Así se enteran juntos.",
+        },
+      },
+      {
+        title: "Llámame la próxima semana",
+        responses: {
+          receptivo: "¡Dale! ¿Qué día y hora te queda mejor? Así lo agendo y te llamo puntual.",
+          esceptico: "Perfecto. ¿Qué día específico? Así le confirmo y respeto su tiempo.",
+          agresivo: "OK. ¿Lunes o martes? ¿Mañana o tarde? Te llamo al minuto.",
+          analitico: "Entendido. ¿Me puede indicar día y horario preferido para agendar correctamente?",
+          indeciso: "¡Perfecto! ¿El lunes? ¿En la mañana o en la tarde? Tú dime.",
+        },
+      },
+      {
+        title: "No estoy interesado",
+        responses: {
+          receptivo: "Entiendo. Solo una pregunta: ¿ya tienen algo similar o no es prioridad ahora?",
+          esceptico: "Respeto su decisión. ¿Me permite preguntar qué parte no le convenció?",
+          agresivo: "OK. ¿Es por el servicio o por el momento? Si es momento, te llamo después.",
+          analitico: "Comprendo. ¿Podría indicarme qué factor fue determinante? Es info valiosa.",
+          indeciso: "Claro, no hay problema. Si más adelante surge la duda, ¿puedo dejarte mi número?",
+        },
+      },
+    ],
+  },
+  {
+    id: 6,
+    name: "Manejo de objeciones",
+    subtitle: "Resolver dudas finales",
+    timer: "45-90 seg",
+    script: {
+      receptivo: "[NOMBRE], entiendo tu punto.\n\nDéjame preguntarte algo:\nSi pudieras tener 20 pacientes nuevos al mes sin esfuerzo extra...\n¿Eso cambiaría algo para ti?\n\n[Esperar respuesta]\n\nEntonces solo es cuestión de resolver esta duda.\n\n💡 Redirige al resultado. Haz que se visualice con el beneficio.",
+      esceptico: "[NOMBRE], es válida su preocupación.\n\nPermítame abordarla directamente:\n[Responder la objeción con datos]\n\n¿Eso resuelve su inquietud o hay algo más?\n\n💡 Responde con datos. No con emoción. Sé transparente.",
+      agresivo: "[NOMBRE], te entiendo. Vamos directo:\n\n[Responder la objeción sin rodeos]\n\n¿Eso aclara el punto o hay algo más?\n\n💡 No te pongas a la defensiva. Responde y avanza.",
+      analitico: "[NOMBRE], permítame abordar eso con datos:\n\n[Presentar evidencia estructurada]\n\n¿Le gustaría ver la documentación de respaldo?\n\n💡 Ofrece pruebas. Documentos. Datos. Deja que verifique.",
+      indeciso: "[NOMBRE], es completamente normal tener esa duda.\n\nMuchos de nuestros clientes pensaron lo mismo.\n\nLo que les ayudó fue [solución específica].\n\n¿Eso te da más tranquilidad?\n\n💡 Normaliza la duda. Resuelve con suavidad.",
+    },
+    objections: [
+      {
+        title: "Es muy caro",
+        responses: {
+          receptivo: "Entiendo. Piénsalo así: ¿cuánto te cuesta NO tener esos pacientes? Con 2-3 se paga solo.",
+          esceptico: "¿Comparado con qué? Si lo ve como inversión: el retorno promedio es 4.7x en 90 días.",
+          agresivo: "¿Cuánto pierdes al mes por no tener pacientes? Eso sí es caro. Esto se paga solo.",
+          analitico: "Hagamos los números: costo mensual vs ingreso por paciente nuevo. Breakeven: 2-3 pacientes.",
+          indeciso: "Entiendo que es inversión importante. ¿Vemos un plan que se ajuste a tu presupuesto?",
+        },
+      },
+      {
+        title: "No confío en la tecnología",
+        responses: {
+          receptivo: "Es normal. ¿Qué tal si lo pruebas y lo ves funcionar? Te acompaño paso a paso.",
+          esceptico: "Comprensible. Por eso ofrecemos demo gratuita. Vea el sistema antes de decidir.",
+          agresivo: "La tecnología no requiere que confíes. Requiere que veas resultados. La demo los muestra.",
+          analitico: "La confianza se construye con datos. Le puedo mostrar la arquitectura y métricas de uptime.",
+          indeciso: "Es normal sentir eso. Nosotros nos encargamos de lo técnico. Tú solo ves pacientes llegar.",
+        },
+      },
+      {
+        title: "Otro proveedor me ofreció lo mismo",
+        responses: {
+          receptivo: "¡Genial que evalúes! La diferencia es que nosotros acompañamos todo. ¿Ves qué nos hace distintos?",
+          esceptico: "¿Qué le ofrecieron exactamente? Los detalles de implementación hacen toda la diferencia.",
+          agresivo: "¿Y qué resultados te dieron? Nosotros hablamos con números verificables. ¿Comparamos?",
+          analitico: "Útil comparar: ¿qué incluye su propuesta? Puedo hacer comparativo técnico punto por punto.",
+          indeciso: "Qué bueno que ves opciones. ¿Quieres que te ayude a comparar? Sin presión.",
+        },
+      },
+      {
+        title: "Mi contador/esposa dice que no",
+        responses: {
+          receptivo: "Entiendo. ¿Qué tal si le muestro los números? Ver el retorno cambia la perspectiva.",
+          esceptico: "¿Cuál es su principal preocupación? Quizás puedo proveer información que ayude.",
+          agresivo: "¿Su preocupación es el costo o el riesgo? Ambos se mitigan con datos correctos.",
+          analitico: "¿Me permite preparar un análisis financiero? Incluiría ROI proyectado.",
+          indeciso: "Claro. ¿Hacemos una llamada donde puedan escuchar juntos? Resolvemos dudas de todos.",
+        },
+      },
+    ],
+  },
+  {
+    id: 7,
+    name: "Cierre y agenda",
+    subtitle: "Agendar reunión / Captura",
+    timer: "60-90 seg",
+    script: {
+      receptivo: "¡Perfecto [NOMBRE]! Entonces agendamos:\n\n📅 Completa los datos del cliente abajo.\n\nTe confirmo por WhatsApp y te mando recordatorio.\n\n¡Va a ser una gran reunión!\n\n💡 Energía alta. Celebra el cierre. Haz que se sienta bien.",
+      esceptico: "Perfecto [NOMBRE]. Procedo a agendar la sesión.\n\n📅 Permítame tomar sus datos.\n\nRecibirá confirmación por WhatsApp con todos los detalles.\n\n💡 Profesional. Confirma todo. Haz que se sienta seguro.",
+      agresivo: "Hecho, [NOMBRE]. Agendado.\n\n📅 Dame tus datos para confirmar.\n\nTe mando confirmación inmediata.\n\n💡 Rápido. Sin demora. Cierra y confirma.",
+      analitico: "Excelente [NOMBRE]. Procedemos con el agendamiento.\n\n📅 Necesito los siguientes datos.\n\nRecibirá correo con la agenda detallada.\n\n💡 Proceso claro. Confirma cada dato. Envía agenda estructurada.",
+      indeciso: "¡Qué bueno que te animaste, [NOMBRE]!\n\n📅 Te tomo los datos rapidito.\n\nTe mando todo por WhatsApp para que lo tengas guardado.\n\nVas a ver que va a salir muy bien.\n\n💡 Refuerza la decisión. Hazlo sentir seguro.",
+    },
+    objections: [
+      {
+        title: "¿Me puede llamar otro día?",
+        responses: {
+          receptivo: "¡Claro! Pero ya que estamos, ¿me das tu nombre y número? Así te llamo seguro.",
+          esceptico: "Por supuesto. Permítame tomar sus datos para contactarlo en su horario preferido.",
+          agresivo: "OK. Dame tu número y nombre. Te llamo puntual. ¿Qué día y hora?",
+          analitico: "Entendido. ¿Me proporciona datos de contacto y horario preferido?",
+          indeciso: "Sí, sin problema. ¿Me das tu número? ¿Qué día te queda mejor?",
+        },
+      },
+      {
+        title: "Todavía no estoy seguro",
+        responses: {
+          receptivo: "Normal. La demo es para eso: que veas y decidas. Sin presión. ¿Agendamos?",
+          esceptico: "La sesión es sin compromiso. Es para resolver esas dudas. ¿Probamos?",
+          agresivo: "La demo aclara todo. 15 minutos. Si no te convence, lo dejamos. ¿Cuándo?",
+          analitico: "Comprensible. La sesión le dará la información que necesita para decidir con certeza.",
+          indeciso: "Es normal no estar seguro. La demo es sin compromiso, solo para ver cómo funciona.",
+        },
+      },
+      {
+        title: "Solo dame el precio",
+        responses: {
+          receptivo: "Los planes arrancan en $X. Pero en la demo te muestro cuál te conviene. ¿Agendamos?",
+          esceptico: "Los planes van desde $X hasta $Y. En la demo le personalizo la mejor opción.",
+          agresivo: "Desde $X. Pero el precio sin contexto no sirve. Demo te da números reales. ¿Cuándo?",
+          analitico: "El rango es $X-$Y según volumen. En la sesión hago cotización precisa.",
+          indeciso: "Claro, arrancan en $X. En la demo vemos cuál se ajusta mejor. ¿Te parece?",
+        },
+      },
+      {
+        title: "Tengo que pensarlo más",
+        responses: {
+          receptivo: "¡Totalmente! Piénsalo y te llamo mañana. ¿A qué hora te queda bien?",
+          esceptico: "Respeto su tiempo. ¿Le envío información y seguimos el jueves?",
+          agresivo: "OK. ¿Qué día confirmo? Si es para ti, mejor no dejarlo pasar.",
+          analitico: "Comprendo. ¿Qué información adicional le ayudaría a decidir?",
+          indeciso: "Claro, sin presión. ¿Hablamos de nuevo el viernes? Así lo piensas tranquilo.",
+        },
+      },
+    ],
+    hasForm: true,
+  },
+];
 
-function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
-function go(p){ph=p;sel=0;show('s2');render()}
+const moodStyles = {
+  receptivo: { accent: "#22c55e" },
+  esceptico: { accent: "#f59e0b" },
+  agresivo: { accent: "#ef4444" },
+  analitico: { accent: "#3b82f6" },
+  indeciso: { accent: "#a855f7" },
+};
 
-$('bO').onclick=()=>go(0);$('bG').onclick=()=>show('s1');$('bB1').onclick=()=>show('s0');$('bG1').onclick=()=>go(0);$('bR').onclick=()=>show('s0');
-$('bBk').onclick=()=>{if(ph>0){ph--;sel=0;render()}};
-$('bNx').onclick=()=>{if(ph<P.length-1){ph++;sel=0;render()}};
+export default function CopilotPSY() {
+  const [currentPhase, setCurrentPhase] = useState(0);
+  const [activeMood, setActiveMood] = useState("receptivo");
+  const [expandedCard, setExpandedCard] = useState(null);
+  const [formData, setFormData] = useState({ nombre: "", telefono: "", negocio: "", horario: "", notas: "" });
+  const [phaseTransition, setPhaseTransition] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
-function render(){
-  const p=P[ph];
-  // track
-  const tr=$('pT');tr.innerHTML='';
-  P.forEach((_,i)=>{const d=document.createElement('div');d.className='pip '+(i<ph?'done':i===ph?'now':'next');d.title=P[i].t;d.onclick=()=>{ph=i;sel=0;render()};tr.appendChild(d)});
-  // moods
-  const mb=$('mB');mb.innerHTML='';
-  Object.entries(M).forEach(([id,m])=>{const b=document.createElement('button');b.className='mbtn'+(id===mood?' on':'');b.setAttribute('data-m',id);b.textContent=m.e+' '+m.l;b.onclick=()=>{mood=id;render()};mb.appendChild(b)});
-  // header
-  $('pId').textContent=p.id;$('pTt').textContent=p.t;$('pMt').textContent=p.m;
-  buildLeft(p);buildRight(p);
-  const nx=P[ph+1];$('bNm').textContent=nx?nx.id+' · '+nx.t:'— Fin del flujo —';$('bNx').disabled=!nx;$('bBk').disabled=ph===0;
-}
+  useEffect(() => {
+    setTimeout(() => setLoaded(true), 100);
+  }, []);
 
-function buildLeft(p){
-  const sf=ph>=5;
-  const cards=p.cards.map((c,i)=>`
-    <div class="gcard${i===sel?' sel':''}" onclick="selC(${i})">
-      <span class="gc-badge ${c.tp}">${e(c.bg)}</span>
-      <div class="gc-title">${e(c.tit)}</div>
-      <div class="gc-text">${e(gs(c.b))}</div>
-    </div>`).join('');
-  let html=`
-    <div class="sbox">
-      <div class="sb-tag">${e(p.sp.tag)}</div>
-      <div class="sb-tit">${e(p.sp.tit)}</div>
-      <div class="sb-body">${e(gs(p.sp.b))}</div>
-    </div>
-    <div class="clbl">REACCIÓN DEL CLIENTE → SELECCIONA LA SITUACIÓN</div>
-    <div class="cgrid">${cards}</div>`;
-  if(sf)html+=buildForm();
-  $('cL').innerHTML=html;
-  if(sf)attachForm();
-}
+  const phase = PHASES[currentPhase];
+  const mood = moodStyles[activeMood];
+  const moodObj = MOODS.find((m) => m.id === activeMood);
 
-function selC(i){sel=i;render()}
-
-function buildForm(){
-  const mo=Object.entries(M).map(([id,m])=>`<option value="${id}"${id===mood?' selected':''}>${m.e} ${m.l}</option>`).join('');
-  return `<div class="lform">
-    <div class="lf-ttl">Registrar cliente</div>
-    <div class="lf-sub">Se envía a cargadecontratos@gmail.com</div>
-    <div class="lf-grid">
-      <div class="lf-f"><label class="lf-lbl">Nombre</label><input class="lf-i" id="fn" placeholder="Dr. / Lic. ..."></div>
-      <div class="lf-f"><label class="lf-lbl">Clínica</label><input class="lf-i" id="fc" placeholder="Nombre de la clínica"></div>
-      <div class="lf-f"><label class="lf-lbl">WhatsApp</label><input class="lf-i" id="ft" placeholder="+51 ..."></div>
-      <div class="lf-f"><label class="lf-lbl">Correo</label><input class="lf-i" id="fe" type="email" placeholder="(opcional)"></div>
-      <div class="lf-f"><label class="lf-lbl">Reunión</label><input class="lf-i" id="ff" placeholder="Ej: Mañana 2 PM"></div>
-      <div class="lf-f"><label class="lf-lbl">Mood</label><select class="lf-s" id="fm">${mo}</select></div>
-      <div class="lf-f full"><label class="lf-lbl">Observaciones</label><textarea class="lf-a" id="fo" placeholder="¿Qué dijo? ¿Objeciones? ¿Cómo cerró?"></textarea></div>
-    </div>
-    <div class="lf-row"><button class="btn-snd" id="fsb">Enviar registro →</button><span class="sst" id="fss"></span></div>
-  </div>`;
-}
-
-function attachForm(){
-  const btn=$('fsb');if(!btn)return;
-  btn.onclick=async()=>{
-    const n=($('fn')||{}).value||'',c=($('fc')||{}).value||'',t=($('ft')||{}).value||'';
-    const em=($('fe')||{}).value||'',f=($('ff')||{}).value||'',m=($('fm')||{}).value||mood,o=($('fo')||{}).value||'';
-    if(!n||!c||!t){$('fss').innerHTML='<span class="ser">⚠ Nombre, clínica y WhatsApp requeridos.</span>';return}
-    btn.disabled=true;$('fss').innerHTML='<span class="spn"></span>Enviando...';
-    try{
-      const r=await fetch('https://formsubmit.co/ajax/cargadecontratos@gmail.com',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({_subject:`[COPILOT PSY] ${n} — ${c}`,nombre:n,clinica:c,whatsapp:t,correo:em||'—',reunion:f||'—',mood:M[m]?.l||m,observaciones:o||'—',_template:'table'})});
-      const d=await r.json();
-      if(d.success==='true'||d.success===true){$('fss').innerHTML='<span class="sok">✓ Enviado</span>';}
-      else throw new Error();
-    }catch{
-      window.open(`mailto:cargadecontratos@gmail.com?subject=${encodeURIComponent(`[COPILOT PSY] ${n} — ${c}`)}&body=${encodeURIComponent(`Nombre: ${n}\nClínica: ${c}\nWhatsApp: ${t}\nCorreo: ${em}\nReunión: ${f}\nMood: ${M[m]?.l||m}\nObs: ${o}`)}`);
-      $('fss').innerHTML='<span class="sok">✓ Abriendo correo...</span>';
-    }
-    btn.disabled=false;
+  const navigate = (dir) => {
+    setPhaseTransition(true);
+    setExpandedCard(null);
+    setTimeout(() => {
+      setCurrentPhase((prev) => Math.max(0, Math.min(6, prev + dir)));
+      setPhaseTransition(false);
+    }, 300);
   };
-}
 
-function buildRight(p){
-  const m=M[mood];const card=p.cards[sel];
-  $('cR').innerHTML=`
-    <div class="rblk">
-      <div class="rblk-lbl">Coach ${m.e} ${m.l}</div>
-      <div class="coach-box">
-        <div class="co-name">${m.e} ${m.l}</div>
-        <div class="co-hint">${e(m.h)}</div>
-        <div class="co-tip">${e(p.coach[mood])}</div>
+  const handleExpand = (idx) => {
+    setExpandedCard(expandedCard === idx ? null : idx);
+  };
+
+  const leftObjs = phase.objections.slice(0, 2);
+  const rightObjs = phase.objections.slice(2, 4);
+
+  return (
+    <div
+      style={{
+        width: "100vw",
+        minHeight: "100vh",
+        background: "linear-gradient(170deg, #060b18 0%, #0a1128 35%, #0f1a35 65%, #0c1222 100%)",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: "'Satoshi', 'DM Sans', 'Inter', -apple-system, sans-serif",
+        color: "#e2e8f0",
+        padding: "20px",
+        boxSizing: "border-box",
+        overflow: "hidden",
+        position: "relative",
+      }}
+    >
+      {/* Ambient background glows */}
+      <div
+        style={{
+          position: "fixed",
+          top: "-20%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "100vw",
+          height: "60vh",
+          background: `radial-gradient(ellipse 60% 50%, ${mood.accent}08, transparent 70%)`,
+          pointerEvents: "none",
+          transition: "background 1s ease",
+        }}
+      />
+      <div
+        style={{
+          position: "fixed",
+          bottom: "-10%",
+          right: "-10%",
+          width: "50vw",
+          height: "50vh",
+          background: "radial-gradient(ellipse, rgba(30,58,138,0.06), transparent 70%)",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* ── HEADER ── */}
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 100,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "14px 28px",
+          background: "linear-gradient(180deg, rgba(6,11,24,0.97) 60%, rgba(6,11,24,0))",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+          <span
+            style={{
+              fontWeight: 800,
+              fontSize: "13px",
+              letterSpacing: "3.5px",
+              color: "#c9a54e",
+              textTransform: "uppercase",
+            }}
+          >
+            Copilot PSY
+          </span>
+          <div style={{ width: "1px", height: "16px", background: "rgba(201,165,78,0.25)" }} />
+          <span style={{ fontSize: "11px", color: "#4a5568", letterSpacing: "1.5px", textTransform: "uppercase" }}>
+            Sales Hub
+          </span>
+        </div>
+
+        {/* Mood selector */}
+        <div style={{ display: "flex", gap: "5px", alignItems: "center" }}>
+          {MOODS.map((m) => (
+            <button
+              key={m.id}
+              onClick={() => setActiveMood(m.id)}
+              style={{
+                background:
+                  activeMood === m.id ? `linear-gradient(135deg, ${m.color}25, ${m.color}08)` : "rgba(255,255,255,0.02)",
+                border: activeMood === m.id ? `1px solid ${m.color}66` : "1px solid rgba(255,255,255,0.04)",
+                borderRadius: "16px",
+                padding: activeMood === m.id ? "5px 12px" : "5px 8px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "5px",
+                transition: "all 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
+                transform: activeMood === m.id ? "scale(1.05)" : "scale(1)",
+              }}
+            >
+              <div
+                style={{
+                  width: "7px",
+                  height: "7px",
+                  borderRadius: "50%",
+                  background: m.color,
+                  boxShadow: activeMood === m.id ? `0 0 8px ${m.color}77` : "none",
+                  transition: "box-shadow 0.3s ease",
+                }}
+              />
+              {activeMood === m.id && (
+                <span style={{ fontSize: "10px", color: m.color, fontWeight: 700, letterSpacing: "0.5px" }}>
+                  {m.label}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
       </div>
-    </div>
-    <div class="rblk">
-      <div class="rblk-lbl">▶ Script card activa</div>
-      <div class="actbox">
-        <div class="act-lbl">${e(card.bg)}</div>
-        <div class="act-tit">${e(card.tit)}</div>
-        <div class="act-body">${e(gs(card.b))}</div>
+
+      {/* ── PHASE INDICATOR ── */}
+      <div
+        style={{
+          position: "fixed",
+          top: "56px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "6px",
+          zIndex: 90,
+          opacity: loaded ? 1 : 0,
+          transition: "opacity 0.6s ease 0.2s",
+        }}
+      >
+        <div style={{ display: "flex", gap: "3px", alignItems: "center" }}>
+          {PHASES.map((p, i) => (
+            <div
+              key={i}
+              style={{
+                width: i === currentPhase ? "28px" : "6px",
+                height: "3px",
+                borderRadius: "2px",
+                background:
+                  i === currentPhase
+                    ? `linear-gradient(90deg, ${mood.accent}, ${mood.accent}77)`
+                    : i < currentPhase
+                    ? `${mood.accent}33`
+                    : "rgba(255,255,255,0.06)",
+                transition: "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+              }}
+            />
+          ))}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <span
+            style={{
+              fontSize: "10px",
+              fontWeight: 800,
+              letterSpacing: "3px",
+              color: mood.accent,
+              textTransform: "uppercase",
+              transition: "color 0.5s ease",
+            }}
+          >
+            F{phase.id}
+          </span>
+          <span style={{ fontSize: "16px", fontWeight: 700, color: "#f1f5f9", letterSpacing: "-0.3px" }}>
+            {phase.name}
+          </span>
+          <span style={{ fontSize: "11px", color: "#4a5568", fontStyle: "italic" }}>{phase.subtitle}</span>
+        </div>
+        <span
+          style={{
+            fontSize: "9px",
+            color: "#374151",
+            letterSpacing: "1.5px",
+            textTransform: "uppercase",
+          }}
+        >
+          {phase.timer}
+        </span>
       </div>
+
+      {/* ── MAIN 5-CARD LAYOUT ── */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "14px",
+          width: "100%",
+          maxWidth: "1400px",
+          marginTop: "50px",
+          opacity: phaseTransition ? 0 : loaded ? 1 : 0,
+          transform: phaseTransition ? "translateY(16px) scale(0.98)" : "translateY(0) scale(1)",
+          transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+          padding: "0 12px",
+          boxSizing: "border-box",
+        }}
+      >
+        {/* LEFT OBJECTION CARDS */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: "1", minWidth: 0 }}>
+          {leftObjs.map((obj, idx) => {
+            const isExp = expandedCard === idx;
+            return (
+              <div
+                key={idx}
+                onClick={() => handleExpand(idx)}
+                style={{
+                  borderRadius: "18px",
+                  backdropFilter: "blur(24px)",
+                  cursor: "pointer",
+                  transition: "all 0.45s cubic-bezier(0.16, 1, 0.3, 1)",
+                  position: "relative",
+                  overflow: "hidden",
+                  background: isExp
+                    ? "linear-gradient(155deg, rgba(56,89,160,0.35), rgba(20,30,60,0.55), rgba(40,70,140,0.2))"
+                    : "linear-gradient(155deg, rgba(30,50,100,0.2), rgba(12,18,35,0.45), rgba(25,45,90,0.15))",
+                  border: isExp ? `1px solid ${mood.accent}55` : "1px solid rgba(80,120,220,0.1)",
+                  boxShadow: isExp
+                    ? `0 20px 50px rgba(0,0,0,0.35), 0 0 40px ${mood.accent}0a, inset 0 1px 0 rgba(255,255,255,0.08)`
+                    : "0 8px 28px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.04)",
+                  padding: "22px 18px",
+                  display: "flex",
+                  flexDirection: "column",
+                  transform: isExp ? "translateY(-4px) scale(1.01)" : "translateY(0) scale(1)",
+                }}
+              >
+                {/* Top glow line */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: "15%",
+                    right: "15%",
+                    height: "1.5px",
+                    background: isExp
+                      ? `linear-gradient(90deg, transparent, ${mood.accent}66, transparent)`
+                      : "linear-gradient(90deg, transparent, rgba(100,150,255,0.1), transparent)",
+                    transition: "all 0.4s ease",
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: "9px",
+                    fontWeight: 800,
+                    letterSpacing: "2.5px",
+                    color: isExp ? mood.accent : "#4a5568",
+                    textTransform: "uppercase",
+                    marginBottom: "6px",
+                    transition: "color 0.3s ease",
+                  }}
+                >
+                  Objeción
+                </span>
+                <span
+                  style={{
+                    fontSize: "14px",
+                    fontWeight: 700,
+                    color: isExp ? "#f1f5f9" : "#cbd5e1",
+                    lineHeight: 1.35,
+                    transition: "color 0.3s ease",
+                  }}
+                >
+                  {obj.title}
+                </span>
+                {isExp && (
+                  <div
+                    style={{
+                      marginTop: "14px",
+                      padding: "14px",
+                      background: `linear-gradient(135deg, ${mood.accent}0c, transparent)`,
+                      borderRadius: "12px",
+                      border: `1px solid ${mood.accent}18`,
+                      animation: "fadeSlideIn 0.35s ease",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "9px",
+                        fontWeight: 700,
+                        color: mood.accent,
+                        letterSpacing: "2px",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Respuesta — {moodObj.label}
+                    </span>
+                    <p
+                      style={{
+                        fontSize: "12.5px",
+                        lineHeight: 1.75,
+                        color: "#b0bec5",
+                        margin: "8px 0 0",
+                      }}
+                    >
+                      {obj.responses[activeMood]}
+                    </p>
+                  </div>
+                )}
+                {!isExp && (
+                  <span style={{ fontSize: "10px", color: "#2d3748", marginTop: "8px", fontStyle: "italic" }}>
+                    Toca para ver respuesta
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* ── CENTER CARD — MAIN SCRIPT ── */}
+        <div
+          style={{
+            flex: "1.9",
+            minHeight: phase.hasForm ? "500px" : "440px",
+            maxHeight: "80vh",
+            borderRadius: "22px",
+            backdropFilter: "blur(30px)",
+            background:
+              "linear-gradient(160deg, rgba(40,72,160,0.25), rgba(15,22,42,0.6) 40%, rgba(30,55,130,0.18) 80%, rgba(20,35,80,0.22))",
+            border: "1px solid rgba(100,160,255,0.14)",
+            boxShadow: `0 40px 80px rgba(0,0,0,0.45), 0 0 60px ${mood.accent}06, inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.15)`,
+            padding: "28px 26px",
+            display: "flex",
+            flexDirection: "column",
+            cursor: "default",
+            alignSelf: "center",
+            position: "relative",
+            minWidth: 0,
+            overflow: "hidden",
+            transition: "box-shadow 0.5s ease",
+          }}
+        >
+          {/* Gold top accent */}
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: "8%",
+              right: "8%",
+              height: "1.5px",
+              background: "linear-gradient(90deg, transparent, #c9a54e55, #c9a54eaa, #c9a54e55, transparent)",
+            }}
+          />
+          {/* Corner accents */}
+          <div
+            style={{
+              position: "absolute",
+              top: "12px",
+              right: "12px",
+              width: "24px",
+              height: "24px",
+              borderTop: "1.5px solid rgba(201,165,78,0.2)",
+              borderRight: "1.5px solid rgba(201,165,78,0.2)",
+              borderRadius: "0 8px 0 0",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              bottom: "12px",
+              left: "12px",
+              width: "24px",
+              height: "24px",
+              borderBottom: "1.5px solid rgba(201,165,78,0.2)",
+              borderLeft: "1.5px solid rgba(201,165,78,0.2)",
+              borderRadius: "0 0 0 8px",
+            }}
+          />
+
+          {/* Badges */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" }}>
+            <span
+              style={{
+                background: `linear-gradient(135deg, ${mood.accent}22, ${mood.accent}08)`,
+                border: `1px solid ${mood.accent}33`,
+                padding: "4px 12px",
+                borderRadius: "10px",
+                fontSize: "9px",
+                fontWeight: 800,
+                letterSpacing: "2.5px",
+                color: mood.accent,
+                textTransform: "uppercase",
+                transition: "all 0.4s ease",
+              }}
+            >
+              Guión Activo
+            </span>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "5px",
+                background: "rgba(201,165,78,0.06)",
+                border: "1px solid rgba(201,165,78,0.15)",
+                borderRadius: "10px",
+                padding: "4px 10px",
+              }}
+            >
+              <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: "#c9a54e" }} />
+              <span style={{ fontSize: "9px", color: "#c9a54e", fontWeight: 700, letterSpacing: "1.5px" }}>
+                {moodObj.label.toUpperCase()}
+              </span>
+            </div>
+          </div>
+
+          {/* Script content */}
+          <div style={{ flex: 1, overflowY: "auto", paddingRight: "6px" }}>
+            {!phase.hasForm ? (
+              <pre
+                style={{
+                  fontFamily: "'DM Sans', 'Inter', sans-serif",
+                  fontSize: "13.5px",
+                  lineHeight: 1.9,
+                  color: "#d1d5db",
+                  whiteSpace: "pre-wrap",
+                  wordBreak: "break-word",
+                  margin: 0,
+                  letterSpacing: "0.15px",
+                }}
+              >
+                {phase.script[activeMood]}
+              </pre>
+            ) : (
+              <div>
+                <pre
+                  style={{
+                    fontFamily: "'DM Sans', 'Inter', sans-serif",
+                    fontSize: "13.5px",
+                    lineHeight: 1.9,
+                    color: "#d1d5db",
+                    whiteSpace: "pre-wrap",
+                    wordBreak: "break-word",
+                    margin: "0 0 20px",
+                  }}
+                >
+                  {phase.script[activeMood]}
+                </pre>
+                <div
+                  style={{
+                    background: "linear-gradient(140deg, rgba(201,165,78,0.07), rgba(201,165,78,0.02))",
+                    borderRadius: "16px",
+                    padding: "20px",
+                    border: "1px solid rgba(201,165,78,0.12)",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "10px",
+                      fontWeight: 800,
+                      letterSpacing: "2.5px",
+                      color: "#c9a54e",
+                      textTransform: "uppercase",
+                      marginBottom: "14px",
+                      display: "block",
+                    }}
+                  >
+                    📋 Datos del Cliente
+                  </span>
+                  {[
+                    { key: "nombre", label: "Nombre completo", placeholder: "Ej: Dr. García" },
+                    { key: "negocio", label: "Negocio / Clínica", placeholder: "Ej: Clínica Dental Sonríe" },
+                    { key: "telefono", label: "Teléfono / WhatsApp", placeholder: "Ej: +52 55 1234 5678" },
+                    { key: "horario", label: "Día y hora de reunión", placeholder: "Ej: Martes 3pm" },
+                    { key: "notas", label: "Notas adicionales", placeholder: "Observaciones..." },
+                  ].map((field) => (
+                    <div key={field.key} style={{ marginBottom: "10px" }}>
+                      <label
+                        style={{
+                          fontSize: "10px",
+                          color: "#7a8599",
+                          fontWeight: 600,
+                          display: "block",
+                          marginBottom: "4px",
+                          letterSpacing: "0.5px",
+                        }}
+                      >
+                        {field.label}
+                      </label>
+                      <input
+                        type="text"
+                        placeholder={field.placeholder}
+                        value={formData[field.key]}
+                        onChange={(e) => setFormData({ ...formData, [field.key]: e.target.value })}
+                        style={{
+                          width: "100%",
+                          background: "rgba(0,0,0,0.3)",
+                          border: "1px solid rgba(201,165,78,0.12)",
+                          borderRadius: "10px",
+                          padding: "10px 14px",
+                          color: "#e2e8f0",
+                          fontSize: "12.5px",
+                          outline: "none",
+                          boxSizing: "border-box",
+                          transition: "border-color 0.25s ease, box-shadow 0.25s ease",
+                          fontFamily: "inherit",
+                        }}
+                        onFocus={(e) => {
+                          e.target.style.borderColor = "#c9a54e44";
+                          e.target.style.boxShadow = "0 0 20px rgba(201,165,78,0.08)";
+                        }}
+                        onBlur={(e) => {
+                          e.target.style.borderColor = "rgba(201,165,78,0.12)";
+                          e.target.style.boxShadow = "none";
+                        }}
+                      />
+                    </div>
+                  ))}
+                  <button
+                    style={{
+                      width: "100%",
+                      marginTop: "10px",
+                      background: "linear-gradient(135deg, #c9a54e, #9a7b30)",
+                      border: "none",
+                      borderRadius: "12px",
+                      padding: "12px",
+                      color: "#060b18",
+                      fontSize: "12px",
+                      fontWeight: 800,
+                      letterSpacing: "1.5px",
+                      textTransform: "uppercase",
+                      cursor: "pointer",
+                      transition: "all 0.25s ease",
+                      boxShadow: "0 6px 24px rgba(201,165,78,0.25)",
+                      fontFamily: "inherit",
+                    }}
+                    onMouseOver={(e) => {
+                      e.target.style.transform = "translateY(-1px)";
+                      e.target.style.boxShadow = "0 8px 30px rgba(201,165,78,0.35)";
+                    }}
+                    onMouseOut={(e) => {
+                      e.target.style.transform = "translateY(0)";
+                      e.target.style.boxShadow = "0 6px 24px rgba(201,165,78,0.25)";
+                    }}
+                  >
+                    Guardar y confirmar cita
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* RIGHT OBJECTION CARDS */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: "1", minWidth: 0 }}>
+          {rightObjs.map((obj, idx) => {
+            const realIdx = idx + 2;
+            const isExp = expandedCard === realIdx;
+            return (
+              <div
+                key={idx}
+                onClick={() => handleExpand(realIdx)}
+                style={{
+                  borderRadius: "18px",
+                  backdropFilter: "blur(24px)",
+                  cursor: "pointer",
+                  transition: "all 0.45s cubic-bezier(0.16, 1, 0.3, 1)",
+                  position: "relative",
+                  overflow: "hidden",
+                  background: isExp
+                    ? "linear-gradient(155deg, rgba(56,89,160,0.35), rgba(20,30,60,0.55), rgba(40,70,140,0.2))"
+                    : "linear-gradient(155deg, rgba(30,50,100,0.2), rgba(12,18,35,0.45), rgba(25,45,90,0.15))",
+                  border: isExp ? `1px solid ${mood.accent}55` : "1px solid rgba(80,120,220,0.1)",
+                  boxShadow: isExp
+                    ? `0 20px 50px rgba(0,0,0,0.35), 0 0 40px ${mood.accent}0a, inset 0 1px 0 rgba(255,255,255,0.08)`
+                    : "0 8px 28px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.04)",
+                  padding: "22px 18px",
+                  display: "flex",
+                  flexDirection: "column",
+                  transform: isExp ? "translateY(-4px) scale(1.01)" : "translateY(0) scale(1)",
+                }}
+              >
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: "15%",
+                    right: "15%",
+                    height: "1.5px",
+                    background: isExp
+                      ? `linear-gradient(90deg, transparent, ${mood.accent}66, transparent)`
+                      : "linear-gradient(90deg, transparent, rgba(100,150,255,0.1), transparent)",
+                    transition: "all 0.4s ease",
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: "9px",
+                    fontWeight: 800,
+                    letterSpacing: "2.5px",
+                    color: isExp ? mood.accent : "#4a5568",
+                    textTransform: "uppercase",
+                    marginBottom: "6px",
+                    transition: "color 0.3s ease",
+                  }}
+                >
+                  Objeción
+                </span>
+                <span
+                  style={{
+                    fontSize: "14px",
+                    fontWeight: 700,
+                    color: isExp ? "#f1f5f9" : "#cbd5e1",
+                    lineHeight: 1.35,
+                    transition: "color 0.3s ease",
+                  }}
+                >
+                  {obj.title}
+                </span>
+                {isExp && (
+                  <div
+                    style={{
+                      marginTop: "14px",
+                      padding: "14px",
+                      background: `linear-gradient(135deg, ${mood.accent}0c, transparent)`,
+                      borderRadius: "12px",
+                      border: `1px solid ${mood.accent}18`,
+                      animation: "fadeSlideIn 0.35s ease",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "9px",
+                        fontWeight: 700,
+                        color: mood.accent,
+                        letterSpacing: "2px",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Respuesta — {moodObj.label}
+                    </span>
+                    <p style={{ fontSize: "12.5px", lineHeight: 1.75, color: "#b0bec5", margin: "8px 0 0" }}>
+                      {obj.responses[activeMood]}
+                    </p>
+                  </div>
+                )}
+                {!isExp && (
+                  <span style={{ fontSize: "10px", color: "#2d3748", marginTop: "8px", fontStyle: "italic" }}>
+                    Toca para ver respuesta
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── NAVIGATION ── */}
+      <div
+        style={{
+          position: "fixed",
+          bottom: "20px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          display: "flex",
+          alignItems: "center",
+          gap: "14px",
+          zIndex: 100,
+          background: "rgba(6,11,24,0.85)",
+          backdropFilter: "blur(24px)",
+          borderRadius: "18px",
+          padding: "8px 14px",
+          border: "1px solid rgba(255,255,255,0.05)",
+          boxShadow: "0 12px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04)",
+        }}
+      >
+        <button
+          onClick={() => navigate(-1)}
+          disabled={currentPhase === 0}
+          style={{
+            background: currentPhase === 0 ? "transparent" : "rgba(255,255,255,0.04)",
+            border: currentPhase === 0 ? "1px solid rgba(255,255,255,0.03)" : "1px solid rgba(255,255,255,0.07)",
+            borderRadius: "12px",
+            padding: "9px 18px",
+            color: currentPhase === 0 ? "#1e293b" : "#64748b",
+            fontSize: "11px",
+            fontWeight: 700,
+            cursor: currentPhase === 0 ? "not-allowed" : "pointer",
+            transition: "all 0.25s ease",
+            letterSpacing: "0.5px",
+            fontFamily: "inherit",
+          }}
+        >
+          ← Anterior
+        </button>
+
+        <div style={{ display: "flex", alignItems: "center", gap: "4px", padding: "0 8px" }}>
+          <span style={{ fontSize: "14px", fontWeight: 800, color: "#c9a54e" }}>{phase.id}</span>
+          <span style={{ fontSize: "10px", color: "#2d3748" }}>/</span>
+          <span style={{ fontSize: "10px", color: "#2d3748" }}>7</span>
+        </div>
+
+        <button
+          onClick={() => navigate(1)}
+          disabled={currentPhase === 6}
+          style={{
+            background:
+              currentPhase === 6 ? "transparent" : `linear-gradient(135deg, ${mood.accent}28, ${mood.accent}0c)`,
+            border: `1px solid ${currentPhase === 6 ? "rgba(255,255,255,0.03)" : mood.accent + "40"}`,
+            borderRadius: "12px",
+            padding: "9px 18px",
+            color: currentPhase === 6 ? "#1e293b" : mood.accent,
+            fontSize: "11px",
+            fontWeight: 800,
+            cursor: currentPhase === 6 ? "not-allowed" : "pointer",
+            transition: "all 0.25s ease",
+            letterSpacing: "0.5px",
+            fontFamily: "inherit",
+          }}
+        >
+          Siguiente →
+        </button>
+      </div>
+
+      <style>{`
+        @keyframes fadeSlideIn {
+          from { opacity: 0; transform: translateY(6px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+        input::placeholder { color: #374151; }
+      `}</style>
     </div>
-    <div class="rblk">
-      <div class="rblk-lbl">Objeciones comunes</div>
-      ${p.objs.map(o=>`<div class="oi"><div class="oq">${e(o.q)}</div><div class="oa">${e(o.a)}</div></div>`).join('')}
-    </div>
-    <div class="rblk">
-      <div class="rblk-lbl">Haz / No hagas</div>
-      ${p.rules.do.map(r=>`<div class="rl do">${e(r)}</div>`).join('')}
-      ${p.rules.no.map(r=>`<div class="rl no">${e(r)}</div>`).join('')}
-    </div>`;
+  );
 }
-render();
-</script>
-</body>
-</html>
