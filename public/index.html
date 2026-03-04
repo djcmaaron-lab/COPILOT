@@ -1,1165 +1,707 @@
-import { useState, useEffect } from "react";
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Copilot PSY — Sales Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+body{font-family:'DM Sans',sans-serif;background:linear-gradient(170deg,#eef1f7 0%,#fff 40%,#f6f7fc 70%,#faf8f2 100%);min-height:100vh;overflow-x:hidden;color:#1a1a2e}
 
-const MOODS = [
-  { id: "receptivo", label: "Receptivo", color: "#22c55e", emoji: "🟢" },
-  { id: "esceptico", label: "Escéptico", color: "#f59e0b", emoji: "🟡" },
-  { id: "agresivo", label: "Agresivo", color: "#ef4444", emoji: "🔴" },
-  { id: "analitico", label: "Analítico", color: "#3b82f6", emoji: "🔵" },
-  { id: "indeciso", label: "Indeciso", color: "#a855f7", emoji: "🟣" },
-];
+/* HEADER */
+.header{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:12px 28px;background:linear-gradient(180deg,rgba(255,255,255,.97) 70%,rgba(255,255,255,0));backdrop-filter:blur(12px)}
+.logo-area{display:flex;align-items:center;gap:12px}
+.logo-text{font-weight:800;font-size:13px;letter-spacing:3.5px;color:#b8942e;text-transform:uppercase}
+.logo-sep{width:1px;height:16px;background:rgba(184,148,46,.25)}
+.logo-sub{font-size:11px;color:#9ca3af;letter-spacing:1.5px;text-transform:uppercase}
+.mood-bar{display:flex;gap:4px;align-items:center}
+.mood-btn{border:none;border-radius:20px;padding:4px 8px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .3s cubic-bezier(.16,1,.3,1);font-family:inherit;background:rgba(0,0,0,.02);border:1px solid rgba(0,0,0,.04)}
+.mood-btn.active{padding:4px 12px;transform:scale(1.05);box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.mood-emoji{font-size:14px;line-height:1}
+.mood-label{font-size:10px;font-weight:700;letter-spacing:.5px}
 
-const PHASES = [
-  {
-    id: 1,
-    name: "Presentación",
-    subtitle: "Filtro al decisor",
-    timer: "< 30 seg",
-    script: {
-      receptivo: "¡Hola! ¿[NEGOCIO]?\nSoy Aarón de Sykes AI.\n¿Estoy hablando con el encargado?\n[Esperar respuesta]\n\n💡 Energía alta. Cierra rápido. Llega al dueño en el primer segundo.",
-      esceptico: "¡Hola! ¿[NEGOCIO]?\nSoy Aarón de Sykes AI.\n¿Con quién tengo el gusto?\n[Esperar respuesta]\n\n💡 Sé directo pero respetuoso. No des info de más. Solo filtra.",
-      agresivo: "¡Hola! ¿[NEGOCIO]?\nSoy Aarón, llamo de parte del área de tecnología.\n¿El encargado se encuentra?\n[Esperar respuesta]\n\n💡 Tono firme y profesional. Sin titubeos. Ve al grano.",
-      analitico: "¡Hola! ¿[NEGOCIO]?\nSoy Aarón de Sykes AI.\n¿Me comunico con el responsable de la gestión?\n[Esperar respuesta]\n\n💡 Usa palabras técnicas. Sé preciso. No adornes.",
-      indeciso: "¡Hola! ¿[NEGOCIO]?\nSoy Aarón de Sykes AI.\n¿Con quién podría hablar sobre la gestión del negocio?\n[Esperar respuesta]\n\n💡 Sé cálido y guía la conversación. No dejes espacios largos de silencio.",
-    },
-    objections: [
-      {
-        title: "¿De qué se trata?",
-        responses: {
-          receptivo: "Es sobre captación de pacientes por WhatsApp. 2 minutos con el dueño y listo.",
-          esceptico: "Es sobre un sistema de captación digital. ¿Usted es el encargado? Solo necesito 2 minutos.",
-          agresivo: "Es sobre tecnología para negocios. ¿El dueño se encuentra? Es breve.",
-          analitico: "Es sobre un sistema de automatización para captación de clientes. ¿Puedo hablar con quien toma las decisiones?",
-          indeciso: "Es algo que le puede interesar al dueño, es rápido. ¿Me lo puede comunicar?",
-        },
-      },
-      {
-        title: "No pasan comerciales",
-        responses: {
-          receptivo: "No es una venta, es un análisis. El dueño lo agradeció en otras clínicas. ¿A qué hora lo ubico?",
-          esceptico: "Entiendo. No es una llamada comercial, es una evaluación gratuita. ¿A qué hora puedo llamar?",
-          agresivo: "No es comercial. Es un análisis que ya se hizo en clínicas similares. ¿A qué hora está el encargado?",
-          analitico: "Comprendo la política. Es una evaluación técnica sin compromiso. ¿Cuál sería el mejor horario?",
-          indeciso: "Claro, lo entiendo. Solo es una consulta rápida. ¿Me puede decir a qué hora está disponible?",
-        },
-      },
-      {
-        title: "Ya es el decisor",
-        responses: {
-          receptivo: "¡Perfecto, [NOMBRE]! Tengo algo que te va a llamar la atención sobre tu clínica. Te hago una pregunta rápida.",
-          esceptico: "Perfecto. Seré breve y directo. Tengo una pregunta sobre cómo manejan la captación actualmente.",
-          agresivo: "Bien, [NOMBRE]. Voy al grano. ¿Cómo están captando clientes nuevos hoy?",
-          analitico: "Excelente. Permítame hacerle una consulta puntual sobre su proceso actual de captación de clientes.",
-          indeciso: "Qué bueno que hablo contigo. Mira, te cuento algo rápido que puede ayudarte. ¿Tienes un minuto?",
-        },
-      },
-      {
-        title: "Espejear el tono",
-        responses: {
-          receptivo: "PERFIL: Cliente abierto. Espejea su energía. Ritmo rápido. Habla como colega. Sonríe de verdad.",
-          esceptico: "PERFIL: Cliente cauteloso. Baja la energía. Sé factual. No exageres. Gana credibilidad.",
-          agresivo: "PERFIL: Cliente confrontativo. No te achiques. Sé firme pero respetuoso. No discutas, redirige.",
-          analitico: "PERFIL: Cliente metódico. Usa datos. Sé estructurado. No uses jerga emocional. Hechos > opiniones.",
-          indeciso: "PERFIL: Cliente dudoso. Sé guía. Toma la iniciativa. Haz preguntas cerradas. Facilita decisiones.",
-        },
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: "Cantar el dolor",
-    subtitle: "Encontrar la necesidad",
-    timer: "30-60 seg",
-    script: {
-      receptivo: "[NOMBRE], te hago una pregunta directa:\n¿Cómo están captando pacientes nuevos hoy?\n[Esperar respuesta]\n\n¿Y qué tal les funciona? ¿Llegan solos o tienen que buscarlos?\n\n💡 Escucha activa. Deja que hable. Usa sus palabras después.",
-      esceptico: "[NOMBRE], una consulta rápida:\n¿Actualmente tienen algún sistema para atraer pacientes nuevos?\n[Esperar respuesta]\n\n¿Sienten que es suficiente o hay meses flojos?\n\n💡 No asumas dolor. Pregunta y deja que lo descubra solo.",
-      agresivo: "[NOMBRE], directo al punto:\n¿De dónde vienen sus pacientes nuevos hoy?\n[Esperar respuesta]\n\n¿Y eso les alcanza para crecer?\n\n💡 Sé breve. Preguntas cortas. No lo hagas sentir interrogado.",
-      analitico: "[NOMBRE], me gustaría entender su operación:\n¿Qué canales utilizan actualmente para captación?\n[Esperar respuesta]\n\n¿Tienen métricas de cuántos pacientes nuevos entran al mes?\n\n💡 Habla en datos. Si da números, úsalos a tu favor después.",
-      indeciso: "[NOMBRE], cuéntame un poco:\n¿Cómo les va con la llegada de pacientes nuevos?\n[Esperar respuesta]\n\nA veces cuesta mantener el flujo, ¿verdad?\n\n💡 Valida lo que diga. Hazlo sentir entendido. Guía suavemente.",
-    },
-    objections: [
-      {
-        title: "Ya tenemos suficientes clientes",
-        responses: {
-          receptivo: "¡Qué bien! ¿Y si pudieras tener aún más sin esfuerzo extra? Solo para que elijas a los mejores.",
-          esceptico: "Me alegra. ¿Tienen capacidad para más? Porque lo que hacemos es optimizar, no saturar.",
-          agresivo: "Perfecto. Hablemos de calidad, no cantidad. ¿Todos los que llegan son el tipo que quieren?",
-          analitico: "Interesante. ¿Cuál es su tasa de ocupación actual? Muchas clínicas creen estar llenas pero tienen huecos.",
-          indeciso: "Qué bueno. ¿Siempre es así o hay temporadas donde baja? Porque ahí es donde esto ayuda.",
-        },
-      },
-      {
-        title: "No tengo tiempo ahora",
-        responses: {
-          receptivo: "Totalmente, ¿a qué hora te queda mejor? Te llamo en 2 minutos exactos.",
-          esceptico: "Entiendo. ¿Cuándo sería un buen momento? Solo necesito 2 minutos de su tiempo.",
-          agresivo: "Sin problema. Dime un horario y te llamo puntual. Son 2 minutos.",
-          analitico: "Comprendo. ¿Le parece si agendamos una llamada de 5 minutos cuando tenga disponibilidad?",
-          indeciso: "Claro, no hay prisa. ¿Te parece si te llamo mañana en la mañana? ¿O prefieres en la tarde?",
-        },
-      },
-      {
-        title: "¿Esto es publicidad?",
-        responses: {
-          receptivo: "No exactamente. Es un diagnóstico gratuito. Te digo en 1 minuto si aplica para tu negocio.",
-          esceptico: "No. Es una evaluación sin costo. Si no aplica, yo mismo se lo digo.",
-          agresivo: "No. Es un análisis directo. Sin compromiso. Si no te sirve, lo dejamos ahí.",
-          analitico: "Es una evaluación técnica de su proceso de captación. No es publicidad, es un diagnóstico basado en datos.",
-          indeciso: "No, para nada. Solo quiero hacerte unas preguntas para ver si te podemos ayudar. Sin compromiso.",
-        },
-      },
-      {
-        title: "Ya tenemos marketing",
-        responses: {
-          receptivo: "¡Genial! Esto complementa lo que ya hacen. Es un canal adicional que trabaja solo.",
-          esceptico: "Bien. ¿Están satisfechos con los resultados? Porque esto trabaja diferente al marketing tradicional.",
-          agresivo: "Perfecto. ¿Cuántos pacientes nuevos les genera al mes? Esto es medible desde el día 1.",
-          analitico: "Excelente. ¿Qué ROI están viendo? Lo que ofrecemos se mide paciente por paciente.",
-          indeciso: "Qué bien. ¿Sienten que funciona bien o a veces no ven resultados claros?",
-        },
-      },
-    ],
-  },
-  {
-    id: 3,
-    name: "Propuesta de valor",
-    subtitle: "Presentar la solución",
-    timer: "45-90 seg",
-    script: {
-      receptivo: "Mira [NOMBRE], te cuento rápido:\n\nInstalamos un sistema de WhatsApp automatizado que capta pacientes por ti.\n\nEl paciente te escribe, el bot lo atiende, califica y agenda.\nTú solo llegas a la cita.\n\n¿Te imaginas tener eso funcionando 24/7?\n\n💡 Pinta el cuadro. Hazlo visual. Que se vea usando el sistema.",
-      esceptico: "[NOMBRE], le explico brevemente:\n\nTenemos un sistema que automatiza la captación por WhatsApp.\n\nFunciona así: el paciente llega por anuncio, el bot lo atiende, lo califica y agenda.\n\nNo requiere nada manual.\n\n¿Le gustaría saber cómo funciona técnicamente?\n\n💡 Sé concreto. Explica el cómo. No vendas el sueño, vende el proceso.",
-      agresivo: "[NOMBRE], voy al punto:\n\nSistema de captación por WhatsApp. Automático.\nPaciente llega → Bot atiende → Agenda cita.\n\nSin que toques nada. Resultados desde la primera semana.\n\n¿Cuántos pacientes nuevos necesitas al mes?\n\n💡 Números y resultados. Sin floreos. Directo.",
-      analitico: "[NOMBRE], permítame explicarle el sistema:\n\n1. Campañas segmentadas que atraen prospectos\n2. Bot de WhatsApp que califica automáticamente\n3. Agenda integrada que programa citas\n4. Dashboard con métricas en tiempo real\n\nTodo medible, todo automatizado.\n\n💡 Estructura la info. Pasos claros. Datos medibles.",
-      indeciso: "[NOMBRE], te explico de forma sencilla:\n\nNosotros nos encargamos de que te lleguen pacientes nuevos por WhatsApp.\n\nTodo es automático. Tú no tienes que hacer nada.\nSolo atender las citas que se agenden.\n\n¿Suena bien o tienes alguna duda?\n\n💡 Simplifica al máximo. Quita complejidad. Pregunta si tiene dudas.",
-    },
-    objections: [
-      {
-        title: "¿Cuánto cuesta?",
-        responses: {
-          receptivo: "Depende del plan, pero con 2-3 pacientes nuevos ya se paga solo. ¿Quieres ver los números?",
-          esceptico: "Antes del precio, déjeme mostrarle el retorno. Con los números claros, el precio se justifica solo.",
-          agresivo: "La inversión se recupera con 2 pacientes. ¿Quieres que te haga los números?",
-          analitico: "Los planes van desde X. Pero lo importante es el ROI: costo por paciente vs valor de vida del paciente.",
-          indeciso: "Es una inversión accesible. Pero primero déjame mostrarte cómo funciona para que veas si hace sentido.",
-        },
-      },
-      {
-        title: "Necesito pensarlo",
-        responses: {
-          receptivo: "¡Claro! ¿Qué te parece si te mando un resumen y hablamos mañana? Así lo piensas con info fresca.",
-          esceptico: "Entiendo. ¿Qué información adicional necesitaría para tomar la decisión?",
-          agresivo: "Bien. ¿Qué necesitas pensar exactamente? Quizás puedo resolverlo ahora.",
-          analitico: "Comprendo. ¿Le sería útil un documento con casos de estudio y métricas detalladas?",
-          indeciso: "Claro, tómate tu tiempo. ¿Te parece si agendamos para el jueves? Así lo platicamos con calma.",
-        },
-      },
-      {
-        title: "¿Tienen resultados comprobables?",
-        responses: {
-          receptivo: "¡Sí! Tenemos clínicas que pasaron de 5 a 30 pacientes nuevos al mes. Te puedo mostrar.",
-          esceptico: "Sí. Tenemos métricas reales de clínicas similares. ¿Le gustaría ver los números?",
-          agresivo: "Sí, resultados medibles. Clínica X pasó de 8 a 35 en 60 días. ¿Quieres ver más?",
-          analitico: "Tenemos un track record documentado. Puedo compartirle un reporte con métricas de rendimiento.",
-          indeciso: "Sí, muchas clínicas ya lo usan y están contentas. Te puedo mostrar testimonios.",
-        },
-      },
-      {
-        title: "Suena a estafa / MLM",
-        responses: {
-          receptivo: "Jaja, te entiendo. Pero es tecnología real. Te puedo mostrar el sistema funcionando ahora mismo.",
-          esceptico: "Comprendo la duda. Le invito a ver una demo en vivo. Sin compromiso.",
-          agresivo: "Entiendo. No hay red, no hay multinivel. Es un servicio directo. ¿Quieres ver la demo?",
-          analitico: "Es una preocupación válida. Somos empresa de tecnología con clientes verificables. Puedo enviar referencias.",
-          indeciso: "Es normal dudarlo. ¿Qué te parece si te muestro cómo funciona? Así lo ves con tus propios ojos.",
-        },
-      },
-    ],
-  },
-  {
-    id: 4,
-    name: "Prueba social",
-    subtitle: "Generar confianza",
-    timer: "30-45 seg",
-    script: {
-      receptivo: "[NOMBRE], te cuento un caso real:\n\nUna clínica dental como la tuya tenía 8 pacientes nuevos al mes.\n\nEn 60 días llegaron a 35. Sin hacer nada manual.\n\nHoy el dueño dice que fue la mejor decisión del año.\n\n¿Te gustaría tener resultados similares?\n\n💡 Cuenta la historia con emoción. Hazlo vivir el resultado.",
-      esceptico: "[NOMBRE], le comparto datos concretos:\n\nClínica similar: 8 pacientes/mes → 35 en 60 días.\nCosto por paciente: reducido en un 60%.\nTasa de agendamiento: 73%.\n\nSon números auditables.\n\n💡 Datos duros. Sin emociones. Deja que los números hablen.",
-      agresivo: "[NOMBRE], sin rodeos:\n\nClínica dental → 8 a 35 pacientes/mes en 60 días.\nOtra clínica estética → triplicó consultas en 45 días.\n\nFunciona. Punto.\n\n¿Cuántos pacientes necesitas para que valga la pena?\n\n💡 Resultados rápidos. Sin historia larga. Impacto directo.",
-      analitico: "[NOMBRE], estos son nuestros benchmarks:\n\n• Promedio de aumento: 3.2x en pacientes nuevos\n• Tiempo medio de resultados: 45-60 días\n• Tasa de agendamiento: 68-75%\n• ROI promedio: 4.7x en 90 días\n\n¿Quiere ver el desglose por industria?\n\n💡 Benchmarks y promedios. Habla en métricas de industria.",
-      indeciso: "[NOMBRE], muchos dueños tenían las mismas dudas.\n\nPero después de probar, dicen lo mismo: \"¿Por qué no lo hice antes?\"\n\nUna clínica como la tuya pasó de 8 a 35 pacientes.\n\nY lo mejor: no tuvieron que hacer nada complicado.\n\n💡 Normaliza la duda. Muestra que otros también dudaron y les fue bien.",
-    },
-    objections: [
-      {
-        title: "Eso funciona en otros rubros, no el mío",
-        responses: {
-          receptivo: "Te entiendo, pero justamente tenemos casos en tu rubro. ¿Quieres que te muestre uno?",
-          esceptico: "Es una duda válida. ¿En qué rubro está? Tengo datos específicos para varios sectores.",
-          agresivo: "Funciona en cualquier negocio que atienda citas. ¿Cuál es tu rubro? Te doy el caso.",
-          analitico: "Tenemos datos segmentados por industria. ¿Me indica su rubro para compartirle métricas?",
-          indeciso: "Muchos pensaron lo mismo. ¿Me dices tu rubro? Te muestro si tenemos algo similar.",
-        },
-      },
-      {
-        title: "Los bots no funcionan",
-        responses: {
-          receptivo: "Antes sí eran malos. Pero este es diferente: usa IA real. Los pacientes ni se dan cuenta.",
-          esceptico: "Entiendo. Este bot usa IA conversacional avanzada. El 89% no detecta que es bot.",
-          agresivo: "Este no es un bot cualquiera. Es IA que convierte. 73% tasa de agendamiento.",
-          analitico: "Los bots tradicionales fallan, correcto. Este usa NLP con 89% satisfacción en interacción.",
-          indeciso: "Es normal pensar eso. Pero este es muy diferente. ¿Te gustaría probarlo tú mismo?",
-        },
-      },
-      {
-        title: "Mi paciente no usa WhatsApp",
-        responses: {
-          receptivo: "¡Te sorprenderías! El 93% de adultos en LATAM usa WhatsApp. Es donde están tus pacientes.",
-          esceptico: "Las estadísticas dicen que el 93% usa WhatsApp. Incluso el segmento 50+.",
-          agresivo: "93% de penetración en LATAM. Tu paciente sí lo usa. ¿Llegas a él primero?",
-          analitico: "La penetración de WhatsApp en LATAM es del 93%. En segmento 35-65, supera el 88%.",
-          indeciso: "Casi todos usan WhatsApp hoy, incluso los mayores. ¿Te preocupa un segmento en particular?",
-        },
-      },
-      {
-        title: "Conozco a alguien que intentó y no le funcionó",
-        responses: {
-          receptivo: "Puede pasar si no se implementa bien. Nosotros acompañamos todo el proceso.",
-          esceptico: "¿Sabe qué sistema usaron? Muchos fallan por mala implementación. Nosotros garantizamos setup.",
-          agresivo: "Hay muchos que lo hacen mal. Nosotros tenemos resultados comprobados. ¿Quieres ver?",
-          analitico: "El 70% de fracasos son por mala configuración. Nosotros hacemos setup completo y optimización.",
-          indeciso: "Es posible que no tuvieran buen soporte. Nosotros acompañamos paso a paso.",
-        },
-      },
-    ],
-  },
-  {
-    id: 5,
-    name: "Cierre tentativo",
-    subtitle: "Proponer siguiente paso",
-    timer: "30-45 seg",
-    script: {
-      receptivo: "[NOMBRE], esto es lo que te propongo:\n\nHacemos una demo de 15 minutos donde te muestro el sistema con tu negocio.\n\nSin compromiso. Si te gusta, avanzamos. Si no, aquí no pasó nada.\n\n¿Te queda mejor hoy en la tarde o mañana en la mañana?\n\n💡 Alternativa de cierre. No preguntes SI quiere, pregunta CUÁNDO.",
-      esceptico: "[NOMBRE], le propongo lo siguiente:\n\nUna sesión de diagnóstico de 15 minutos. Sin costo.\n\nLe muestro exactamente cómo funcionaría en su caso.\n\nSi no le convence, no hay compromiso alguno.\n\n¿Tiene disponibilidad esta semana?\n\n💡 Quita el riesgo. Hazlo sentir en control. Sin presión.",
-      agresivo: "[NOMBRE], siguiente paso:\n\nDemo de 15 minutos. Te muestro resultados reales para tu rubro.\n\nSi no te convence en 5 minutos, cortamos.\n\n¿Hoy o mañana?\n\n💡 Directo. Ahorra tiempo. Dale control sobre el tiempo.",
-      analitico: "[NOMBRE], el siguiente paso lógico sería:\n\n1. Demo personalizada de 15 minutos\n2. Diagnóstico específico para su operación\n3. Proyección de resultados basada en sus datos\n\nTodo sin compromiso. ¿Qué día le funciona?\n\n💡 Estructura el paso. Hazlo ver como proceso lógico.",
-      indeciso: "[NOMBRE], mira, lo que podemos hacer es esto:\n\nTe muestro el sistema en 15 minutos. Solo es ver cómo funciona.\n\nSi te gusta, genial. Si no, no pasa absolutamente nada.\n\n¿Qué te parece? ¿Mañana te queda bien?\n\n💡 Facilita la decisión. Quita presión. Ofrece opción fácil.",
-    },
-    objections: [
-      {
-        title: "Mándame info por WhatsApp",
-        responses: {
-          receptivo: "¡Claro! Te la mando ahora. Pero en 15 min te explico mejor que cualquier PDF. ¿A qué hora?",
-          esceptico: "Se la envío. Pero en 15 minutos le resuelvo todas las dudas. ¿Agendamos también?",
-          agresivo: "Te la mando. Pero la info real está en la demo. 15 minutos. ¿Cuándo?",
-          analitico: "Le envío el material con casos de estudio. ¿Agendamos también una sesión para profundizar?",
-          indeciso: "Sí, te la mando. Y si quieres, agendamos llamadita corta para explicarte mejor. ¿Te parece?",
-        },
-      },
-      {
-        title: "Tengo que consultarlo con mi socio",
-        responses: {
-          receptivo: "¡Perfecto! ¿Y si hacemos la demo con los dos? Así resolvemos dudas de una vez.",
-          esceptico: "Entiendo. ¿Agendamos con ambos? Así la información llega de primera mano.",
-          agresivo: "Agenda con tu socio para la demo. Los dos ven lo mismo. ¿Qué día pueden?",
-          analitico: "Lógico. ¿Programamos sesión conjunta? Puedo preparar material para ambos decisores.",
-          indeciso: "Claro, es importante. ¿Agendamos cuando puedan los dos? Así se enteran juntos.",
-        },
-      },
-      {
-        title: "Llámame la próxima semana",
-        responses: {
-          receptivo: "¡Dale! ¿Qué día y hora te queda mejor? Así lo agendo y te llamo puntual.",
-          esceptico: "Perfecto. ¿Qué día específico? Así le confirmo y respeto su tiempo.",
-          agresivo: "OK. ¿Lunes o martes? ¿Mañana o tarde? Te llamo al minuto.",
-          analitico: "Entendido. ¿Me puede indicar día y horario preferido para agendar correctamente?",
-          indeciso: "¡Perfecto! ¿El lunes? ¿En la mañana o en la tarde? Tú dime.",
-        },
-      },
-      {
-        title: "No estoy interesado",
-        responses: {
-          receptivo: "Entiendo. Solo una pregunta: ¿ya tienen algo similar o no es prioridad ahora?",
-          esceptico: "Respeto su decisión. ¿Me permite preguntar qué parte no le convenció?",
-          agresivo: "OK. ¿Es por el servicio o por el momento? Si es momento, te llamo después.",
-          analitico: "Comprendo. ¿Podría indicarme qué factor fue determinante? Es info valiosa.",
-          indeciso: "Claro, no hay problema. Si más adelante surge la duda, ¿puedo dejarte mi número?",
-        },
-      },
-    ],
-  },
-  {
-    id: 6,
-    name: "Manejo de objeciones",
-    subtitle: "Resolver dudas finales",
-    timer: "45-90 seg",
-    script: {
-      receptivo: "[NOMBRE], entiendo tu punto.\n\nDéjame preguntarte algo:\nSi pudieras tener 20 pacientes nuevos al mes sin esfuerzo extra...\n¿Eso cambiaría algo para ti?\n\n[Esperar respuesta]\n\nEntonces solo es cuestión de resolver esta duda.\n\n💡 Redirige al resultado. Haz que se visualice con el beneficio.",
-      esceptico: "[NOMBRE], es válida su preocupación.\n\nPermítame abordarla directamente:\n[Responder la objeción con datos]\n\n¿Eso resuelve su inquietud o hay algo más?\n\n💡 Responde con datos. No con emoción. Sé transparente.",
-      agresivo: "[NOMBRE], te entiendo. Vamos directo:\n\n[Responder la objeción sin rodeos]\n\n¿Eso aclara el punto o hay algo más?\n\n💡 No te pongas a la defensiva. Responde y avanza.",
-      analitico: "[NOMBRE], permítame abordar eso con datos:\n\n[Presentar evidencia estructurada]\n\n¿Le gustaría ver la documentación de respaldo?\n\n💡 Ofrece pruebas. Documentos. Datos. Deja que verifique.",
-      indeciso: "[NOMBRE], es completamente normal tener esa duda.\n\nMuchos de nuestros clientes pensaron lo mismo.\n\nLo que les ayudó fue [solución específica].\n\n¿Eso te da más tranquilidad?\n\n💡 Normaliza la duda. Resuelve con suavidad.",
-    },
-    objections: [
-      {
-        title: "Es muy caro",
-        responses: {
-          receptivo: "Entiendo. Piénsalo así: ¿cuánto te cuesta NO tener esos pacientes? Con 2-3 se paga solo.",
-          esceptico: "¿Comparado con qué? Si lo ve como inversión: el retorno promedio es 4.7x en 90 días.",
-          agresivo: "¿Cuánto pierdes al mes por no tener pacientes? Eso sí es caro. Esto se paga solo.",
-          analitico: "Hagamos los números: costo mensual vs ingreso por paciente nuevo. Breakeven: 2-3 pacientes.",
-          indeciso: "Entiendo que es inversión importante. ¿Vemos un plan que se ajuste a tu presupuesto?",
-        },
-      },
-      {
-        title: "No confío en la tecnología",
-        responses: {
-          receptivo: "Es normal. ¿Qué tal si lo pruebas y lo ves funcionar? Te acompaño paso a paso.",
-          esceptico: "Comprensible. Por eso ofrecemos demo gratuita. Vea el sistema antes de decidir.",
-          agresivo: "La tecnología no requiere que confíes. Requiere que veas resultados. La demo los muestra.",
-          analitico: "La confianza se construye con datos. Le puedo mostrar la arquitectura y métricas de uptime.",
-          indeciso: "Es normal sentir eso. Nosotros nos encargamos de lo técnico. Tú solo ves pacientes llegar.",
-        },
-      },
-      {
-        title: "Otro proveedor me ofreció lo mismo",
-        responses: {
-          receptivo: "¡Genial que evalúes! La diferencia es que nosotros acompañamos todo. ¿Ves qué nos hace distintos?",
-          esceptico: "¿Qué le ofrecieron exactamente? Los detalles de implementación hacen toda la diferencia.",
-          agresivo: "¿Y qué resultados te dieron? Nosotros hablamos con números verificables. ¿Comparamos?",
-          analitico: "Útil comparar: ¿qué incluye su propuesta? Puedo hacer comparativo técnico punto por punto.",
-          indeciso: "Qué bueno que ves opciones. ¿Quieres que te ayude a comparar? Sin presión.",
-        },
-      },
-      {
-        title: "Mi contador/esposa dice que no",
-        responses: {
-          receptivo: "Entiendo. ¿Qué tal si le muestro los números? Ver el retorno cambia la perspectiva.",
-          esceptico: "¿Cuál es su principal preocupación? Quizás puedo proveer información que ayude.",
-          agresivo: "¿Su preocupación es el costo o el riesgo? Ambos se mitigan con datos correctos.",
-          analitico: "¿Me permite preparar un análisis financiero? Incluiría ROI proyectado.",
-          indeciso: "Claro. ¿Hacemos una llamada donde puedan escuchar juntos? Resolvemos dudas de todos.",
-        },
-      },
-    ],
-  },
-  {
-    id: 7,
-    name: "Cierre y agenda",
-    subtitle: "Agendar reunión / Captura",
-    timer: "60-90 seg",
-    script: {
-      receptivo: "¡Perfecto [NOMBRE]! Entonces agendamos:\n\n📅 Completa los datos del cliente abajo.\n\nTe confirmo por WhatsApp y te mando recordatorio.\n\n¡Va a ser una gran reunión!\n\n💡 Energía alta. Celebra el cierre. Haz que se sienta bien.",
-      esceptico: "Perfecto [NOMBRE]. Procedo a agendar la sesión.\n\n📅 Permítame tomar sus datos.\n\nRecibirá confirmación por WhatsApp con todos los detalles.\n\n💡 Profesional. Confirma todo. Haz que se sienta seguro.",
-      agresivo: "Hecho, [NOMBRE]. Agendado.\n\n📅 Dame tus datos para confirmar.\n\nTe mando confirmación inmediata.\n\n💡 Rápido. Sin demora. Cierra y confirma.",
-      analitico: "Excelente [NOMBRE]. Procedemos con el agendamiento.\n\n📅 Necesito los siguientes datos.\n\nRecibirá correo con la agenda detallada.\n\n💡 Proceso claro. Confirma cada dato. Envía agenda estructurada.",
-      indeciso: "¡Qué bueno que te animaste, [NOMBRE]!\n\n📅 Te tomo los datos rapidito.\n\nTe mando todo por WhatsApp para que lo tengas guardado.\n\nVas a ver que va a salir muy bien.\n\n💡 Refuerza la decisión. Hazlo sentir seguro.",
-    },
-    objections: [
-      {
-        title: "¿Me puede llamar otro día?",
-        responses: {
-          receptivo: "¡Claro! Pero ya que estamos, ¿me das tu nombre y número? Así te llamo seguro.",
-          esceptico: "Por supuesto. Permítame tomar sus datos para contactarlo en su horario preferido.",
-          agresivo: "OK. Dame tu número y nombre. Te llamo puntual. ¿Qué día y hora?",
-          analitico: "Entendido. ¿Me proporciona datos de contacto y horario preferido?",
-          indeciso: "Sí, sin problema. ¿Me das tu número? ¿Qué día te queda mejor?",
-        },
-      },
-      {
-        title: "Todavía no estoy seguro",
-        responses: {
-          receptivo: "Normal. La demo es para eso: que veas y decidas. Sin presión. ¿Agendamos?",
-          esceptico: "La sesión es sin compromiso. Es para resolver esas dudas. ¿Probamos?",
-          agresivo: "La demo aclara todo. 15 minutos. Si no te convence, lo dejamos. ¿Cuándo?",
-          analitico: "Comprensible. La sesión le dará la información que necesita para decidir con certeza.",
-          indeciso: "Es normal no estar seguro. La demo es sin compromiso, solo para ver cómo funciona.",
-        },
-      },
-      {
-        title: "Solo dame el precio",
-        responses: {
-          receptivo: "Los planes arrancan en $X. Pero en la demo te muestro cuál te conviene. ¿Agendamos?",
-          esceptico: "Los planes van desde $X hasta $Y. En la demo le personalizo la mejor opción.",
-          agresivo: "Desde $X. Pero el precio sin contexto no sirve. Demo te da números reales. ¿Cuándo?",
-          analitico: "El rango es $X-$Y según volumen. En la sesión hago cotización precisa.",
-          indeciso: "Claro, arrancan en $X. En la demo vemos cuál se ajusta mejor. ¿Te parece?",
-        },
-      },
-      {
-        title: "Tengo que pensarlo más",
-        responses: {
-          receptivo: "¡Totalmente! Piénsalo y te llamo mañana. ¿A qué hora te queda bien?",
-          esceptico: "Respeto su tiempo. ¿Le envío información y seguimos el jueves?",
-          agresivo: "OK. ¿Qué día confirmo? Si es para ti, mejor no dejarlo pasar.",
-          analitico: "Comprendo. ¿Qué información adicional le ayudaría a decidir?",
-          indeciso: "Claro, sin presión. ¿Hablamos de nuevo el viernes? Así lo piensas tranquilo.",
-        },
-      },
-    ],
-    hasForm: true,
-  },
-];
+/* PHASE */
+.phase-bar{position:fixed;top:52px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4px;z-index:90;opacity:0;animation:fadeIn .5s ease .2s forwards}
+.phase-dots{display:flex;gap:3px}
+.pdot{height:3px;border-radius:2px;transition:all .5s cubic-bezier(.16,1,.3,1)}
+.pdot.on{width:26px}.pdot.done{width:6px}.pdot.off{width:6px;background:rgba(0,0,0,.07)}
+.phase-info{display:flex;align-items:center;gap:8px}
+.ptag{font-size:10px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase}
+.pname{font-size:15px;font-weight:700;color:#1a1a2e}
+.psub{font-size:10px;color:#9ca3af;font-style:italic}
+.ptimer{font-size:9px;color:#b0b5c0;letter-spacing:1.5px}
+.pmission{font-size:10px;color:#6b7280;margin-top:1px;font-weight:500}
 
-const moodStyles = {
-  receptivo: { accent: "#22c55e" },
-  esceptico: { accent: "#f59e0b" },
-  agresivo: { accent: "#ef4444" },
-  analitico: { accent: "#3b82f6" },
-  indeciso: { accent: "#a855f7" },
-};
+/* LAYOUT */
+.main{display:flex;align-items:stretch;gap:14px;width:100%;max-width:1460px;margin:120px auto 80px;padding:0 18px;transition:all .35s cubic-bezier(.16,1,.3,1)}
+.main.hide{opacity:0;transform:translateY(14px) scale(.98)}
+.side{display:flex;flex-direction:column;gap:12px;flex:1;min-width:0}
 
-export default function CopilotPSY() {
-  const [currentPhase, setCurrentPhase] = useState(0);
-  const [activeMood, setActiveMood] = useState("receptivo");
-  const [expandedCard, setExpandedCard] = useState(null);
-  const [formData, setFormData] = useState({ nombre: "", telefono: "", negocio: "", horario: "", notas: "" });
-  const [phaseTransition, setPhaseTransition] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    setTimeout(() => setLoaded(true), 100);
-  }, []);
-
-  const phase = PHASES[currentPhase];
-  const mood = moodStyles[activeMood];
-  const moodObj = MOODS.find((m) => m.id === activeMood);
-
-  const navigate = (dir) => {
-    setPhaseTransition(true);
-    setExpandedCard(null);
-    setTimeout(() => {
-      setCurrentPhase((prev) => Math.max(0, Math.min(6, prev + dir)));
-      setPhaseTransition(false);
-    }, 300);
-  };
-
-  const handleExpand = (idx) => {
-    setExpandedCard(expandedCard === idx ? null : idx);
-  };
-
-  const leftObjs = phase.objections.slice(0, 2);
-  const rightObjs = phase.objections.slice(2, 4);
-
-  return (
-    <div
-      style={{
-        width: "100vw",
-        minHeight: "100vh",
-        background: "linear-gradient(170deg, #060b18 0%, #0a1128 35%, #0f1a35 65%, #0c1222 100%)",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        fontFamily: "'Satoshi', 'DM Sans', 'Inter', -apple-system, sans-serif",
-        color: "#e2e8f0",
-        padding: "20px",
-        boxSizing: "border-box",
-        overflow: "hidden",
-        position: "relative",
-      }}
-    >
-      {/* Ambient background glows */}
-      <div
-        style={{
-          position: "fixed",
-          top: "-20%",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "100vw",
-          height: "60vh",
-          background: `radial-gradient(ellipse 60% 50%, ${mood.accent}08, transparent 70%)`,
-          pointerEvents: "none",
-          transition: "background 1s ease",
-        }}
-      />
-      <div
-        style={{
-          position: "fixed",
-          bottom: "-10%",
-          right: "-10%",
-          width: "50vw",
-          height: "50vh",
-          background: "radial-gradient(ellipse, rgba(30,58,138,0.06), transparent 70%)",
-          pointerEvents: "none",
-        }}
-      />
-
-      {/* ── HEADER ── */}
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 100,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "14px 28px",
-          background: "linear-gradient(180deg, rgba(6,11,24,0.97) 60%, rgba(6,11,24,0))",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-          <span
-            style={{
-              fontWeight: 800,
-              fontSize: "13px",
-              letterSpacing: "3.5px",
-              color: "#c9a54e",
-              textTransform: "uppercase",
-            }}
-          >
-            Copilot PSY
-          </span>
-          <div style={{ width: "1px", height: "16px", background: "rgba(201,165,78,0.25)" }} />
-          <span style={{ fontSize: "11px", color: "#4a5568", letterSpacing: "1.5px", textTransform: "uppercase" }}>
-            Sales Hub
-          </span>
-        </div>
-
-        {/* Mood selector */}
-        <div style={{ display: "flex", gap: "5px", alignItems: "center" }}>
-          {MOODS.map((m) => (
-            <button
-              key={m.id}
-              onClick={() => setActiveMood(m.id)}
-              style={{
-                background:
-                  activeMood === m.id ? `linear-gradient(135deg, ${m.color}25, ${m.color}08)` : "rgba(255,255,255,0.02)",
-                border: activeMood === m.id ? `1px solid ${m.color}66` : "1px solid rgba(255,255,255,0.04)",
-                borderRadius: "16px",
-                padding: activeMood === m.id ? "5px 12px" : "5px 8px",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: "5px",
-                transition: "all 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
-                transform: activeMood === m.id ? "scale(1.05)" : "scale(1)",
-              }}
-            >
-              <div
-                style={{
-                  width: "7px",
-                  height: "7px",
-                  borderRadius: "50%",
-                  background: m.color,
-                  boxShadow: activeMood === m.id ? `0 0 8px ${m.color}77` : "none",
-                  transition: "box-shadow 0.3s ease",
-                }}
-              />
-              {activeMood === m.id && (
-                <span style={{ fontSize: "10px", color: m.color, fontWeight: 700, letterSpacing: "0.5px" }}>
-                  {m.label}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* ── PHASE INDICATOR ── */}
-      <div
-        style={{
-          position: "fixed",
-          top: "56px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: "6px",
-          zIndex: 90,
-          opacity: loaded ? 1 : 0,
-          transition: "opacity 0.6s ease 0.2s",
-        }}
-      >
-        <div style={{ display: "flex", gap: "3px", alignItems: "center" }}>
-          {PHASES.map((p, i) => (
-            <div
-              key={i}
-              style={{
-                width: i === currentPhase ? "28px" : "6px",
-                height: "3px",
-                borderRadius: "2px",
-                background:
-                  i === currentPhase
-                    ? `linear-gradient(90deg, ${mood.accent}, ${mood.accent}77)`
-                    : i < currentPhase
-                    ? `${mood.accent}33`
-                    : "rgba(255,255,255,0.06)",
-                transition: "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
-              }}
-            />
-          ))}
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <span
-            style={{
-              fontSize: "10px",
-              fontWeight: 800,
-              letterSpacing: "3px",
-              color: mood.accent,
-              textTransform: "uppercase",
-              transition: "color 0.5s ease",
-            }}
-          >
-            F{phase.id}
-          </span>
-          <span style={{ fontSize: "16px", fontWeight: 700, color: "#f1f5f9", letterSpacing: "-0.3px" }}>
-            {phase.name}
-          </span>
-          <span style={{ fontSize: "11px", color: "#4a5568", fontStyle: "italic" }}>{phase.subtitle}</span>
-        </div>
-        <span
-          style={{
-            fontSize: "9px",
-            color: "#374151",
-            letterSpacing: "1.5px",
-            textTransform: "uppercase",
-          }}
-        >
-          {phase.timer}
-        </span>
-      </div>
-
-      {/* ── MAIN 5-CARD LAYOUT ── */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "14px",
-          width: "100%",
-          maxWidth: "1400px",
-          marginTop: "50px",
-          opacity: phaseTransition ? 0 : loaded ? 1 : 0,
-          transform: phaseTransition ? "translateY(16px) scale(0.98)" : "translateY(0) scale(1)",
-          transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-          padding: "0 12px",
-          boxSizing: "border-box",
-        }}
-      >
-        {/* LEFT OBJECTION CARDS */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: "1", minWidth: 0 }}>
-          {leftObjs.map((obj, idx) => {
-            const isExp = expandedCard === idx;
-            return (
-              <div
-                key={idx}
-                onClick={() => handleExpand(idx)}
-                style={{
-                  borderRadius: "18px",
-                  backdropFilter: "blur(24px)",
-                  cursor: "pointer",
-                  transition: "all 0.45s cubic-bezier(0.16, 1, 0.3, 1)",
-                  position: "relative",
-                  overflow: "hidden",
-                  background: isExp
-                    ? "linear-gradient(155deg, rgba(56,89,160,0.35), rgba(20,30,60,0.55), rgba(40,70,140,0.2))"
-                    : "linear-gradient(155deg, rgba(30,50,100,0.2), rgba(12,18,35,0.45), rgba(25,45,90,0.15))",
-                  border: isExp ? `1px solid ${mood.accent}55` : "1px solid rgba(80,120,220,0.1)",
-                  boxShadow: isExp
-                    ? `0 20px 50px rgba(0,0,0,0.35), 0 0 40px ${mood.accent}0a, inset 0 1px 0 rgba(255,255,255,0.08)`
-                    : "0 8px 28px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.04)",
-                  padding: "22px 18px",
-                  display: "flex",
-                  flexDirection: "column",
-                  transform: isExp ? "translateY(-4px) scale(1.01)" : "translateY(0) scale(1)",
-                }}
-              >
-                {/* Top glow line */}
-                <div
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: "15%",
-                    right: "15%",
-                    height: "1.5px",
-                    background: isExp
-                      ? `linear-gradient(90deg, transparent, ${mood.accent}66, transparent)`
-                      : "linear-gradient(90deg, transparent, rgba(100,150,255,0.1), transparent)",
-                    transition: "all 0.4s ease",
-                  }}
-                />
-                <span
-                  style={{
-                    fontSize: "9px",
-                    fontWeight: 800,
-                    letterSpacing: "2.5px",
-                    color: isExp ? mood.accent : "#4a5568",
-                    textTransform: "uppercase",
-                    marginBottom: "6px",
-                    transition: "color 0.3s ease",
-                  }}
-                >
-                  Objeción
-                </span>
-                <span
-                  style={{
-                    fontSize: "14px",
-                    fontWeight: 700,
-                    color: isExp ? "#f1f5f9" : "#cbd5e1",
-                    lineHeight: 1.35,
-                    transition: "color 0.3s ease",
-                  }}
-                >
-                  {obj.title}
-                </span>
-                {isExp && (
-                  <div
-                    style={{
-                      marginTop: "14px",
-                      padding: "14px",
-                      background: `linear-gradient(135deg, ${mood.accent}0c, transparent)`,
-                      borderRadius: "12px",
-                      border: `1px solid ${mood.accent}18`,
-                      animation: "fadeSlideIn 0.35s ease",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "9px",
-                        fontWeight: 700,
-                        color: mood.accent,
-                        letterSpacing: "2px",
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      Respuesta — {moodObj.label}
-                    </span>
-                    <p
-                      style={{
-                        fontSize: "12.5px",
-                        lineHeight: 1.75,
-                        color: "#b0bec5",
-                        margin: "8px 0 0",
-                      }}
-                    >
-                      {obj.responses[activeMood]}
-                    </p>
-                  </div>
-                )}
-                {!isExp && (
-                  <span style={{ fontSize: "10px", color: "#2d3748", marginTop: "8px", fontStyle: "italic" }}>
-                    Toca para ver respuesta
-                  </span>
-                )}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* ── CENTER CARD — MAIN SCRIPT ── */}
-        <div
-          style={{
-            flex: "1.9",
-            minHeight: phase.hasForm ? "500px" : "440px",
-            maxHeight: "80vh",
-            borderRadius: "22px",
-            backdropFilter: "blur(30px)",
-            background:
-              "linear-gradient(160deg, rgba(40,72,160,0.25), rgba(15,22,42,0.6) 40%, rgba(30,55,130,0.18) 80%, rgba(20,35,80,0.22))",
-            border: "1px solid rgba(100,160,255,0.14)",
-            boxShadow: `0 40px 80px rgba(0,0,0,0.45), 0 0 60px ${mood.accent}06, inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.15)`,
-            padding: "28px 26px",
-            display: "flex",
-            flexDirection: "column",
-            cursor: "default",
-            alignSelf: "center",
-            position: "relative",
-            minWidth: 0,
-            overflow: "hidden",
-            transition: "box-shadow 0.5s ease",
-          }}
-        >
-          {/* Gold top accent */}
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: "8%",
-              right: "8%",
-              height: "1.5px",
-              background: "linear-gradient(90deg, transparent, #c9a54e55, #c9a54eaa, #c9a54e55, transparent)",
-            }}
-          />
-          {/* Corner accents */}
-          <div
-            style={{
-              position: "absolute",
-              top: "12px",
-              right: "12px",
-              width: "24px",
-              height: "24px",
-              borderTop: "1.5px solid rgba(201,165,78,0.2)",
-              borderRight: "1.5px solid rgba(201,165,78,0.2)",
-              borderRadius: "0 8px 0 0",
-            }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              bottom: "12px",
-              left: "12px",
-              width: "24px",
-              height: "24px",
-              borderBottom: "1.5px solid rgba(201,165,78,0.2)",
-              borderLeft: "1.5px solid rgba(201,165,78,0.2)",
-              borderRadius: "0 0 0 8px",
-            }}
-          />
-
-          {/* Badges */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" }}>
-            <span
-              style={{
-                background: `linear-gradient(135deg, ${mood.accent}22, ${mood.accent}08)`,
-                border: `1px solid ${mood.accent}33`,
-                padding: "4px 12px",
-                borderRadius: "10px",
-                fontSize: "9px",
-                fontWeight: 800,
-                letterSpacing: "2.5px",
-                color: mood.accent,
-                textTransform: "uppercase",
-                transition: "all 0.4s ease",
-              }}
-            >
-              Guión Activo
-            </span>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "5px",
-                background: "rgba(201,165,78,0.06)",
-                border: "1px solid rgba(201,165,78,0.15)",
-                borderRadius: "10px",
-                padding: "4px 10px",
-              }}
-            >
-              <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: "#c9a54e" }} />
-              <span style={{ fontSize: "9px", color: "#c9a54e", fontWeight: 700, letterSpacing: "1.5px" }}>
-                {moodObj.label.toUpperCase()}
-              </span>
-            </div>
-          </div>
-
-          {/* Script content */}
-          <div style={{ flex: 1, overflowY: "auto", paddingRight: "6px" }}>
-            {!phase.hasForm ? (
-              <pre
-                style={{
-                  fontFamily: "'DM Sans', 'Inter', sans-serif",
-                  fontSize: "13.5px",
-                  lineHeight: 1.9,
-                  color: "#d1d5db",
-                  whiteSpace: "pre-wrap",
-                  wordBreak: "break-word",
-                  margin: 0,
-                  letterSpacing: "0.15px",
-                }}
-              >
-                {phase.script[activeMood]}
-              </pre>
-            ) : (
-              <div>
-                <pre
-                  style={{
-                    fontFamily: "'DM Sans', 'Inter', sans-serif",
-                    fontSize: "13.5px",
-                    lineHeight: 1.9,
-                    color: "#d1d5db",
-                    whiteSpace: "pre-wrap",
-                    wordBreak: "break-word",
-                    margin: "0 0 20px",
-                  }}
-                >
-                  {phase.script[activeMood]}
-                </pre>
-                <div
-                  style={{
-                    background: "linear-gradient(140deg, rgba(201,165,78,0.07), rgba(201,165,78,0.02))",
-                    borderRadius: "16px",
-                    padding: "20px",
-                    border: "1px solid rgba(201,165,78,0.12)",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "10px",
-                      fontWeight: 800,
-                      letterSpacing: "2.5px",
-                      color: "#c9a54e",
-                      textTransform: "uppercase",
-                      marginBottom: "14px",
-                      display: "block",
-                    }}
-                  >
-                    📋 Datos del Cliente
-                  </span>
-                  {[
-                    { key: "nombre", label: "Nombre completo", placeholder: "Ej: Dr. García" },
-                    { key: "negocio", label: "Negocio / Clínica", placeholder: "Ej: Clínica Dental Sonríe" },
-                    { key: "telefono", label: "Teléfono / WhatsApp", placeholder: "Ej: +52 55 1234 5678" },
-                    { key: "horario", label: "Día y hora de reunión", placeholder: "Ej: Martes 3pm" },
-                    { key: "notas", label: "Notas adicionales", placeholder: "Observaciones..." },
-                  ].map((field) => (
-                    <div key={field.key} style={{ marginBottom: "10px" }}>
-                      <label
-                        style={{
-                          fontSize: "10px",
-                          color: "#7a8599",
-                          fontWeight: 600,
-                          display: "block",
-                          marginBottom: "4px",
-                          letterSpacing: "0.5px",
-                        }}
-                      >
-                        {field.label}
-                      </label>
-                      <input
-                        type="text"
-                        placeholder={field.placeholder}
-                        value={formData[field.key]}
-                        onChange={(e) => setFormData({ ...formData, [field.key]: e.target.value })}
-                        style={{
-                          width: "100%",
-                          background: "rgba(0,0,0,0.3)",
-                          border: "1px solid rgba(201,165,78,0.12)",
-                          borderRadius: "10px",
-                          padding: "10px 14px",
-                          color: "#e2e8f0",
-                          fontSize: "12.5px",
-                          outline: "none",
-                          boxSizing: "border-box",
-                          transition: "border-color 0.25s ease, box-shadow 0.25s ease",
-                          fontFamily: "inherit",
-                        }}
-                        onFocus={(e) => {
-                          e.target.style.borderColor = "#c9a54e44";
-                          e.target.style.boxShadow = "0 0 20px rgba(201,165,78,0.08)";
-                        }}
-                        onBlur={(e) => {
-                          e.target.style.borderColor = "rgba(201,165,78,0.12)";
-                          e.target.style.boxShadow = "none";
-                        }}
-                      />
-                    </div>
-                  ))}
-                  <button
-                    style={{
-                      width: "100%",
-                      marginTop: "10px",
-                      background: "linear-gradient(135deg, #c9a54e, #9a7b30)",
-                      border: "none",
-                      borderRadius: "12px",
-                      padding: "12px",
-                      color: "#060b18",
-                      fontSize: "12px",
-                      fontWeight: 800,
-                      letterSpacing: "1.5px",
-                      textTransform: "uppercase",
-                      cursor: "pointer",
-                      transition: "all 0.25s ease",
-                      boxShadow: "0 6px 24px rgba(201,165,78,0.25)",
-                      fontFamily: "inherit",
-                    }}
-                    onMouseOver={(e) => {
-                      e.target.style.transform = "translateY(-1px)";
-                      e.target.style.boxShadow = "0 8px 30px rgba(201,165,78,0.35)";
-                    }}
-                    onMouseOut={(e) => {
-                      e.target.style.transform = "translateY(0)";
-                      e.target.style.boxShadow = "0 6px 24px rgba(201,165,78,0.25)";
-                    }}
-                  >
-                    Guardar y confirmar cita
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* RIGHT OBJECTION CARDS */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: "1", minWidth: 0 }}>
-          {rightObjs.map((obj, idx) => {
-            const realIdx = idx + 2;
-            const isExp = expandedCard === realIdx;
-            return (
-              <div
-                key={idx}
-                onClick={() => handleExpand(realIdx)}
-                style={{
-                  borderRadius: "18px",
-                  backdropFilter: "blur(24px)",
-                  cursor: "pointer",
-                  transition: "all 0.45s cubic-bezier(0.16, 1, 0.3, 1)",
-                  position: "relative",
-                  overflow: "hidden",
-                  background: isExp
-                    ? "linear-gradient(155deg, rgba(56,89,160,0.35), rgba(20,30,60,0.55), rgba(40,70,140,0.2))"
-                    : "linear-gradient(155deg, rgba(30,50,100,0.2), rgba(12,18,35,0.45), rgba(25,45,90,0.15))",
-                  border: isExp ? `1px solid ${mood.accent}55` : "1px solid rgba(80,120,220,0.1)",
-                  boxShadow: isExp
-                    ? `0 20px 50px rgba(0,0,0,0.35), 0 0 40px ${mood.accent}0a, inset 0 1px 0 rgba(255,255,255,0.08)`
-                    : "0 8px 28px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.04)",
-                  padding: "22px 18px",
-                  display: "flex",
-                  flexDirection: "column",
-                  transform: isExp ? "translateY(-4px) scale(1.01)" : "translateY(0) scale(1)",
-                }}
-              >
-                <div
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: "15%",
-                    right: "15%",
-                    height: "1.5px",
-                    background: isExp
-                      ? `linear-gradient(90deg, transparent, ${mood.accent}66, transparent)`
-                      : "linear-gradient(90deg, transparent, rgba(100,150,255,0.1), transparent)",
-                    transition: "all 0.4s ease",
-                  }}
-                />
-                <span
-                  style={{
-                    fontSize: "9px",
-                    fontWeight: 800,
-                    letterSpacing: "2.5px",
-                    color: isExp ? mood.accent : "#4a5568",
-                    textTransform: "uppercase",
-                    marginBottom: "6px",
-                    transition: "color 0.3s ease",
-                  }}
-                >
-                  Objeción
-                </span>
-                <span
-                  style={{
-                    fontSize: "14px",
-                    fontWeight: 700,
-                    color: isExp ? "#f1f5f9" : "#cbd5e1",
-                    lineHeight: 1.35,
-                    transition: "color 0.3s ease",
-                  }}
-                >
-                  {obj.title}
-                </span>
-                {isExp && (
-                  <div
-                    style={{
-                      marginTop: "14px",
-                      padding: "14px",
-                      background: `linear-gradient(135deg, ${mood.accent}0c, transparent)`,
-                      borderRadius: "12px",
-                      border: `1px solid ${mood.accent}18`,
-                      animation: "fadeSlideIn 0.35s ease",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "9px",
-                        fontWeight: 700,
-                        color: mood.accent,
-                        letterSpacing: "2px",
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      Respuesta — {moodObj.label}
-                    </span>
-                    <p style={{ fontSize: "12.5px", lineHeight: 1.75, color: "#b0bec5", margin: "8px 0 0" }}>
-                      {obj.responses[activeMood]}
-                    </p>
-                  </div>
-                )}
-                {!isExp && (
-                  <span style={{ fontSize: "10px", color: "#2d3748", marginTop: "8px", fontStyle: "italic" }}>
-                    Toca para ver respuesta
-                  </span>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* ── NAVIGATION ── */}
-      <div
-        style={{
-          position: "fixed",
-          bottom: "20px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          display: "flex",
-          alignItems: "center",
-          gap: "14px",
-          zIndex: 100,
-          background: "rgba(6,11,24,0.85)",
-          backdropFilter: "blur(24px)",
-          borderRadius: "18px",
-          padding: "8px 14px",
-          border: "1px solid rgba(255,255,255,0.05)",
-          boxShadow: "0 12px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04)",
-        }}
-      >
-        <button
-          onClick={() => navigate(-1)}
-          disabled={currentPhase === 0}
-          style={{
-            background: currentPhase === 0 ? "transparent" : "rgba(255,255,255,0.04)",
-            border: currentPhase === 0 ? "1px solid rgba(255,255,255,0.03)" : "1px solid rgba(255,255,255,0.07)",
-            borderRadius: "12px",
-            padding: "9px 18px",
-            color: currentPhase === 0 ? "#1e293b" : "#64748b",
-            fontSize: "11px",
-            fontWeight: 700,
-            cursor: currentPhase === 0 ? "not-allowed" : "pointer",
-            transition: "all 0.25s ease",
-            letterSpacing: "0.5px",
-            fontFamily: "inherit",
-          }}
-        >
-          ← Anterior
-        </button>
-
-        <div style={{ display: "flex", alignItems: "center", gap: "4px", padding: "0 8px" }}>
-          <span style={{ fontSize: "14px", fontWeight: 800, color: "#c9a54e" }}>{phase.id}</span>
-          <span style={{ fontSize: "10px", color: "#2d3748" }}>/</span>
-          <span style={{ fontSize: "10px", color: "#2d3748" }}>7</span>
-        </div>
-
-        <button
-          onClick={() => navigate(1)}
-          disabled={currentPhase === 6}
-          style={{
-            background:
-              currentPhase === 6 ? "transparent" : `linear-gradient(135deg, ${mood.accent}28, ${mood.accent}0c)`,
-            border: `1px solid ${currentPhase === 6 ? "rgba(255,255,255,0.03)" : mood.accent + "40"}`,
-            borderRadius: "12px",
-            padding: "9px 18px",
-            color: currentPhase === 6 ? "#1e293b" : mood.accent,
-            fontSize: "11px",
-            fontWeight: 800,
-            cursor: currentPhase === 6 ? "not-allowed" : "pointer",
-            transition: "all 0.25s ease",
-            letterSpacing: "0.5px",
-            fontFamily: "inherit",
-          }}
-        >
-          Siguiente →
-        </button>
-      </div>
-
-      <style>{`
-        @keyframes fadeSlideIn {
-          from { opacity: 0; transform: translateY(6px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-        ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
-        input::placeholder { color: #374151; }
-      `}</style>
-    </div>
-  );
+/* OBJ CARDS - DEEP BLUE 3D */
+.ocard{
+  border-radius:18px;padding:22px 18px;cursor:pointer;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;transition:all .4s cubic-bezier(.16,1,.3,1);
+  background:linear-gradient(155deg,#0062cc,#004ba0 40%,#003580 70%,#004da6);
+  border:1px solid rgba(0,120,255,.2);
+  box-shadow:0 2px 4px rgba(0,30,80,.12),0 8px 20px rgba(0,40,100,.18),0 18px 40px rgba(0,20,60,.14),inset 0 1px 0 rgba(100,180,255,.18),inset 0 -2px 5px rgba(0,15,50,.25);
+  min-height:120px;
 }
+.ocard:hover{transform:translateY(-4px) scale(1.01);box-shadow:0 4px 8px rgba(0,30,80,.15),0 14px 32px rgba(0,40,100,.22),0 28px 56px rgba(0,20,60,.16),inset 0 1px 0 rgba(100,180,255,.22),inset 0 -2px 6px rgba(0,15,50,.28)}
+.ocard .tline{position:absolute;top:0;left:12%;right:12%;height:2px;background:linear-gradient(90deg,transparent,rgba(100,180,255,.2),transparent)}
+.otag{font-size:8px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:rgba(150,200,255,.5);margin-bottom:6px}
+.otitle{font-size:14px;font-weight:700;color:#fff;line-height:1.35;text-shadow:0 1px 2px rgba(0,20,60,.25)}
+.ohint{font-size:9px;color:rgba(150,200,255,.35);margin-top:6px;font-style:italic}
+
+/* CENTER CARD */
+.ccard{
+  flex:2;min-height:460px;max-height:80vh;border-radius:22px;padding:26px 24px;
+  display:flex;flex-direction:column;position:relative;overflow:hidden;
+  background:linear-gradient(160deg,#0070e0,#005cc0 25%,#003d8f 50%,#004da6 75%,#0062cc);
+  border:1px solid rgba(0,140,255,.28);
+  box-shadow:0 4px 8px rgba(0,30,80,.12),0 12px 28px rgba(0,40,100,.18),0 28px 56px rgba(0,20,60,.16),0 48px 96px rgba(0,15,50,.1),inset 0 2px 0 rgba(100,190,255,.22),inset 0 -3px 10px rgba(0,15,50,.3);
+}
+.ccard .gline{position:absolute;top:0;left:8%;right:8%;height:2.5px;background:linear-gradient(90deg,transparent,#c9a54e55,#c9a54eaa,#c9a54e55,transparent)}
+.ccard .ctl{position:absolute;top:12px;right:12px;width:20px;height:20px;border-top:1.5px solid rgba(201,165,78,.4);border-right:1.5px solid rgba(201,165,78,.4);border-radius:0 5px 0 0}
+.ccard .cbr{position:absolute;bottom:12px;left:12px;width:20px;height:20px;border-bottom:1.5px solid rgba(201,165,78,.4);border-left:1.5px solid rgba(201,165,78,.4);border-radius:0 0 0 5px}
+.ccard::before{content:'';position:absolute;top:-40%;left:-30%;width:160%;height:160%;background:radial-gradient(ellipse at 25% 15%,rgba(0,140,255,.12),transparent 55%);pointer-events:none}
+.badges{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;position:relative;z-index:1}
+.bscript{padding:4px 12px;border-radius:9px;font-size:8px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;background:rgba(201,165,78,.18);border:1px solid rgba(201,165,78,.35);color:#e8c85a}
+.bmood{display:flex;align-items:center;gap:4px;background:rgba(0,0,0,.12);border:1px solid rgba(100,180,255,.12);border-radius:9px;padding:4px 10px}
+.bmood-text{font-size:8px;color:#e8c85a;font-weight:700;letter-spacing:1.5px}
+.script-area{flex:1;overflow-y:auto;padding-right:4px;position:relative;z-index:1}
+.script-area::-webkit-scrollbar{width:3px}
+.script-area::-webkit-scrollbar-thumb{background:rgba(100,180,255,.2);border-radius:3px}
+.stxt{font-size:13.5px;line-height:1.85;color:rgba(220,235,255,.92);margin-bottom:6px}
+.stxt .v{color:#fff;font-weight:600}
+.stxt .c{color:#7dd3fc;font-style:italic;display:block;margin:6px 0;padding:6px 10px;background:rgba(0,0,0,.1);border-left:2px solid #7dd3fc;border-radius:0 6px 6px 0;font-weight:500}
+.stxt .r{color:#fcd34d;display:block;margin:4px 0 4px 12px;font-weight:500}
+.stxt .note{color:rgba(180,210,255,.55);font-size:12px;display:block;margin-top:10px;padding-top:8px;border-top:1px solid rgba(100,180,255,.1);font-style:italic}
+
+/* SUB-DIRECTIONS */
+.subdirs{margin-top:14px;padding-top:12px;border-top:1px solid rgba(100,180,255,.12);position:relative;z-index:1}
+.subdirs-title{font-size:8px;font-weight:800;letter-spacing:2px;color:rgba(201,165,78,.7);text-transform:uppercase;margin-bottom:8px}
+.subdir-btn{
+  display:inline-block;margin:3px 4px 3px 0;padding:7px 14px;border-radius:10px;
+  background:rgba(0,0,0,.15);border:1px solid rgba(100,180,255,.15);
+  color:rgba(200,225,255,.85);font-size:11px;font-weight:600;cursor:pointer;
+  transition:all .25s;font-family:inherit;
+}
+.subdir-btn:hover{background:rgba(0,0,0,.25);border-color:rgba(100,180,255,.3);transform:translateY(-1px)}
+
+/* FORM */
+.form-area{margin-top:14px;padding:16px;border-radius:14px;background:rgba(0,0,0,.12);border:1px solid rgba(201,165,78,.2)}
+.form-title{font-size:9px;font-weight:800;letter-spacing:2px;color:#e8c85a;text-transform:uppercase;margin-bottom:10px}
+.fgrp{margin-bottom:8px}
+.fgrp label{font-size:9px;color:rgba(180,210,255,.6);font-weight:600;display:block;margin-bottom:3px}
+.fgrp input{width:100%;background:rgba(0,0,0,.2);border:1px solid rgba(201,165,78,.15);border-radius:8px;padding:8px 12px;color:#fff;font-size:12px;outline:none;font-family:inherit;transition:border .2s,box-shadow .2s}
+.fgrp input:focus{border-color:rgba(201,165,78,.4);box-shadow:0 0 16px rgba(201,165,78,.1)}
+.fgrp input::placeholder{color:rgba(150,190,240,.35)}
+.fbtn{width:100%;margin-top:8px;border:none;border-radius:10px;padding:11px;background:linear-gradient(135deg,#c9a54e,#a8862e);color:#fff;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;font-family:inherit;box-shadow:0 4px 18px rgba(184,148,46,.3)}
+.fbtn:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(184,148,46,.4)}
+
+/* NAV */
+.nav{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:12px;z-index:100;background:rgba(255,255,255,.88);backdrop-filter:blur(20px);border-radius:18px;padding:7px 14px;border:1px solid rgba(0,80,180,.1);box-shadow:0 6px 28px rgba(0,30,80,.08)}
+.nbtn{border-radius:10px;padding:8px 16px;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px;font-family:inherit;transition:all .25s;border:1px solid rgba(0,80,180,.1);background:rgba(0,80,180,.04);color:#1e3a5f}
+.nbtn:disabled{cursor:not-allowed;color:#d1d5db;background:transparent;border-color:rgba(0,0,0,.02)}
+.nbtn.nx{font-weight:800}
+.ncnt{display:flex;align-items:center;gap:3px;padding:0 6px}
+.ncur{font-size:13px;font-weight:800;color:#c9a54e}
+.ntot{font-size:10px;color:#c5c9d4}
+
+/* POPUP OVERLAY */
+.popup-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:200;background:rgba(0,15,40,.6);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s ease}
+.popup-overlay.show{display:flex}
+.popup{
+  width:100%;max-width:680px;max-height:80vh;overflow-y:auto;
+  border-radius:22px;padding:32px 28px;position:relative;
+  background:linear-gradient(160deg,#0070e0,#004da6 40%,#003580 70%,#0058c0);
+  border:1px solid rgba(0,140,255,.3);
+  box-shadow:0 20px 60px rgba(0,20,60,.4),0 40px 100px rgba(0,10,40,.3),inset 0 1px 0 rgba(100,190,255,.2);
+  animation:popIn .3s cubic-bezier(.16,1,.3,1);
+}
+.popup::-webkit-scrollbar{width:3px}
+.popup::-webkit-scrollbar-thumb{background:rgba(100,180,255,.2);border-radius:3px}
+.popup-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.1);color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:inherit}
+.popup-close:hover{background:rgba(0,0,0,.35);transform:scale(1.1)}
+.popup-tag{font-size:8px;font-weight:800;letter-spacing:2.5px;color:rgba(150,200,255,.5);text-transform:uppercase;margin-bottom:4px}
+.popup-title{font-size:20px;font-weight:800;color:#fff;margin-bottom:4px;text-shadow:0 1px 3px rgba(0,20,60,.3)}
+.popup-mood{font-size:10px;color:#e8c85a;font-weight:700;letter-spacing:1px;margin-bottom:16px;display:flex;align-items:center;gap:6px}
+.popup-mood::before{content:'';width:4px;height:4px;border-radius:50%;background:#e8c85a}
+.popup-body{font-size:14px;line-height:1.85;color:rgba(220,235,255,.9)}
+.popup-body .section{margin-bottom:16px}
+.popup-body .section-title{font-size:11px;font-weight:800;letter-spacing:1.5px;color:#7dd3fc;text-transform:uppercase;margin-bottom:6px}
+.popup-body .example{padding:10px 14px;background:rgba(0,0,0,.12);border-left:2px solid #fcd34d;border-radius:0 8px 8px 0;margin:8px 0;color:#fcd34d;font-weight:500;font-size:13px}
+.popup-body .proof{padding:10px 14px;background:rgba(34,197,94,.08);border-left:2px solid #22c55e;border-radius:0 8px 8px 0;margin:8px 0;color:#86efac;font-size:13px}
+.popup-body .warning{padding:8px 14px;background:rgba(239,68,68,.08);border-left:2px solid #ef4444;border-radius:0 8px 8px 0;margin:8px 0;color:#fca5a5;font-size:12px}
+
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(.92) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-area"><span class="logo-text">Copilot PSY</span><div class="logo-sep"></div><span class="logo-sub">Sales Hub</span></div>
+  <div class="mood-bar" id="moodBar"></div>
+</div>
+<div class="phase-bar" id="phaseBar">
+  <div class="phase-dots" id="phaseDots"></div>
+  <div class="phase-info"><span class="ptag" id="ptag"></span><span class="pname" id="pname"></span><span class="psub" id="psub"></span></div>
+  <span class="ptimer" id="ptimer"></span>
+  <span class="pmission" id="pmission"></span>
+</div>
+<div class="main" id="main">
+  <div class="side" id="leftCol"></div>
+  <div class="ccard" id="ccard">
+    <div class="gline"></div><div class="ctl"></div><div class="cbr"></div>
+    <div class="badges"><span class="bscript">Guión Activo</span><div class="bmood"><span class="bmood-text" id="bmoodText"></span></div></div>
+    <div class="script-area" id="scriptArea"></div>
+  </div>
+  <div class="side" id="rightCol"></div>
+</div>
+<div class="nav">
+  <button class="nbtn" id="btnP" onclick="go(-1)">← Anterior</button>
+  <div class="ncnt"><span class="ncur" id="ncur"></span><span class="ntot">/7</span></div>
+  <button class="nbtn nx" id="btnN" onclick="go(1)">Siguiente →</button>
+</div>
+<div class="popup-overlay" id="popover" onclick="closePopup(event)">
+  <div class="popup" id="popup" onclick="event.stopPropagation()">
+    <button class="popup-close" onclick="closePopup()">✕</button>
+    <div class="popup-tag" id="popTag"></div>
+    <div class="popup-title" id="popTitle"></div>
+    <div class="popup-mood" id="popMood"></div>
+    <div class="popup-body" id="popBody"></div>
+  </div>
+</div>
+
+<script>
+const M=[
+  {id:"receptivo",label:"Receptivo",color:"#22c55e",emoji:"😊"},
+  {id:"esceptico",label:"Escéptico",color:"#f59e0b",emoji:"🤨"},
+  {id:"agresivo",label:"Agresivo",color:"#ef4444",emoji:"😤"},
+  {id:"analitico",label:"Analítico",color:"#3b82f6",emoji:"🧐"},
+  {id:"indeciso",label:"Indeciso",color:"#a855f7",emoji:"😕"}
+];
+
+const P=[
+// ═══ F1 PRESENTACIÓN ═══
+{id:1,name:"Presentación",sub:"Filtro al decisor",timer:"< 30 seg",mission:"Llegar al decisor sin revelar el producto. No des info de más.",
+script:{
+receptivo:`<span class="v">— ¡Hola! ¿Hablo con [NEGOCIO]?</span>
+<span class="v">— Soy Aarón de Sykes AI. ¿Estoy hablando con el encargado o dueño?</span>
+
+<span class="c">👤 "Sí, soy yo" / "Sí, ¿qué necesita?"</span>
+<span class="r">→ ¡Perfecto! Mire, le llamo porque estamos trabajando con negocios como el suyo en [ZONA] y quería hacerle una consulta rápida, ¿me regala 2 minutos?</span>
+
+<span class="c">👤 "No, no está" / "¿De parte de quién?"</span>
+<span class="r">→ Entiendo, ¿a qué hora lo puedo localizar? Es sobre un tema de gestión del negocio, nada comercial. Solo necesito 2 minutos con él.</span>
+
+<span class="c">👤 "¿De qué se trata?"</span>
+<span class="r">→ Estamos haciendo una evaluación con negocios de [RUBRO] en la zona. Solo quiero verificar un dato con el encargado, ¿se encuentra?</span>
+
+<span class="note">Apertura &lt; 20 seg · Confirma nombre del negocio al inicio · No mencionar bot, WhatsApp, ni precio · No explicar el producto</span>`,
+
+esceptico:`<span class="v">— ¡Hola! ¿[NEGOCIO]? Buenas tardes.</span>
+<span class="v">— Soy Aarón, de Sykes AI. ¿Con quién tengo el gusto?</span>
+
+<span class="c">👤 "¿Qué necesita?" / "¿Qué vende?"</span>
+<span class="r">→ No le voy a vender nada. Estamos haciendo un diagnóstico con negocios de su rubro en [ZONA]. Solo necesito validar un dato con el responsable. ¿Es usted?</span>
+
+<span class="c">👤 "Sí, pero estoy ocupado"</span>
+<span class="r">→ Lo entiendo perfectamente. Son 2 minutos exactos. Si ve que no le aporta, cortamos ahí. ¿Me da la oportunidad?</span>
+
+<span class="c">👤 "No, él no está"</span>
+<span class="r">→ Perfecto, ¿me puede indicar su nombre y a qué hora lo localizo? Es un tema que le compete directamente.</span>
+
+<span class="note">Con el escéptico, menos es más · No insistas si dice que no, agenda callback · Tono neutro y profesional, nunca entusiasta</span>`,
+
+agresivo:`<span class="v">— ¡Hola! ¿[NEGOCIO]?</span>
+<span class="v">— Aarón, del área de consultoría de Sykes. ¿El encargado está disponible?</span>
+
+<span class="c">👤 "¿Qué quiere?" / "No pasamos llamadas"</span>
+<span class="r">→ Entiendo. No es una llamada comercial. Estamos cerrando un análisis de negocios en [ZONA] y necesito 90 segundos con quien toma decisiones. ¿Está?</span>
+
+<span class="c">👤 "Soy yo, ¿qué necesita?"</span>
+<span class="r">→ Perfecto, seré breve. Le llamo porque detectamos una oportunidad específica para negocios de su tipo. ¿Me permite una pregunta directa?</span>
+
+<span class="c">👤 "No me interesa"</span>
+<span class="r">→ Respeto su tiempo. Solo una pregunta: ¿actualmente está satisfecho con cómo llegan sus clientes nuevos? Si la respuesta es sí, no lo molesto más.</span>
+
+<span class="note">Con agresivos: tono firme, cero sumisión · No pidas permiso excesivo · Si dice no, haz UNA pregunta ancla y respeta la respuesta</span>`,
+
+analitico:`<span class="v">— Buenas tardes, ¿me comunico con [NEGOCIO]?</span>
+<span class="v">— Mi nombre es Aarón, soy consultor de Sykes AI. ¿Podría hablar con el responsable de la operación?</span>
+
+<span class="c">👤 "¿Cuál es el motivo de su llamada?"</span>
+<span class="r">→ Estamos realizando un análisis del sector [RUBRO] en [ZONA]. Queremos contrastar un dato operativo. Son 2 minutos y si no aplica, se lo indico directamente.</span>
+
+<span class="c">👤 "Soy yo, ¿qué dato necesita?"</span>
+<span class="r">→ Excelente. Le haré una consulta puntual sobre su proceso de captación actual. ¿Me permite?</span>
+
+<span class="c">👤 "Envíeme un correo"</span>
+<span class="r">→ Con gusto, ¿a qué correo se lo envío? Aunque le adelanto que es un tema que se resuelve mejor en 2 minutos por teléfono que por escrito. ¿Preferirá que le llame en otro horario?</span>
+
+<span class="note">El analítico quiere contexto antes de ceder · Sé específico en el motivo · No uses superlativos · Respeta su proceso</span>`,
+
+indeciso:`<span class="v">— ¡Hola! ¿[NEGOCIO]? ¿Cómo está?</span>
+<span class="v">— Soy Aarón, de Sykes AI. ¿Me podría comunicar con el dueño o encargado?</span>
+
+<span class="c">👤 "Mmm, ¿para qué sería?"</span>
+<span class="r">→ Tranquilo, es algo rápido. Estamos trabajando con negocios como el suyo y quería hacerle una consulta. No toma más de 2 minutos. ¿Es usted el encargado?</span>
+
+<span class="c">👤 "Sí... pero no sé si tenga tiempo"</span>
+<span class="r">→ Solo son 2 minutos, de verdad. Si en cualquier momento siente que no es para usted, lo dejamos. ¿Le parece?</span>
+
+<span class="c">👤 "No sé, mejor luego"</span>
+<span class="r">→ Claro, ¿le queda mejor mañana por la mañana o por la tarde? Le llamo a la hora exacta que me diga.</span>
+
+<span class="note">El indeciso necesita seguridad · Dale opciones cerradas, nunca abiertas · Guía cada paso · No lo dejes en silencio largo</span>`
+},
+subdirs:[
+  {label:"Gatekeeper no cede",action:"Pregúntale: '¿Cuál es el nombre del encargado y a qué hora está? Le digo que es sobre un análisis que le compete directamente.' Si no da nombre, pregunta si hay horario fijo en que esté presente."},
+  {label:"Piden que llames después",action:"Nunca aceptes un 'después' sin fecha. Di: 'Perfecto, ¿le queda mejor mañana a las 10 o a las 3?' Si dice 'cualquier hora', elige tú: 'Le llamo mañana a las 10 en punto.'"},
+  {label:"Preguntan precio/producto",action:"NO reveles. Di: 'Antes de hablar de eso necesito validar un dato con el encargado, ¿se encuentra?' Si insisten: 'Es un análisis gratuito del negocio, no una venta.'"}
+],
+objections:[
+  {title:"¿De qué se trata?",popup:{
+    receptivo:`<div class="section"><div class="section-title">Estrategia</div>El interlocutor quiere filtrar si vale la pena escucharte. Tu objetivo es generar curiosidad sin revelar el producto. Si dices "WhatsApp" o "bot" aquí, pierdes.</div><div class="section"><div class="section-title">Argumento</div><div class="example">"Estamos haciendo una evaluación con negocios de [RUBRO] en [ZONA]. Hemos encontrado oportunidades que otros negocios están aprovechando y quería verificar si aplica para ustedes. Solo necesito 2 minutos con quien toma las decisiones."</div></div><div class="section"><div class="section-title">Si insiste</div><div class="example">"Es sobre captación de clientes. Pero antes de entrar en detalle necesito validar un par de datos con el encargado. ¿Se encuentra?"</div></div><div class="warning">NUNCA: mencionar WhatsApp, bot, automatización, precio, o cualquier detalle del producto en esta fase.</div>`,
+    esceptico:`<div class="section"><div class="section-title">Estrategia</div>El escéptico filtra con desconfianza. Responde con hechos, no con entusiasmo. Sé directo y conciso.</div><div class="section"><div class="section-title">Argumento</div><div class="example">"Es un diagnóstico sin costo que estamos realizando para negocios de su sector. No es una venta. Si no aplica, se lo digo directamente. ¿Usted es el encargado o me puede comunicar?"</div></div><div class="section"><div class="section-title">Si insiste</div><div class="example">"Se trata de evaluar su proceso actual de captación de clientes. Es factual, sin compromiso, y toma 2 minutos."</div></div><div class="warning">No uses palabras como "increíble", "revolucionario" o "oportunidad única". El escéptico las detecta como venta.</div>`,
+    agresivo:`<div class="section"><div class="section-title">Estrategia</div>El agresivo quiere que vayas al grano. Responde con firmeza y brevedad. No pidas permiso, da información mínima.</div><div class="section"><div class="section-title">Argumento</div><div class="example">"Es sobre captación de clientes para su negocio. No es comercial. Solo necesito verificar un dato con el responsable. ¿Está disponible?"</div></div><div class="section"><div class="section-title">Si presiona más</div><div class="example">"Mire, no le quiero hacer perder el tiempo ni yo perder el mío. Trabajo con negocios de su tipo y tengo un dato que le interesa. Son 90 segundos. ¿Sí o no?"</div></div><div class="warning">Con el agresivo, la duda es debilidad. Sé directo sin ser confrontativo.</div>`,
+    analitico:`<div class="section"><div class="section-title">Estrategia</div>El analítico quiere categorizar tu llamada. Dale contexto suficiente para que no te descarte, pero no tanto que pierda interés.</div><div class="section"><div class="section-title">Argumento</div><div class="example">"Realizamos análisis sectoriales para negocios de [RUBRO]. Específicamente evaluamos el proceso de adquisición de clientes y lo comparamos con benchmarks del sector. Solo necesito contrastar un dato con el responsable."</div></div><div class="section"><div class="section-title">Si pide más detalles</div><div class="example">"Evaluamos tres métricas: fuente de captación, costo por cliente adquirido y tasa de conversión. El análisis toma 2 minutos por teléfono."</div></div><div class="warning">No le digas que es "rápido" — el analítico desconfía de lo superficial. Dile que es "puntual" o "específico".</div>`,
+    indeciso:`<div class="section"><div class="section-title">Estrategia</div>El indeciso no sabe si debería escucharte o no. Necesita que tomes la decisión por él dándole seguridad.</div><div class="section"><div class="section-title">Argumento</div><div class="example">"Es algo sencillo, no se preocupe. Estamos trabajando con negocios como el suyo y quería hacerle una pregunta rápida al encargado. Si al final no le sirve, no pasa nada. ¿Es usted o me lo puede comunicar?"</div></div><div class="section"><div class="section-title">Si duda</div><div class="example">"Mire, no le va a quitar tiempo. Es literalmente una pregunta. Si la respuesta no aplica, le agradezco y ya. ¿Le parece?"</div></div><div class="warning">No des opciones abiertas al indeciso. En vez de "¿le queda bien?", di "¿le marco mañana a las 10?"</div>`
+  }},
+  {title:"No pasan comerciales",popup:{
+    receptivo:`<div class="section"><div class="section-title">Estrategia</div>Te clasificaron como vendedor. Necesitas reclasificarte como algo diferente: consultor, analista, evaluador.</div><div class="section"><div class="section-title">Argumento principal</div><div class="example">"Entiendo completamente. Esto no es una llamada comercial. Estamos haciendo un análisis del sector y el dueño de una clínica similar a esta nos pidió que también evaluáramos a ustedes. ¿A qué hora lo puedo localizar?"</div></div><div class="section"><div class="section-title">Técnica: referencia cruzada</div><div class="proof">Menciona que "otro negocio similar" ya participó. Esto crea FOMO y legitimiza tu llamada: "El dueño de [negocio similar] ya tomó el análisis y nos sugirió incluirlos a ustedes."</div></div><div class="section"><div class="section-title">Plan B: agenda callback</div><div class="example">"Sin problema. ¿Me puede dar el nombre del encargado y un horario donde lo pueda localizar? El análisis es gratuito y toma 2 minutos."</div></div><div class="warning">Si el gatekeeper es firme, no pelees. Agradece y llama en otro horario. A veces un turno diferente tiene diferente gatekeeper.</div>`,
+    esceptico:`<div class="section"><div class="section-title">Argumento</div><div class="example">"Comprendo. No es una llamada de ventas. Soy consultor y estoy recopilando datos del sector. Solo necesito 2 minutos con el responsable para un dato puntual. Si no aplica, no insisto."</div></div><div class="proof">"Le puedo dar mi nombre completo y empresa para que lo verifique antes si lo prefiere."</div><div class="warning">Al escéptico, ofrece transparencia. Que verifique quién eres.</div>`,
+    agresivo:`<div class="section"><div class="section-title">Argumento</div><div class="example">"Entendido. No es comercial. Es un análisis que ya se hizo con negocios similares. Necesito al encargado 90 segundos. ¿Está o no?"</div></div><div class="warning">No te disculpes. No pidas permiso de más. Si dicen no, pregunta horario y cuelga.</div>`,
+    analitico:`<div class="section"><div class="section-title">Argumento</div><div class="example">"Comprendo la política. Mi llamada es de carácter consultivo, no comercial. Estamos realizando un benchmarking sectorial y necesito contrastar un dato operativo con el responsable. ¿Cuándo sería el horario más adecuado?"</div></div><div class="proof">Usar la palabra "benchmarking" con el analítico legitima tu llamada como técnica.</div>`,
+    indeciso:`<div class="section"><div class="section-title">Argumento</div><div class="example">"Claro, lo entiendo. No es nada de ventas, es una consulta rápida. Solo quería hacerle una pregunta al encargado. ¿Me puede decir a qué hora lo encuentro? Le prometo que es breve."</div></div><div class="warning">Con el indeciso, usa "le prometo que es breve" — necesita sentir seguridad de que no perderá tiempo.</div>`
+  }},
+  {title:"Ya es el decisor",popup:{
+    receptivo:`<div class="section"><div class="section-title">¡Objetivo cumplido!</div>Ya tienes al decisor. Ahora tu misión es hacer UNA pregunta que abra la puerta a F2 (Captar el dolor).</div><div class="section"><div class="section-title">Transición a F2</div><div class="example">"¡Perfecto, [NOMBRE]! Mire, le llamo porque estamos trabajando con negocios como el suyo en [ZONA] y quería preguntarle algo rápido: ¿cómo les llegan hoy los clientes nuevos? ¿Tienen algún sistema para eso o llegan orgánicamente?"</div></div><div class="proof">Esta pregunta es el puente perfecto a F2. Si responde, ya estás dentro.</div>`,
+    esceptico:`<div class="section"><div class="section-title">Transición a F2</div><div class="example">"Perfecto. Seré directo: ¿actualmente tienen algún proceso definido para captar clientes nuevos o depende de la recomendación?"</div></div><div class="proof">Con el escéptico, la pregunta debe ser cerrada y profesional. Sin entusiasmo.</div>`,
+    agresivo:`<div class="section"><div class="section-title">Transición a F2</div><div class="example">"Bien. Pregunta directa: ¿cómo llegan sus clientes nuevos hoy?"</div></div>`,
+    analitico:`<div class="section"><div class="section-title">Transición a F2</div><div class="example">"Excelente. Permítame una consulta puntual: ¿qué canales utiliza actualmente su negocio para la captación de clientes nuevos?"</div></div>`,
+    indeciso:`<div class="section"><div class="section-title">Transición a F2</div><div class="example">"Qué bueno que hablo con usted. Mire, solo una cosita rápida: ¿cómo hacen para que les lleguen clientes nuevos al negocio? ¿Les llegan solitos o tienen que buscarlos?"</div></div>`
+  }},
+  {title:"Espejear el tono",popup:{
+    receptivo:`<div class="section"><div class="section-title">Perfil: Cliente abierto y amigable</div>Espejea su energía. Habla con ritmo rápido pero claro. Sonríe (se escucha). Usa lenguaje coloquial: "mira", "te cuento", "fíjate". Trata de tú si él lo hace primero.</div><div class="section"><div class="section-title">Señales que lo identifican</div><div class="proof">Responde rápido · Usa humor · Dice "cuéntame" o "dale" · No pone barreras · Tono relajado</div></div><div class="section"><div class="section-title">Errores a evitar</div><div class="warning">No seas demasiado formal — lo aburres. No leas un guión robótico. Fluye con la conversación.</div></div>`,
+    esceptico:`<div class="section"><div class="section-title">Perfil: Cliente cauteloso y desconfiado</div>Baja tu energía un 30%. Sé factual, no emocional. No exageres nada. Cada afirmación debe poder respaldarse. Trata de usted.</div><div class="section"><div class="section-title">Señales</div><div class="proof">Hace muchas preguntas · Duda de lo que dices · Pide pruebas · Tono plano · Silencios largos</div></div><div class="warning">No digas "confíe en mí" ni "le va a encantar". Son red flags para el escéptico.</div>`,
+    agresivo:`<div class="section"><div class="section-title">Perfil: Cliente directo y confrontativo</div>NO te achiques. Sé firme sin ser agresivo de vuelta. Respuestas cortas. No justifiques de más. Si te interrumpe, déjalo hablar y retoma con calma.</div><div class="section"><div class="section-title">Señales</div><div class="proof">Interrumpe · Tono alto · "Vaya al grano" · Impaciente · Confronta afirmaciones</div></div><div class="warning">No te disculpes excesivamente. No digas "perdón por molestarlo". Dilo una vez y nunca más.</div>`,
+    analitico:`<div class="section"><div class="section-title">Perfil: Cliente metódico y racional</div>Usa datos, no emociones. Estructura tus argumentos: "primero... segundo... tercero". Sé preciso con números. Evita jerga emocional.</div><div class="section"><div class="section-title">Señales</div><div class="proof">Pregunta "¿cómo funciona?" · Quiere detalles · Tono neutro · Pide documentación · Compara opciones</div></div><div class="warning">No digas "es increíble" o "todos lo aman". El analítico decide con datos, no con entusiasmo ajeno.</div>`,
+    indeciso:`<div class="section"><div class="section-title">Perfil: Cliente dudoso e inseguro</div>Tú eres el guía. Toma la iniciativa siempre. Haz preguntas cerradas (sí/no, A o B). Nunca dejes silencio largo. Valida sus dudas: "es normal tener esa pregunta".</div><div class="section"><div class="section-title">Señales</div><div class="proof">"No sé..." · "Tendría que ver..." · Respuestas vagas · No toma decisiones · Pide tiempo</div></div><div class="warning">No le des muchas opciones — se paraliza. Elige por él: "Le marco mañana a las 10".</div>`
+  }}
+]},
+
+// ═══ F2 CAPTAR EL DOLOR ═══
+{id:2,name:"Captar el dolor",sub:"El anzuelo",timer:"1-2 min",mission:"Que el cliente confiese el problema. Tú preguntas, él habla.",
+script:{
+receptivo:`<span class="v">— [NOMBRE], te hago una pregunta directa y honesta:</span>
+<span class="v">— Hoy en día, ¿cómo les llegan los clientes nuevos al negocio?</span>
+
+<span class="c">👤 "Por recomendación" / "De boca en boca"</span>
+<span class="r">→ O sea que dependen de que alguien los recomiende. ¿Y qué pasa los meses que no recomiendan tanto? ¿Baja el flujo?</span>
+
+<span class="c">👤 "Sí, la verdad hay meses flojos"</span>
+<span class="r">→ ¿Y esos meses flojos cuántos clientes dejan de entrar? ¿Estamos hablando de 5, 10, 15 menos?</span>
+
+<span class="c">👤 "Tenemos redes sociales"</span>
+<span class="r">→ ¿Y de esas redes cuántos clientes concretos les llegan al mes? No likes ni seguidores, sino personas que realmente agenden cita.</span>
+
+<span class="c">👤 "La verdad no muchos" / "No lo tenemos medido"</span>
+<span class="r">→ Ahí está el tema. Muchos negocios invierten en redes pero no saben cuántos clientes reales generan. ¿Le pasa algo similar?</span>
+
+<span class="note">Tu trabajo aquí es ESCUCHAR. Mientras más hable el cliente, más información tienes para F3. Anota mentalmente los números que dé.</span>`,
+
+esceptico:`<span class="v">— [NOMBRE], una consulta puntual:</span>
+<span class="v">— ¿Actualmente tienen algún sistema estructurado para atraer clientes nuevos?</span>
+
+<span class="c">👤 "Sí, tenemos marketing"</span>
+<span class="r">→ ¿Y están satisfechos con los resultados? Específicamente, ¿saben cuántos clientes nuevos les genera al mes esa inversión?</span>
+
+<span class="c">👤 "Más o menos" / "Podría ser mejor"</span>
+<span class="r">→ ¿Qué parte no funciona como esperaban? ¿Es el volumen, la calidad del cliente, o la consistencia?</span>
+
+<span class="c">👤 "Funcionamos con recomendación"</span>
+<span class="r">→ La recomendación es excelente, pero tiene un problema: no se puede escalar ni predecir. ¿Han notado meses donde baja?</span>
+
+<span class="note">El escéptico no va a "confesar" fácil. Haz preguntas concretas que lo lleven a darse cuenta solo. No asumas, pregunta.</span>`,
+
+agresivo:`<span class="v">— [NOMBRE], directo:</span>
+<span class="v">— ¿De dónde vienen sus clientes nuevos hoy?</span>
+
+<span class="c">👤 "De varios lados" / "Recomendación"</span>
+<span class="r">→ ¿Cuántos al mes, en promedio?</span>
+
+<span class="c">👤 "[Número]" / "No lo tengo exacto"</span>
+<span class="r">→ ¿Y ese número les alcanza para cubrir su capacidad o hay huecos en la agenda?</span>
+
+<span class="c">👤 "Siempre hay huecos"</span>
+<span class="r">→ ¿Cuántos huecos por semana, más o menos?</span>
+
+<span class="note">Con el agresivo, preguntas cortas. Si te da un número, ÚSALO. "10 huecos a la semana × valor de consulta = dinero que pierde."</span>`,
+
+analitico:`<span class="v">— [NOMBRE], me gustaría entender su operación actual:</span>
+<span class="v">— ¿Qué canales de captación utilizan y cuál es el rendimiento de cada uno?</span>
+
+<span class="c">👤 "Tenemos redes, algo de Google, y recomendación"</span>
+<span class="r">→ De esos tres canales, ¿tiene medido cuántos clientes nuevos genera cada uno al mes?</span>
+
+<span class="c">👤 "No exactamente"</span>
+<span class="r">→ Ese es un punto clave. Sin esa métrica es imposible saber cuál canal optimizar y cuál eliminar. ¿Cuántos clientes nuevos entran en total al mes?</span>
+
+<span class="c">👤 "[Número]"</span>
+<span class="r">→ ¿Y cuál es su capacidad máxima de atención mensual? Porque la brecha entre los dos números es exactamente su oportunidad de crecimiento.</span>
+
+<span class="note">Al analítico, llévalo con preguntas métricas. Él mismo va a descubrir el gap. Tú solo facilitas.</span>`,
+
+indeciso:`<span class="v">— [NOMBRE], cuénteme un poco de su negocio:</span>
+<span class="v">— ¿Cómo hacen para que les lleguen clientes nuevos? ¿Les llegan solitos o tienen que buscarlos?</span>
+
+<span class="c">👤 "Pues... nos llegan por recomendación mayormente"</span>
+<span class="r">→ Eso está bien. Pero déjeme preguntarle algo: ¿todos los meses les llegan los mismos o hay temporadas donde baja?</span>
+
+<span class="c">👤 "Sí, hay meses más flojos"</span>
+<span class="r">→ Y en esos meses flojos, ¿qué hacen? ¿Esperan a que se reactive solo o intentan algo?</span>
+
+<span class="c">👤 "Pues esperamos, la verdad"</span>
+<span class="r">→ Es lo que pasa en muchos negocios. El tema es que esperar es costoso: cada día sin clientes es dinero que no entra. ¿Ha pensado en tener algo que trabaje por usted?</span>
+
+<span class="note">Guía cada paso. El indeciso no va a profundizar solo — tú debes ir llevándolo con preguntas suaves.</span>`
+},
+subdirs:[
+  {label:"Cliente dice que está bien así",action:"No confrontes. Pregunta: '¿Cuántos clientes nuevos le gustaría tener vs cuántos tiene hoy?' Si hay diferencia, ahí está el dolor."},
+  {label:"No da números concretos",action:"Reformula: 'Sin número exacto, ¿diría que son más de 10 o menos de 10 al mes? ¿Y cuántos podría atender si llegaran?' Contrasta la capacidad vs la realidad."},
+  {label:"Quiere ir al grano",action:"Si presiona, haz el puente: 'Perfecto, lo que hacemos es justamente resolver eso. Pero para darle algo concreto, necesito entender un dato más...'"}
+],
+objections:[
+  {title:"Ya tenemos suficientes clientes",popup:{
+    receptivo:`<div class="section"><div class="section-title">Estrategia: No contradigas, profundiza</div>Si dice que tiene suficientes, no pelees. Acepta y busca el hueco.</div><div class="section"><div class="section-title">Argumento</div><div class="example">"Qué bien, me alegra escuchar eso. Solo una curiosidad: ¿están trabajando a capacidad máxima? Porque muchos negocios que dicen estar bien en realidad tienen un 30-40% de agenda libre que podrían llenar con clientes mejor calificados."</div></div><div class="section"><div class="section-title">Seguimiento</div><div class="example">"¿Y todos los que llegan son el tipo de cliente que usted quiere? Porque una cosa es tener clientes y otra es tener los clientes correctos, los que pagan bien y vuelven."</div></div><div class="proof">El 78% de negocios que dicen "tener suficientes" tienen al menos 25% de capacidad ociosa cuando se mide objetivamente.</div>`,
+    esceptico:`<div class="section"><div class="section-title">Argumento</div><div class="example">"Me alegra. Pregunta: ¿están al 100% de capacidad todos los días de la semana? Porque 'suficientes' y 'al máximo' son cosas distintas."</div></div><div class="proof">Llevar la conversación a datos concretos: ocupación real, días con huecos, variación mensual.</div>`,
+    agresivo:`<div class="section"><div class="section-title">Argumento</div><div class="example">"Perfecto. Entonces no le quito tiempo. Solo una pregunta: ¿todos los meses son iguales o hay variación? Porque si hay meses donde baja, ahí hay dinero que se pierde."</div></div>`,
+    analitico:`<div class="section"><div class="section-title">Argumento</div><div class="example">"Interesante. ¿Cuál es su tasa de ocupación promedio? En nuestra experiencia, negocios que reportan estar 'bien' suelen operar entre 65-75% de capacidad. La diferencia entre 75% y 95% puede representar [X] ingreso mensual adicional."</div></div>`,
+    indeciso:`<div class="section"><div class="section-title">Argumento</div><div class="example">"Qué bueno. Y dígame, ¿siempre ha sido así o hay temporadas donde baja un poco? Porque muchos negocios como el suyo nos dicen que hay 2-3 meses al año donde la cosa se pone lenta."</div></div>`
+  }},
+  {title:"No tengo tiempo para esto",popup:{
+    receptivo:`<div class="section"><div class="section-title">Estrategia</div>No es que no tenga tiempo: es que no ve valor suficiente. Muestra el valor en una frase.</div><div class="section"><div class="section-title">Argumento</div><div class="example">"Totalmente entiendo. Le digo qué: si en los próximos 60 segundos lo que le cuento no le parece relevante, colgamos y no lo vuelvo a molestar. ¿Me da 60 segundos?"</div></div><div class="section"><div class="section-title">Si dice que sí (60 seg)</div><div class="example">"Trabajamos con negocios como el suyo y el promedio de nuestros clientes pasó de [X] a [Y] clientes nuevos al mes sin hacer nada manual. ¿Eso le interesaría o no?"</div></div><div class="proof">La técnica del "60 segundos" funciona porque reduce el riesgo percibido a casi cero.</div>`,
+    esceptico:`<div class="section"><div class="section-title">Argumento</div><div class="example">"Lo respeto. ¿Cuándo sería un buen momento para usted? Le aseguro que serán máximo 3 minutos y si no ve valor, no insisto."</div></div>`,
+    agresivo:`<div class="section"><div class="section-title">Argumento</div><div class="example">"Entendido. ¿Cuándo le queda? Porque esto puede representar [X] clientes más al mes para usted. Si no le sirve, 2 minutos perdidos. Si sí, le cambia el negocio."</div></div>`,
+    analitico:`<div class="section"><div class="section-title">Argumento</div><div class="example">"Comprendo. ¿Me permite agendar 5 minutos en su calendario esta semana? Le puedo adelantar que el tema es optimización de captación con ROI medible desde el mes 1."</div></div>`,
+    indeciso:`<div class="section"><div class="section-title">Argumento</div><div class="example">"Claro, no se preocupe. ¿Le marco mañana a las 10 de la mañana? Son solo 2 minutitos, y si no le parece, ahí lo dejamos. ¿Le parece mañana a las 10?"</div></div>`
+  }},
+  {title:"Ya tenemos marketing",popup:{
+    receptivo:`<div class="section"><div class="section-title">Estrategia: Complementar, no reemplazar</div>No ataques su marketing actual. Posiciónate como complemento.</div><div class="section"><div class="section-title">Argumento</div><div class="example">"¡Genial! Eso habla bien de ustedes. Pregunta: ¿saben exactamente cuántos clientes nuevos les genera esa inversión cada mes? No hablo de alcance o likes, sino de personas que realmente agendaron y pagaron."</div></div><div class="section"><div class="section-title">Seguimiento clave</div><div class="example">"Porque lo que nosotros hacemos no reemplaza su marketing, lo potencia. Es como tener un vendedor más que trabaja 24/7 y usted solo ve los resultados."</div></div><div class="proof">El 82% de negocios que "tienen marketing" no pueden decir cuántos clientes concretos genera. Esa pregunta siempre abre la conversación.</div>`,
+    esceptico:`<div class="section"><div class="section-title">Argumento</div><div class="example">"¿Y están satisfechos con el retorno? Porque muchos negocios invierten en marketing sin saber el costo real por cliente adquirido. ¿Tiene ese dato?"</div></div>`,
+    agresivo:`<div class="section"><div class="section-title">Argumento</div><div class="example">"¿Cuántos clientes nuevos les genera al mes? Número concreto. Porque si no lo sabe, está invirtiendo a ciegas."</div></div>`,
+    analitico:`<div class="section"><div class="section-title">Argumento</div><div class="example">"Excelente. ¿Cuál es su CAC actual? ¿Y su tasa de conversión de lead a cliente? Porque ahí es donde podemos hacer una comparación objetiva."</div></div>`,
+    indeciso:`<div class="section"><div class="section-title">Argumento</div><div class="example">"Qué bien que ya invierten. Y dígame, ¿sienten que les funciona bien o hay veces que no ven resultados claros? Porque eso es muy común y tiene solución."</div></div>`
+  }},
+  {title:"¿Esto es publicidad / venta?",popup:{
+    receptivo:`<div class="section"><div class="section-title">Estrategia</div>Reclasifica tu llamada. No eres vendedor, eres consultor haciendo un diagnóstico.</div><div class="section"><div class="section-title">Argumento</div><div class="example">"No, para nada. Mire, le explico: nosotros trabajamos con negocios de [RUBRO] y lo que hacemos primero es un diagnóstico gratuito. Si encontramos una oportunidad se la mostramos, si no, le decimos directamente. No hay compromiso. ¿Me permite hacerle una pregunta?"</div></div><div class="proof">La palabra "diagnóstico" cambia la percepción. No es venta, es evaluación profesional.</div>`,
+    esceptico:`<div class="section"><div class="section-title">Argumento</div><div class="example">"No. Es una evaluación sin costo de su proceso de captación. Si no hay oportunidad de mejora, se lo digo y no insisto. ¿Me permite una pregunta?"</div></div>`,
+    agresivo:`<div class="section"><div class="section-title">Argumento</div><div class="example">"No. Es un análisis. Si no le sirve, le digo directo y no le quito más tiempo. ¿Me da 60 segundos?"</div></div>`,
+    analitico:`<div class="section"><div class="section-title">Argumento</div><div class="example">"Es una consultoría diagnóstica basada en datos del sector. Si los resultados del análisis no aplican para su caso, se lo informo sin obligación alguna."</div></div>`,
+    indeciso:`<div class="section"><div class="section-title">Argumento</div><div class="example">"No, tranquilo. Solo quiero hacerle una pregunta rápida para ver si le podemos ayudar. Si no, no pasa nada. ¿Me permite?"</div></div>`
+  }}
+]},
+
+// ═══ F3-F7 (structure same, content adjusted) ═══
+{id:3,name:"Desarrollar el dolor",sub:"Cuantificar la pérdida",timer:"2-3 min",mission:"Usa SUS números para que vea cuánto pierde. Que el dolor sea tangible.",
+script:{
+receptivo:`<span class="v">— Entonces, si me dice que le llegan unos [X] al mes y su capacidad es [Y]...</span>
+<span class="v">— Eso significa que tiene [Y-X] espacios vacíos cada mes.</span>
+<span class="v">— Si cada consulta vale $[Z], estamos hablando de $[Z×(Y-X)] que podría estar facturando y no está entrando.</span>
+
+<span class="c">👤 "Sí, nunca lo había visto así"</span>
+<span class="r">→ Y eso es solo un mes. En un año son $[anual]. Es como tener un empleado que cobra pero no produce. ¿No le gustaría cerrar esa brecha?</span>
+
+<span class="c">👤 "Pero no todos los espacios se van a llenar"</span>
+<span class="r">→ Claro, tampoco digo el 100%. Pero si llenáramos la mitad, ¿ya vale la pena? Estamos hablando de $[mitad] al mes extra.</span>
+
+<span class="note">USA SUS NÚMEROS. No inventes. Si dijo "10 clientes al mes" y puede atender 30, ahí está el dolor: 20 espacios vacíos × precio de consulta.</span>`,
+
+esceptico:`<span class="v">— [NOMBRE], hagamos un ejercicio rápido con sus propios números:</span>
+<span class="v">— Usted me dijo que entran [X] clientes al mes. Su capacidad es [Y]. ¿Correcto?</span>
+<span class="v">— La diferencia son [Y-X] espacios vacíos. A $[Z] por consulta, eso es $[resultado] mensual en ingreso no realizado.</span>
+
+<span class="c">👤 "Sí, pero la realidad es más compleja"</span>
+<span class="r">→ Tiene razón, hay variables. Pero incluso si tomamos el escenario más conservador y solo llenamos un 30% de esos espacios, son $[30%] al mes extra. ¿Eso sería significativo?</span>
+
+<span class="note">Con el escéptico, usa escenarios conservadores. Si dices "el 100%", no te cree. Dile "el 30% más conservador" y le parece más real.</span>`,
+
+agresivo:`<span class="v">— [NOMBRE], los números:</span>
+<span class="v">— [X] clientes al mes. Capacidad para [Y]. Son [Y-X] huecos.</span>
+<span class="v">— A $[Z] cada uno: $[total] al mes que no están entrando.</span>
+
+<span class="c">👤 "¿Y ustedes qué proponen?"</span>
+<span class="r">→ Le cuento en un momento. Pero primero: ¿está de acuerdo con que hay oportunidad de crecimiento aquí? Porque si la respuesta es sí, tengo algo concreto.</span>
+
+<span class="note">El agresivo quiere acción, no análisis largo. Presenta números rápido y pasa a la pregunta de cierre de fase.</span>`,
+
+analitico:`<span class="v">— [NOMBRE], permítame presentarle un análisis basado en sus datos:</span>
+<span class="v">— Captación actual: [X]/mes · Capacidad: [Y]/mes · Gap: [Y-X]/mes</span>
+<span class="v">— Ticket promedio: $[Z] · Ingreso no realizado: $[Z×gap]/mes · Proyección anual: $[anual]</span>
+
+<span class="c">👤 "Esos números son correctos, pero ¿cómo proponen cerrar ese gap?"</span>
+<span class="r">→ Con un sistema que tiene un costo de adquisición por cliente de $[CAC], lo que significa un ROI de [X]x. Le muestro cómo funciona.</span>
+
+<span class="note">El analítico ama las tablas y las proyecciones. Dale estructura numérica y déjalo que procese. Él mismo llega a la conclusión.</span>`,
+
+indeciso:`<span class="v">— [NOMBRE], le hago ver algo que quizá no había notado:</span>
+<span class="v">— Usted me dijo que atiende unos [X] clientes al mes, pero podría atender [Y].</span>
+<span class="v">— Eso son [Y-X] clientes que podrían estar pagando cada mes y no están llegando.</span>
+<span class="v">— ¿Se imagina cuánto representan al año? Es como tirar dinero a la basura sin darse cuenta.</span>
+
+<span class="c">👤 "Sí... nunca lo había pensado así"</span>
+<span class="r">→ Es normal, le pasa a muchos. La buena noticia es que tiene solución. ¿Le gustaría saber cómo?</span>
+
+<span class="note">Con el indeciso, el dolor debe generar urgencia PERO también esperanza inmediata. "Tiene solución" es clave.</span>`
+},
+subdirs:[
+  {label:"No da precio de consulta",action:"Estima: 'En negocios como el suyo, el ticket promedio suele estar entre $[rango]. ¿Es similar?' Si confirma, usa esos números."},
+  {label:"Dice que no pierde dinero",action:"Reformula: 'No es que pierda dinero, es que deja de ganarlo. Es capacidad instalada que ya tiene y no está monetizando. ¿Cuánto cuesta mantener el local abierto aunque no vengan pacientes?'"},
+  {label:"Quiere solución ya",action:"Si el cliente se adelanta y quiere saber la solución, ve a F4. Dile: 'Perfecto, justo eso quería mostrarle...'"}
+],
+objections:[
+  {title:"Mis números son diferentes",popup:{receptivo:`<div class="section"><div class="section-title">Argumento</div><div class="example">"Perfecto, corríjame. ¿Cuáles son sus números reales? Porque mientras haya un gap entre lo que tiene y lo que podría tener, hay oportunidad. Dígame sus cifras y recalculamos juntos."</div></div>`,esceptico:`<div class="section"><div class="section-title">Argumento</div><div class="example">"Tiene razón, corríjame. Use sus números reales. Lo importante no es mi estimación, sino la realidad de su negocio. ¿Cuántos entran y cuántos podría atender?"</div></div>`,agresivo:`<div class="section"><div class="example">"Dígame los correctos. Recalculamos en 30 segundos."</div></div>`,analitico:`<div class="section"><div class="example">"Ajustemos. ¿Me puede proporcionar sus datos reales de captación mensual y capacidad operativa?"</div></div>`,indeciso:`<div class="section"><div class="example">"Claro, cada negocio es diferente. Dígame cómo es en su caso y vemos juntos."</div></div>`}},
+  {title:"No se puede predecir la demanda",popup:{receptivo:`<div class="section"><div class="example">"Tiene razón, no se puede predecir. Pero sí se puede generar. La diferencia entre esperar que lleguen y tener un sistema que los traiga, es la diferencia entre dejar el negocio al azar y controlarlo. ¿No preferiría controlarlo?"</div></div><div class="proof">Los negocios con sistema activo de captación tienen 40% menos variación mensual que los que dependen de recomendación.</div>`,esceptico:`<div class="section"><div class="example">"Coincido, la demanda fluctúa. Pero se puede estabilizar con un canal constante. Lo que no se puede es depender de variables que no controla."</div></div>`,agresivo:`<div class="section"><div class="example">"No se predice, se genera. ¿Quiere seguir esperando o quiere un sistema que produzca?"</div></div>`,analitico:`<div class="section"><div class="example">"Estadísticamente, la variabilidad se reduce con múltiples canales de adquisición. Un canal automatizado reduce la desviación estándar de ingresos mensuales en aproximadamente 35%."</div></div>`,indeciso:`<div class="section"><div class="example">"Es verdad que no se puede predecir. Pero hay formas de tener un flujo más constante para que no dependa de la suerte. ¿Eso le interesaría?"</div></div>`}},
+  {title:"Estoy conforme con lo que tengo",popup:{receptivo:`<div class="section"><div class="example">"Lo respeto. Solo un dato: el 90% de nuestros clientes actuales decían exactamente eso antes de empezar. Después nos dicen que no sabían lo que estaban dejando sobre la mesa. ¿Me permite mostrarle una cosa y usted decide?"</div></div>`,esceptico:`<div class="section"><div class="example">"Eso está bien. Pero conformidad no es optimización. ¿Ha calculado cuánto ingreso adicional podría generar si llenara su capacidad ociosa?"</div></div>`,agresivo:`<div class="section"><div class="example">"Perfecto. Si está conforme, no lo molesto más. Solo dígame: ¿algún mes del año la cosa se pone más lenta? Porque ahí es donde esto funciona."</div></div>`,analitico:`<div class="section"><div class="example">"Comprendo. ¿Me permite hacerle una pregunta cuantitativa? ¿Cuál es su tasa de utilización de capacidad? Porque 'conforme' y 'optimizado' son métricas diferentes."</div></div>`,indeciso:`<div class="section"><div class="example">"Qué bueno que le va bien. Y si le dijera que puede irle todavía mejor sin esfuerzo extra, ¿al menos le daría curiosidad?"</div></div>`}},
+  {title:"Eso suena muy bonito en teoría",popup:{receptivo:`<div class="section"><div class="example">"Tiene razón en ser precavido. Por eso no le pido que confíe en la teoría: le pido 15 minutos para mostrarle cómo funciona con datos de su propio negocio. Si no le cuadra, no perdió más que 15 minutos."</div></div><div class="proof">Oferta de demostración personalizada: reduce la objeción "teórica" porque lo convierte en práctico y específico.</div>`,esceptico:`<div class="section"><div class="example">"Entiendo su postura. No le voy a dar teoría. Le puedo mostrar datos reales de negocios similares al suyo: nombres, números, resultados. ¿Eso le daría más confianza?"</div></div>`,agresivo:`<div class="section"><div class="example">"No es teoría. Tengo números de clínicas reales. ¿Quiere verlos o no?"</div></div>`,analitico:`<div class="section"><div class="example">"Más que teoría, le puedo presentar evidencia empírica: casos documentados, métricas de rendimiento y ROI verificable. ¿Le envío el reporte?"</div></div>`,indeciso:`<div class="section"><div class="example">"Es normal sentir eso. Muchos lo sintieron igual. ¿Qué le parece si le muestro un caso real parecido al suyo? Así ve con sus propios ojos."</div></div>`}}
+]},
+
+// F4-F7 abbreviated for space but with proper structure
+{id:4,name:"Presentar la solución",sub:"Vende el resultado",timer:"1.5 min",mission:"Vende el resultado, nunca la tecnología. El cliente quiere más clientes, no un bot.",
+script:{
+receptivo:`<span class="v">— [NOMBRE], lo que hacemos es esto:</span>
+<span class="v">— Instalamos un sistema que hace que clientes nuevos le escriban a usted directamente por WhatsApp, listos para agendar cita.</span>
+<span class="v">— Usted no tiene que hacer nada. Solo recibe el mensaje de un cliente que ya quiere ir.</span>
+<span class="v">— Es como tener un vendedor que trabaja 24/7, no cobra sueldo, y solo le pasa clientes calificados.</span>
+
+<span class="c">👤 "¿Pero cómo funciona exactamente?"</span>
+<span class="r">→ Se lo explico simple: nosotros atraemos a personas que buscan [SERVICIO] en su zona. Esas personas llegan a una conversación automatizada que las califica y les agenda cita directamente en su agenda. Usted solo llega a atender.</span>
+
+<span class="c">👤 "¿Cuántos clientes estamos hablando?"</span>
+<span class="r">→ En negocios como el suyo, el rango típico es [X-Y] clientes nuevos al mes. Pero depende de su zona y capacidad. Por eso antes de darle un número, hacemos un diagnóstico personalizado.</span>
+
+<span class="note">NUNCA digas "bot" ni "automatización" a menos que pregunten directamente. Vende el resultado: "clientes nuevos que le escriben listos para agendar".</span>`,
+esceptico:`<span class="v">— [NOMBRE], le explico sin rodeos:</span>
+<span class="v">— Tenemos un sistema que genera clientes nuevos para negocios como el suyo a través de WhatsApp.</span>
+<span class="v">— El cliente llega ya interesado, ya calificado, y listo para agendar.</span>
+<span class="v">— No requiere esfuerzo suyo. El sistema trabaja solo y usted solo ve los resultados.</span>
+
+<span class="c">👤 "¿Qué garantía tengo?"</span>
+<span class="r">→ Le puedo mostrar casos reales de negocios similares con números verificables. Sin humo, sin promesas abstractas. Datos.</span>
+
+<span class="note">El escéptico quiere pruebas, no promesas. Ofrece mostrar, no decir.</span>`,
+agresivo:`<span class="v">— [NOMBRE], simple:</span>
+<span class="v">— Le generamos clientes nuevos por WhatsApp. Llegan calificados, agendan solos.</span>
+<span class="v">— Usted no hace nada. Solo atiende las citas.</span>
+<span class="v">— Los negocios como el suyo ven resultados en las primeras 2 semanas.</span>
+
+<span class="c">👤 "¿Cuánto cuesta?"</span>
+<span class="r">→ Depende de su caso. Pero le doy un dato: con 2-3 clientes nuevos ya se paga la inversión. ¿Cuánto cobra por consulta?</span>
+
+<span class="note">El agresivo quiere precio rápido. No lo evites, pero hazlo condicional: "depende de su caso, pero con X clientes se paga solo."</span>`,
+analitico:`<span class="v">— [NOMBRE], el sistema opera así:</span>
+<span class="v">— Fase 1: Campañas segmentadas dirigidas a su perfil de paciente ideal en su zona geográfica.</span>
+<span class="v">— Fase 2: Los prospectos interactúan con un sistema conversacional que los califica automáticamente.</span>
+<span class="v">— Fase 3: Los prospectos calificados se agendan directamente en su calendario.</span>
+<span class="v">— Fase 4: Usted recibe métricas en tiempo real de todo el funnel.</span>
+
+<span class="c">👤 "¿Qué métricas puedo ver?"</span>
+<span class="r">→ Costo por lead, tasa de calificación, tasa de agendamiento, costo por paciente adquirido, y ROI mensual. Todo en un dashboard en tiempo real.</span>
+
+<span class="note">Al analítico dale estructura y datos. Le encanta ver el proceso desglosado.</span>`,
+indeciso:`<span class="v">— [NOMBRE], se lo pongo bien sencillo:</span>
+<span class="v">— Nosotros nos encargamos de que le lleguen clientes nuevos por WhatsApp.</span>
+<span class="v">— El cliente le escribe ya interesado, ya calificado, listo para agendar.</span>
+<span class="v">— Usted no tiene que hacer absolutamente nada diferente. Solo atender las citas.</span>
+<span class="v">— Es como poner un letrero en la calle que trabaja las 24 horas.</span>
+
+<span class="c">👤 "¿Y es complicado?"</span>
+<span class="r">→ Nada. Nosotros configuramos todo. Usted solo recibe los mensajes de pacientes nuevos. Es tan fácil como recibir un WhatsApp.</span>
+
+<span class="note">El indeciso teme la complejidad. Simplifica al máximo. "Es como recibir un WhatsApp" elimina el miedo.</span>`
+},
+subdirs:[
+  {label:"Pide precio directamente",action:"No lo evites pero condiciona: 'La inversión depende de su caso, pero le doy un dato: con 2-3 clientes nuevos al mes ya se cubre. ¿Cuánto cobra por consulta?' Así tú controlas la conversación de precio."},
+  {label:"Compara con otro servicio",action:"No compitas: 'Cada servicio tiene su enfoque. Lo nuestro se mide diferente: usted paga por resultados medibles, no por promesas. ¿Le muestro los números?'"},
+  {label:"Quiere demo ahora",action:"Si quiere ver, llévalo a F6 (Cierre) directamente: 'Perfecto, lo que hacemos es una sesión de 15 minutos donde le muestro exactamente cómo funcionaría en su caso...'"}
+],
+objections:[
+  {title:"¿Cuánto cuesta?",popup:{receptivo:`<div class="section"><div class="section-title">Estrategia: Ancla por resultado</div><div class="example">"La inversión depende de su caso. Pero le comparto un dato: si usted cobra $[Z] por consulta y el sistema le genera 10 clientes nuevos, son $[10×Z] de ingreso contra una inversión de una fracción de eso. ¿Le gustaría ver los números exactos para su negocio?"</div></div><div class="proof">Siempre ancla el precio al retorno, nunca al costo. El costo asusta, el retorno emociona.</div>`,esceptico:`<div class="section"><div class="example">"Los planes van de acuerdo al caso. Pero antes del precio, ¿me permite mostrarle el retorno? Porque si el retorno no le cuadra, el precio es irrelevante. Y si el retorno sí cuadra, el precio se justifica solo."</div></div>`,agresivo:`<div class="section"><div class="example">"La inversión se recupera con 2-3 clientes. Usted cobra $[Z] por consulta. Haga la cuenta. ¿Quiere ver los números específicos?"</div></div>`,analitico:`<div class="section"><div class="example">"El rango de inversión depende del volumen. Pero lo relevante es el unit economics: costo por cliente adquirido vs ingreso por cliente. Puedo presentarle una proyección financiera en la sesión de diagnóstico."</div></div>`,indeciso:`<div class="section"><div class="example">"Es una inversión accesible, y con los primeros clientes ya se cubre. Pero antes de hablar de precio, ¿le gustaría ver cómo funciona? Así decide con toda la información."</div></div>`}},
+  {title:"¿Y si no funciona?",popup:{receptivo:`<div class="section"><div class="example">"Excelente pregunta. Le doy un dato real: [X]% de nuestros clientes ven resultados en los primeros 30 días. Pero más allá de eso: acompañamos el proceso, optimizamos cada semana, y si en [plazo] no ve resultados, hablamos y lo resolvemos."</div></div><div class="proof">No prometas garantías falsas. Promete proceso, acompañamiento y transparencia.</div>`,esceptico:`<div class="section"><div class="example">"Le puedo mostrar casos de estudio con métricas reales. No le pido que confíe en mi palabra — confíe en los datos. Le comparto resultados verificables."</div></div>`,agresivo:`<div class="section"><div class="example">"Si no funciona en [plazo], lo hablamos directo. Pero en [X años] de operación, nuestro track record dice otra cosa. ¿Le muestro?"</div></div>`,analitico:`<div class="section"><div class="example">"Nuestra tasa de éxito documentada es de [X]% en los primeros 60 días. Puedo compartirle el reporte con desglose por industria y geografía para que evalúe el riesgo real."</div></div>`,indeciso:`<div class="section"><div class="example">"Es normal tener esa duda. Muchos la tuvieron. Lo que hacemos es ir paso a paso: primero le mostramos cómo funciona, sin compromiso. Si le gusta, avanzamos. Si no, no pasa nada."</div></div>`}},
+  {title:"Suena demasiado bueno",popup:{receptivo:`<div class="section"><div class="example">"Jaja, me lo dicen seguido. Pero no es magia: es tecnología + estrategia. Le puedo mostrar exactamente cómo funciona, paso a paso, con números reales. ¿Le doy una demo?"</div></div>`,esceptico:`<div class="section"><div class="example">"Entiendo la duda. Le propongo algo: le muestro datos reales de negocios como el suyo. Si después de verlos sigue pensando que suena demasiado bueno, respeto su posición. ¿Le parece justo?"</div></div>`,agresivo:`<div class="section"><div class="example">"No es bueno ni malo, es medible. Le muestro números reales y usted juzga. ¿Sí o no?"</div></div>`,analitico:`<div class="section"><div class="example">"Es una observación válida. Los resultados son función de variables específicas: zona, competencia, ticket promedio. Puedo hacer una proyección con datos de su caso particular."</div></div>`,indeciso:`<div class="section"><div class="example">"Es normal pensar eso. ¿Sabe qué le daría más confianza? Ver un caso real de un negocio parecido al suyo. Le puedo mostrar uno, ¿le parece?"</div></div>`}},
+  {title:"Mi rubro es diferente",popup:{receptivo:`<div class="section"><div class="example">"Todos los rubros son diferentes, pero todos los negocios que atienden citas tienen el mismo reto: llenar la agenda. ¿Usted atiende por cita? Entonces aplica. Le muestro un caso de su sector."</div></div>`,esceptico:`<div class="section"><div class="example">"¿En qué rubro está exactamente? Porque tenemos datos segmentados. Si no tenemos su rubro específico, se lo digo directo."</div></div>`,agresivo:`<div class="section"><div class="example">"¿Qué rubro? Si atiende citas, funciona. Punto."</div></div>`,analitico:`<div class="section"><div class="example">"Tenemos datos segmentados por industria. ¿Me indica su rubro? Le comparto las métricas específicas de su sector."</div></div>`,indeciso:`<div class="section"><div class="example">"Muchos lo pensaron, pero después vieron que funciona igual. ¿Me dice su rubro? Busco si tenemos algo parecido para que se sienta más seguro."</div></div>`}}
+]},
+
+{id:5,name:"Defender la solución",sub:"Objeta = interesado",timer:"Sin límite",mission:"El que objeta está interesado. El que cuelga, no. Cada objeción es una oportunidad de cierre.",
+script:{
+receptivo:`<span class="v">— [NOMBRE], entiendo su punto. Déjeme abordarlo:</span>
+<span class="v">— [Usar los argumentos de las objeciones laterales según lo que diga]</span>
+
+<span class="c">👤 Después de resolver la objeción:</span>
+<span class="r">→ ¿Eso aclara su duda? ¿Hay algo más que le inquiete? Porque si ya estamos claros, el siguiente paso es...</span>
+
+<span class="note">Regla de oro: cada objeción resuelta es un paso más hacia el cierre. Después de resolver, pregunta si hay más. Si no hay más, avanza a F6.</span>`,
+esceptico:`<span class="v">— [NOMBRE], válida preocupación. Permítame responder con hechos:</span>
+<span class="v">— [Responder con datos concretos]</span>
+
+<span class="c">👤 "Necesitaría ver pruebas"</span>
+<span class="r">→ Absolutamente. ¿Le parece si le muestro datos reales en una sesión de 15 minutos? Sin compromiso. Si los datos no le convencen, ahí lo dejamos.</span>
+
+<span class="note">El escéptico necesita pruebas, no palabras. Siempre ofrece mostrar, nunca solo decir.</span>`,
+agresivo:`<span class="v">— [NOMBRE], directo:</span>
+<span class="v">— [Responder sin rodeos con datos]</span>
+
+<span class="c">👤 "OK pero..."</span>
+<span class="r">→ ¿Cuál es la verdadera duda? Porque si es el precio, se paga con 2 clientes. Si es la confianza, le muestro datos. ¿Cuál es?</span>
+
+<span class="note">Con el agresivo, llega a la raíz. "¿Cuál es la verdadera duda?" corta capas de resistencia.</span>`,
+analitico:`<span class="v">— [NOMBRE], abordemos punto por punto:</span>
+<span class="v">— [Presentar evidencia estructurada]</span>
+<span class="v">— ¿Le gustaría revisar la documentación de respaldo?</span>
+
+<span class="note">El analítico quiere procesar. Ofrece documentación y tiempo para revisarla.</span>`,
+indeciso:`<span class="v">— [NOMBRE], es completamente normal tener esa duda.</span>
+<span class="v">— Le cuento: muchos clientes nuestros pensaron lo mismo al principio.</span>
+<span class="v">— Lo que les ayudó fue ver el sistema funcionando. ¿Le gustaría verlo?</span>
+
+<span class="note">Normaliza → evidencia social → opción fácil. Ese es el ciclo con el indeciso.</span>`
+},
+subdirs:[
+  {label:"Múltiples objeciones seguidas",action:"Anota cada una. Después dile: '[NOMBRE], escuché 3 puntos. Permítame abordarlos uno por uno.' Resuelve en orden. Esto muestra profesionalismo."},
+  {label:"Silencio largo del cliente",action:"No llenes el silencio. Espera 3-5 segundos. Si sigue en silencio: '¿[NOMBRE]? ¿Hay algo que le preocupe?' El silencio a veces es procesamiento, no rechazo."},
+  {label:"Listo para cerrar",action:"Si las objeciones se resolvieron, pasa a F6: 'Perfecto, entonces lo que hacemos es esto...'"}
+],
+objections:[
+  {title:"Es muy caro / No tengo presupuesto",popup:{receptivo:`<div class="section"><div class="section-title">Ancla al costo de NO hacer nada</div><div class="example">"Entiendo. Pero permítame ponerlo en perspectiva: ¿cuánto le cuesta un mes sin esos clientes? Si pierde $[X] al mes en capacidad ociosa, la inversión no es un gasto, es la solución al gasto que YA tiene."</div></div><div class="section"><div class="section-title">Técnica: fraccionamiento</div><div class="example">"Veámoslo así: la inversión dividida entre 30 días es $[diario]. ¿Invertiría $[diario] al día para recibir [X] clientes nuevos al mes? Es menos que una comida."</div></div><div class="proof">El costo de inacción siempre es mayor que el costo de acción. Haz que el cliente vea que YA está pagando — con dinero que no entra.</div>`,esceptico:`<div class="section"><div class="example">"¿Caro comparado con qué? ¿Con lo que pierde cada mes en capacidad ociosa? Le propongo algo: revisemos los números juntos en 15 minutos. Si el ROI no cuadra, yo mismo le digo que no lo haga."</div></div>`,agresivo:`<div class="section"><div class="example">"¿Cuánto pierde al mes por los huecos en agenda? Eso sí es caro. Esto se paga con 2 clientes. Haga la cuenta."</div></div>`,analitico:`<div class="section"><div class="example">"Hagamos el ejercicio: inversión mensual / clientes generados = costo por adquisición. Compare ese CAC con el lifetime value de cada cliente. Le anticipo que el ratio es favorable."</div></div>`,indeciso:`<div class="section"><div class="example">"Entiendo que es una inversión importante. ¿Sabe qué hacemos? Empezamos con un plan básico que se ajusta a cualquier presupuesto. Y con los primeros clientes que lleguen, ya se cubrió. ¿Le parece?"</div></div>`}},
+  {title:"Necesito pensarlo / consultarlo",popup:{receptivo:`<div class="section"><div class="section-title">Estrategia: No dejes enfriar</div><div class="example">"¡Por supuesto! Solo para que lo piense con toda la información: ¿qué tal si hacemos una sesión de 15 minutos donde le muestro el sistema funcionando? Así tiene toda la info para decidir con su socio/esposa/contador. ¿Mañana en la mañana o en la tarde?"</div></div><div class="proof">Pensar sin información = olvidar. Pensar con información = decidir. Siempre ofrece dar MÁS info, no menos.</div>`,esceptico:`<div class="section"><div class="example">"Lo respeto. ¿Qué información adicional le ayudaría a tomar la decisión? Se la puedo preparar para que la revise con calma."</div></div>`,agresivo:`<div class="section"><div class="example">"Entendido. ¿Cuándo tiene respuesta? Porque esta oportunidad tiene vigencia. ¿Le llamo el jueves?"</div></div>`,analitico:`<div class="section"><div class="example">"Comprendo. ¿Le sería útil que le envíe un documento con proyección financiera personalizada? Así tiene datos duros para la toma de decisión."</div></div>`,indeciso:`<div class="section"><div class="example">"Claro, sin presión. ¿Le parece si le mando un resumen y hablamos el jueves? Así lo piensa tranquilo. ¿Jueves a las 10 o a las 3?"</div></div>`}},
+  {title:"No confío en este tipo de servicios",popup:{receptivo:`<div class="section"><div class="example">"Lo entiendo, hay mucho humo en el mercado. Por eso le propongo algo concreto: le muestro el sistema funcionando en vivo, con datos reales de negocios como el suyo. Usted ve y decide. Sin presión, sin compromiso."</div></div><div class="proof">La confianza no se pide, se demuestra. Demo en vivo > cualquier promesa verbal.</div>`,esceptico:`<div class="section"><div class="example">"Es una postura prudente. Le puedo compartir referencias de clientes actuales que usted puede contactar directamente. ¿Eso le daría más confianza?"</div></div>`,agresivo:`<div class="section"><div class="example">"Respeto eso. Pero la desconfianza se cura con datos, no con palabras. ¿Le muestro números reales o no?"</div></div>`,analitico:`<div class="section"><div class="example">"Comprensible. ¿Le ayudaría revisar: (a) casos de estudio documentados, (b) métricas de rendimiento auditables, y (c) referencias directas de clientes actuales?"</div></div>`,indeciso:`<div class="section"><div class="example">"Es totalmente normal sentir eso. Le cuento que muchos clientes nuestros empezaron con la misma duda. ¿Qué le daría más tranquilidad? ¿Ver un caso real? ¿Hablar con alguien que ya lo usa?"</div></div>`}},
+  {title:"Otro me ofrece algo similar más barato",popup:{receptivo:`<div class="section"><div class="example">"¡Qué bueno que está comparando! La diferencia está en el acompañamiento y los resultados. Le pregunto: ¿ellos le garantizan un proceso de optimización continua? ¿Le dan métricas en tiempo real? ¿Tiene un consultor dedicado?"</div></div><div class="section"><div class="section-title">Diferenciadores clave</div><div class="proof">Setup completo sin esfuerzo suyo · Optimización semanal · Dashboard en tiempo real · Consultor dedicado · Resultados medibles desde mes 1</div></div>`,esceptico:`<div class="section"><div class="example">"¿Qué incluye exactamente su propuesta? Porque barato sin resultados es caro. Le puedo hacer un comparativo punto por punto si me comparte los detalles."</div></div>`,agresivo:`<div class="section"><div class="example">"¿Más barato? ¿Y qué resultados le prometen? Porque el precio más bajo con cero resultados es el precio más caro que existe."</div></div>`,analitico:`<div class="section"><div class="example">"Interesante. ¿Me puede compartir el desglose de su oferta? Puedo preparar un comparativo técnico: alcance, métricas incluidas, nivel de optimización, y sobre todo, resultados comprobables."</div></div>`,indeciso:`<div class="section"><div class="example">"Qué bueno que está viendo opciones. ¿Quiere que le ayude a comparar? Sin compromiso. Le digo honestamente si la otra opción es mejor para usted."</div></div>`}}
+]},
+
+{id:6,name:"Cierre",sub:"Se conduce, no se pide",timer:"30 seg",mission:"El cierre se conduce, nunca se pide. No preguntes '¿quiere?', di '¿cuándo?'",
+script:{
+receptivo:`<span class="v">— Perfecto [NOMBRE], entonces lo que hacemos es lo siguiente:</span>
+<span class="v">— Le agendo una sesión de 15 minutos donde le muestro el sistema personalizado para su negocio.</span>
+<span class="v">— Es sin compromiso. Si le gusta, avanzamos. Si no, aquí no pasó nada.</span>
+<span class="v">— ¿Le queda mejor hoy en la tarde o mañana en la mañana?</span>
+
+<span class="c">👤 "Mañana en la mañana"</span>
+<span class="r">→ Perfecto. ¿A las 10 o a las 11? → Listo, le confirmo por WhatsApp. ¿Me da su número?</span>
+
+<span class="note">TÉCNICA: Alternativa de cierre. NUNCA preguntes "¿quiere agendar?". Siempre "¿martes o miércoles?", "¿mañana o tarde?"</span>`,
+esceptico:`<span class="v">— [NOMBRE], lo que le propongo es lo siguiente:</span>
+<span class="v">— Una sesión diagnóstica de 15 minutos. Sin costo, sin compromiso.</span>
+<span class="v">— Le muestro datos reales aplicados a su caso y usted decide.</span>
+<span class="v">— ¿Tiene disponibilidad esta semana?</span>
+
+<span class="c">👤 "¿Cuál es el formato?"</span>
+<span class="r">→ Videollamada o llamada, como prefiera. Le comparto pantalla con los datos de su caso. 15 minutos exactos.</span>
+
+<span class="note">El escéptico quiere control. Dale opciones de formato y horario.</span>`,
+agresivo:`<span class="v">— [NOMBRE], siguiente paso:</span>
+<span class="v">— Sesión de 15 min. Le muestro números de su rubro.</span>
+<span class="v">— Si en 5 minutos no le convence, cortamos.</span>
+<span class="v">— ¿Hoy o mañana?</span>
+
+<span class="note">Con agresivo: rápido, sin florituras, dale control del tiempo.</span>`,
+analitico:`<span class="v">— [NOMBRE], el siguiente paso lógico sería:</span>
+<span class="v">— Sesión personalizada donde le presento: proyección de resultados, análisis de costo-beneficio, y timeline de implementación. Todo basado en datos de su operación.</span>
+<span class="v">— Son 15 minutos estructurados. ¿Qué día le funciona?</span>
+
+<span class="note">El analítico agenda si ve que recibirá algo de valor: datos, análisis, proyecciones.</span>`,
+indeciso:`<span class="v">— [NOMBRE], mire lo que podemos hacer:</span>
+<span class="v">— Le muestro el sistema en 15 minutos. Es solo ver, sin compromiso.</span>
+<span class="v">— Si le gusta, genial. Si no, no pasa absolutamente nada.</span>
+<span class="v">— Le voy a agendar para mañana a las 10. ¿Le parece bien?</span>
+
+<span class="note">Con indeciso: NO preguntes "¿cuándo le queda?". DECIDE por él: "Le agendo mañana a las 10."</span>`
+},
+subdirs:[
+  {label:"Dice sí pero no da fecha",action:"Toma control: 'Perfecto, ¿mañana a las 10 le funciona? Le mando confirmación ahora mismo.' Si dice 'puede ser', confirma: 'Listo, mañana a las 10.'"},
+  {label:"Pide info antes de agendar",action:"'Le mando un resumen por WhatsApp ahora y agendamos la sesión para verlo juntos. ¿Me da su número?' Vincula enviar info con agendar."},
+  {label:"'Déjame pensarlo'",action:"'Claro. ¿Qué dato le ayudaría a decidir? Porque puedo resolverlo ahora.' Si insiste: 'OK, le llamo el jueves. ¿A las 10 o a las 3?'"}
+],
+objections:[
+  {title:"Mándame info primero",popup:{receptivo:`<div class="section"><div class="example">"¡Claro! Le mando un resumen ahora mismo. Pero le digo algo: en 15 minutos le puedo explicar mucho mejor que cualquier PDF. ¿Qué tal si le mando la info Y agendamos la sesión? Así tiene la info para revisarla y en la sesión resolvemos dudas. ¿Mañana o pasado?"</div></div><div class="proof">Técnica: vincular. No es "info O sesión", es "info Y sesión".</div>`,esceptico:`<div class="section"><div class="example">"Con gusto. ¿A qué WhatsApp se lo envío? Le incluyo casos de estudio y métricas. Y si después de revisarlo quiere profundizar, agendamos 15 minutos. ¿Le parece?"</div></div>`,agresivo:`<div class="section"><div class="example">"Se la mando ahora. ¿Número de WhatsApp? Pero le anticipo: la info real está en la demo. ¿La vemos mañana?"</div></div>`,analitico:`<div class="section"><div class="example">"Le preparo un documento con: casos de estudio, métricas de rendimiento, y una proyección preliminar para su caso. ¿A qué correo? Y para el análisis detallado, ¿agendamos una sesión de 15 minutos?"</div></div>`,indeciso:`<div class="section"><div class="example">"Sí, se la mando. ¿Me da su WhatsApp? Y le agendo una llamadita corta para la semana que viene, así si le surgen dudas las resolvemos. ¿El martes le queda?"</div></div>`}},
+  {title:"Tengo que hablar con mi socio",popup:{receptivo:`<div class="section"><div class="example">"¡Perfecto! ¿Y si hacemos la sesión con los dos? Así ambos tienen la misma información y pueden decidir juntos. ¿Cuándo pueden ambos?"</div></div><div class="proof">Incluir al socio en la sesión es MEJOR que dejarlo afuera. Evita el teléfono roto.</div>`,esceptico:`<div class="section"><div class="example">"Comprendo. ¿Le parece si agendamos una sesión con ambos presentes? Así la información llega completa y pueden evaluar juntos."</div></div>`,agresivo:`<div class="section"><div class="example">"Bien. Agenda con tu socio. ¿Cuándo pueden los dos? Lo hacemos en 15 minutos."</div></div>`,analitico:`<div class="section"><div class="example">"Lógico. ¿Le preparo material para que comparta? Y agendamos sesión conjunta para abordar preguntas de ambos. ¿Qué día funcionaría?"</div></div>`,indeciso:`<div class="section"><div class="example">"Claro, es importante que estén de acuerdo. ¿Me dice cuándo pueden los dos y lo agendamos? Así se enteran juntos y nadie se queda con dudas."</div></div>`}},
+  {title:"No estoy convencido aún",popup:{receptivo:`<div class="section"><div class="example">"Lo entiendo. ¿Qué parte le genera duda? Porque quizás puedo resolverla ahora. Y si no, la sesión de 15 minutos es justamente para eso: que vea todo y decida con información completa."</div></div>`,esceptico:`<div class="section"><div class="example">"Respeto eso. ¿Qué necesitaría ver para estar convencido? Datos, testimonios, demo en vivo... dígame y se lo preparo."</div></div>`,agresivo:`<div class="section"><div class="example">"¿Qué necesitas para decidir? Dime y te lo doy ahora."</div></div>`,analitico:`<div class="section"><div class="example">"¿Qué variable le falta para completar su evaluación? Puedo proporcionarle datos adicionales o un análisis específico."</div></div>`,indeciso:`<div class="section"><div class="example">"Es normal no estar convencido todavía. La sesión de 15 minutos es sin compromiso, justamente para resolver esas dudas. Si después no le convence, no pasa nada. ¿Le parece mañana?"</div></div>`}},
+  {title:"No estoy interesado",popup:{receptivo:`<div class="section"><div class="section-title">No es no, pero merece una pregunta final</div><div class="example">"Lo respeto completamente. Solo una última pregunta: ¿no le interesa porque ya tiene algo que funciona, o porque no es el momento? Porque si es el momento, le puedo llamar cuando sea más oportuno."</div></div><div class="proof">Esta pregunta clasifica: si tiene algo, es un no real. Si es momento, es un seguimiento.</div>`,esceptico:`<div class="section"><div class="example">"Entiendo. ¿Me permite preguntar qué parte no le pareció relevante? Me ayuda a mejorar."</div></div>`,agresivo:`<div class="section"><div class="example">"OK. ¿Es por el servicio o por el momento?"</div></div>`,analitico:`<div class="section"><div class="example">"Comprendo. ¿Podría indicarme qué factor fue determinante? Es información valiosa."</div></div>`,indeciso:`<div class="section"><div class="example">"Claro, sin problema. Y si en algún momento le surge la curiosidad, ¿puedo dejarle mi número por si acaso?"</div></div>`}}
+]},
+
+{id:7,name:"Despedida",sub:"Cierre limpio",timer:"< 20 seg",mission:"Corto, seguro, sin reabrir conversación. Confirma datos y despide.",hasForm:true,
+script:{
+receptivo:`<span class="v">— ¡Perfecto [NOMBRE]! Quedo confirmado entonces:</span>
+<span class="v">— [DÍA] a las [HORA].</span>
+<span class="v">— Le mando confirmación por WhatsApp ahora mismo.</span>
+<span class="v">— ¡Que le vaya excelente y nos vemos pronto!</span>
+
+<span class="note">NO reabras temas. NO hagas más preguntas. Confirma y despide con energía positiva.</span>`,
+esceptico:`<span class="v">— Perfecto [NOMBRE]. Queda agendado:</span>
+<span class="v">— [DÍA] a las [HORA].</span>
+<span class="v">— Le envío confirmación por WhatsApp.</span>
+<span class="v">— Cualquier duda previa, me escribe. Hasta pronto.</span>
+
+<span class="note">Breve, profesional, sin efusiones. El escéptico respeta la concisión.</span>`,
+agresivo:`<span class="v">— Listo [NOMBRE]. [DÍA] a las [HORA].</span>
+<span class="v">— Le confirmo por WhatsApp. Hasta entonces.</span>
+
+<span class="note">Máximo 2 frases. Ni una más.</span>`,
+analitico:`<span class="v">— [NOMBRE], confirmo: sesión el [DÍA] a las [HORA].</span>
+<span class="v">— Le envío confirmación con agenda de la sesión por correo.</span>
+<span class="v">— Hasta pronto.</span>
+
+<span class="note">Confirma con detalle y ofrece agenda escrita. El analítico lo aprecia.</span>`,
+indeciso:`<span class="v">— ¡Listo [NOMBRE]! Ya quedó agendado para el [DÍA] a las [HORA].</span>
+<span class="v">— Le mando todo por WhatsApp para que lo tenga guardado.</span>
+<span class="v">— Va a ver que va a salir muy bien. ¡Hasta pronto!</span>
+
+<span class="note">Refuerza la decisión. "Va a salir muy bien" elimina arrepentimiento anticipado.</span>`
+},
+subdirs:[
+  {label:"No agendó (no interesado)",action:"Cierra con profesionalismo: 'Entendido [NOMBRE], gracias por su tiempo. Si en el futuro le interesa, aquí estamos. Que le vaya bien.' NO insistas."},
+  {label:"Agendó pero duda",action:"Refuerza: 'Le mando la confirmación ahora. Y recuerde: es solo para ver, sin compromiso. Nos vemos el [DÍA].' Despide rápido antes de que reconsidere."}
+],
+objections:[
+  {title:"¿Me puedes llamar otro día?",popup:{receptivo:`<div class="section"><div class="example">"¡Claro! ¿Qué día y hora le queda? Le llamo puntual. ¿Me da su nombre y número para confirmarle?"</div></div><div class="proof">Si no deja datos, es un no. Si deja datos, es una oportunidad real. SIEMPRE pide datos de contacto.</div>`,esceptico:`<div class="section"><div class="example">"Por supuesto. ¿Qué día y horario prefiere? Le agendo y le confirmo por WhatsApp."</div></div>`,agresivo:`<div class="section"><div class="example">"Dígame día y hora. Le llamo puntual."</div></div>`,analitico:`<div class="section"><div class="example">"Entendido. ¿Me proporciona día, hora y datos de contacto para agendar correctamente?"</div></div>`,indeciso:`<div class="section"><div class="example">"Sí, ¿le parece el jueves a las 10? Le mando recordatorio por WhatsApp. ¿Me da su número?"</div></div>`}},
+  {title:"Ya cambié de opinión",popup:{receptivo:`<div class="section"><div class="example">"Entiendo. ¿Hay algo que le hizo cambiar de parecer? A veces una duda sin resolver causa eso. Si es algo que puedo aclarar, con gusto."</div></div><div class="warning">Si insiste en que no, respeta. Cierra con: "Sin problema [NOMBRE], que le vaya bien. Aquí estamos si necesita."</div>`,esceptico:`<div class="section"><div class="example">"Comprendo. ¿Fue algún punto específico? Me ayuda a saber si hay algo que no expliqué bien."</div></div>`,agresivo:`<div class="section"><div class="example">"OK. ¿Es por algo específico? Si no, respeto. Gracias por su tiempo."</div></div>`,analitico:`<div class="section"><div class="example">"¿Fue algún factor que no abordamos? Porque si hay información pendiente, puedo resolverla ahora."</div></div>`,indeciso:`<div class="section"><div class="example">"Entiendo. Mire, no hay presión. Si en algún momento quiere retomarlo, me escribe y lo vemos con calma. ¿Le dejo mi número?"</div></div>`}},
+  {title:"Solo dame tu contacto",popup:{receptivo:`<div class="section"><div class="example">"¡Claro! Le paso mi número: [NÚMERO]. Y si me da el suyo le mando un mensaje para que me tenga guardado. ¿Cuál es?"</div></div><div class="proof">Siempre intercambia. Si tú tienes su número, puedes hacer follow-up. Si solo él tiene el tuyo, depende de que llame.</div>`,esceptico:`<div class="section"><div class="example">"Mi número es [NÚMERO]. ¿Me permite enviarle un mensaje para que me tenga registrado?"</div></div>`,agresivo:`<div class="section"><div class="example">"[NÚMERO]. Le mando un mensaje ahora. ¿Cuál es su WhatsApp?"</div></div>`,analitico:`<div class="section"><div class="example">"Le comparto: teléfono [NÚMERO], correo [CORREO]. ¿Me proporciona sus datos para enviarle el material?"</div></div>`,indeciso:`<div class="section"><div class="example">"Sí, es [NÚMERO]. Le mando un mensajito ahora para que me tenga guardado. ¿Me da su número?"</div></div>`}},
+  {title:"Confirmar datos de cita",popup:{receptivo:`<div class="section"><div class="section-title">Checklist de cierre</div><div class="proof">✅ Nombre completo del contacto<br>✅ Nombre del negocio<br>✅ Número de WhatsApp<br>✅ Día y hora confirmados<br>✅ Formato (videollamada/llamada)<br>✅ Enviar confirmación inmediata</div></div><div class="example">"[NOMBRE], confirmo: [DÍA] a las [HORA] por [FORMATO]. Le mando confirmación ahora. ¡Nos vemos!"</div>`,esceptico:`<div class="section"><div class="proof">Misma checklist. Confirma cada dato verbalmente. El escéptico aprecia la precisión.</div></div>`,agresivo:`<div class="section"><div class="proof">Confirma rápido. Máximo 2 frases.</div></div>`,analitico:`<div class="section"><div class="proof">Confirma todos los datos + envía agenda escrita por correo.</div></div>`,indeciso:`<div class="section"><div class="proof">Confirma + refuerza: "Va a ser una sesión muy útil, ya verá."</div></div>`}}
+]}
+];
+
+let cp=0,am="receptivo",ec=null;
+const gc=()=>M.find(m=>m.id===am).color;
+const gm=()=>M.find(m=>m.id===am);
+
+function rMood(){document.getElementById('moodBar').innerHTML=M.map(m=>{const a=m.id===am;return`<button class="mood-btn${a?' active':''}"onclick="setM('${m.id}')"style="background:${a?m.color+'12':''};border-color:${a?m.color+'44':''}"><span class="mood-emoji">${m.emoji}</span>${a?`<span class="mood-label"style="color:${m.color}">${m.label}</span>`:''}</button>`}).join('')}
+
+function rPhase(){const p=P[cp],c=gc();document.getElementById('phaseDots').innerHTML=P.map((_,i)=>{if(i===cp)return`<div class="pdot on"style="background:linear-gradient(90deg,${c},${c}88)"></div>`;if(i<cp)return`<div class="pdot done"style="background:${c}44"></div>`;return`<div class="pdot off"></div>`}).join('');document.getElementById('ptag').textContent=`F${p.id}`;document.getElementById('ptag').style.color=c;document.getElementById('pname').textContent=p.name;document.getElementById('psub').textContent=p.sub;document.getElementById('ptimer').textContent=p.timer;document.getElementById('pmission').textContent=p.mission}
+
+function rCards(){const p=P[cp];document.getElementById('leftCol').innerHTML=p.objections.slice(0,2).map((o,i)=>`<div class="ocard"onclick="openPop(${i})"><div class="tline"></div><span class="otag">Objeción</span><span class="otitle">${o.title}</span><span class="ohint">Toca para ver argumento completo</span></div>`).join('');document.getElementById('rightCol').innerHTML=p.objections.slice(2,4).map((o,i)=>`<div class="ocard"onclick="openPop(${i+2})"><div class="tline"></div><span class="otag">Objeción</span><span class="otitle">${o.title}</span><span class="ohint">Toca para ver argumento completo</span></div>`).join('')}
+
+function rCenter(){const p=P[cp],m=gm();document.getElementById('bmoodText').textContent=`${m.emoji} ${m.label.toUpperCase()}`;let h=`<div class="stxt">${p.script[am]}</div>`;
+if(p.hasForm){h+=`<div class="form-area"><div class="form-title">📋 Datos del Cliente</div>${[{k:'nombre',l:'Nombre completo',p:'Ej: Dr. García'},{k:'negocio',l:'Negocio / Clínica',p:'Ej: Clínica Dental Sonríe'},{k:'telefono',l:'Teléfono / WhatsApp',p:'+52 55 1234 5678'},{k:'horario',l:'Día y hora',p:'Ej: Martes 10am'},{k:'formato',l:'Formato',p:'Videollamada / Llamada'},{k:'notas',l:'Notas',p:'Observaciones...'}].map(f=>`<div class="fgrp"><label>${f.l}</label><input placeholder="${f.p}"id="f_${f.k}"></div>`).join('')}<button class="fbtn"onclick="save()">✓ Confirmar cita</button></div>`}
+h+=`<div class="subdirs"><div class="subdirs-title">↳ Redireccionamientos</div>${p.subdirs.map((s,i)=>`<button class="subdir-btn"onclick="openSub(${i})">${s.label}</button>`).join('')}</div>`;
+document.getElementById('scriptArea').innerHTML=h}
+
+function rNav(){const p=P[cp],c=gc();document.getElementById('ncur').textContent=p.id;document.getElementById('btnP').disabled=cp===0;const n=document.getElementById('btnN');n.disabled=cp===6;n.style.background=cp===6?'':c+'12';n.style.borderColor=cp===6?'':c+'33';n.style.color=cp===6?'#c5c9d4':c}
+
+function render(){rMood();rPhase();rCards();rCenter();rNav()}
+function setM(id){am=id;ec=null;render()}
+function go(d){document.getElementById('main').classList.add('hide');ec=null;setTimeout(()=>{cp=Math.max(0,Math.min(6,cp+d));render();document.getElementById('main').classList.remove('hide')},300)}
+
+function openPop(idx){const p=P[cp],o=p.objections[idx],m=gm(),c=gc();document.getElementById('popTag').textContent='Objeción — F'+p.id+' '+p.name;document.getElementById('popTitle').textContent=o.title;document.getElementById('popMood').innerHTML=`Modo: ${m.emoji} ${m.label}`;document.getElementById('popMood').style.color=c;document.getElementById('popBody').innerHTML=o.popup[am];document.getElementById('popover').classList.add('show');document.body.style.overflow='hidden'}
+function openSub(idx){const s=P[cp].subdirs[idx],m=gm(),c=gc();document.getElementById('popTag').textContent='Redirección — F'+P[cp].id;document.getElementById('popTitle').textContent=s.label;document.getElementById('popMood').innerHTML=`Modo: ${m.emoji} ${m.label}`;document.getElementById('popMood').style.color=c;document.getElementById('popBody').innerHTML=`<div class="section"><div class="section-title">Qué hacer</div><p>${s.action}</p></div>`;document.getElementById('popover').classList.add('show');document.body.style.overflow='hidden'}
+function closePopup(e){if(e&&e.target!==document.getElementById('popover'))return;document.getElementById('popover').classList.remove('show');document.body.style.overflow=''}
+function save(){const d={};['nombre','negocio','telefono','horario','formato','notas'].forEach(k=>{const e=document.getElementById('f_'+k);if(e)d[k]=e.value});alert('✅ Cita confirmada:\n'+JSON.stringify(d,null,2))}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closePopup()});
+render();
+</script>
+</body>
+</html>
