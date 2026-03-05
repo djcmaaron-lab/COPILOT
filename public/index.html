@@ -8,8 +8,6 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
 body{font-family:'DM Sans',sans-serif;background:linear-gradient(170deg,#eef1f7 0%,#fff 40%,#f6f7fc 70%,#faf8f2 100%);min-height:100vh;overflow-x:hidden;color:#1a1a2e}
-
-/* HEADER */
 .header{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:12px 28px;background:linear-gradient(180deg,rgba(255,255,255,.97) 70%,rgba(255,255,255,0));backdrop-filter:blur(12px)}
 .logo-area{display:flex;align-items:center;gap:12px}
 .logo-text{font-weight:800;font-size:13px;letter-spacing:3.5px;color:#b8942e;text-transform:uppercase}
@@ -20,8 +18,6 @@ body{font-family:'DM Sans',sans-serif;background:linear-gradient(170deg,#eef1f7 
 .mood-btn.active{padding:4px 12px;transform:scale(1.05);box-shadow:0 2px 12px rgba(0,0,0,.08)}
 .mood-emoji{font-size:14px;line-height:1}
 .mood-label{font-size:10px;font-weight:700;letter-spacing:.5px}
-
-/* PHASE */
 .phase-bar{position:fixed;top:52px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4px;z-index:90;opacity:0;animation:fadeIn .5s ease .2s forwards}
 .phase-dots{display:flex;gap:3px}
 .pdot{height:3px;border-radius:2px;transition:all .5s cubic-bezier(.16,1,.3,1)}
@@ -32,35 +28,16 @@ body{font-family:'DM Sans',sans-serif;background:linear-gradient(170deg,#eef1f7 
 .psub{font-size:10px;color:#9ca3af;font-style:italic}
 .ptimer{font-size:9px;color:#b0b5c0;letter-spacing:1.5px}
 .pmission{font-size:10px;color:#6b7280;margin-top:1px;font-weight:500}
-
-/* LAYOUT */
 .main{display:flex;align-items:stretch;gap:14px;width:100%;max-width:1460px;margin:120px auto 80px;padding:0 18px;transition:all .35s cubic-bezier(.16,1,.3,1);min-height:calc(100vh - 220px)}
 .main.hide{opacity:0;transform:translateY(14px) scale(.98)}
 .side{display:flex;flex-direction:column;gap:12px;flex:1;min-width:0}
-
-/* OBJ CARDS — NOW STRETCH FULL HEIGHT */
-.ocard{
-  border-radius:18px;padding:22px 18px;cursor:pointer;position:relative;overflow:hidden;
-  display:flex;flex-direction:column;justify-content:center;transition:all .4s cubic-bezier(.16,1,.3,1);
-  background:linear-gradient(155deg,#0062cc,#004ba0 40%,#003580 70%,#004da6);
-  border:1px solid rgba(0,120,255,.2);
-  box-shadow:0 2px 4px rgba(0,30,80,.12),0 8px 20px rgba(0,40,100,.18),0 18px 40px rgba(0,20,60,.14),inset 0 1px 0 rgba(100,180,255,.18),inset 0 -2px 5px rgba(0,15,50,.25);
-  flex:1;min-height:0;
-}
+.ocard{border-radius:18px;padding:22px 18px;cursor:pointer;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;transition:all .4s cubic-bezier(.16,1,.3,1);background:linear-gradient(155deg,#0062cc,#004ba0 40%,#003580 70%,#004da6);border:1px solid rgba(0,120,255,.2);box-shadow:0 2px 4px rgba(0,30,80,.12),0 8px 20px rgba(0,40,100,.18),0 18px 40px rgba(0,20,60,.14),inset 0 1px 0 rgba(100,180,255,.18),inset 0 -2px 5px rgba(0,15,50,.25);flex:1;min-height:0}
 .ocard:hover{transform:translateY(-4px) scale(1.01);box-shadow:0 4px 8px rgba(0,30,80,.15),0 14px 32px rgba(0,40,100,.22),0 28px 56px rgba(0,20,60,.16),inset 0 1px 0 rgba(100,180,255,.22),inset 0 -2px 6px rgba(0,15,50,.28)}
 .ocard .tline{position:absolute;top:0;left:12%;right:12%;height:2px;background:linear-gradient(90deg,transparent,rgba(100,180,255,.2),transparent)}
 .otag{font-size:8px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:rgba(150,200,255,.5);margin-bottom:6px}
 .otitle{font-size:14px;font-weight:700;color:#fff;line-height:1.35;text-shadow:0 1px 2px rgba(0,20,60,.25)}
 .ohint{font-size:9px;color:rgba(150,200,255,.35);margin-top:6px;font-style:italic}
-
-/* CENTER CARD */
-.ccard{
-  flex:2;min-height:460px;max-height:80vh;border-radius:22px;padding:26px 24px;
-  display:flex;flex-direction:column;position:relative;overflow:hidden;
-  background:linear-gradient(160deg,#0070e0,#005cc0 25%,#003d8f 50%,#004da6 75%,#0062cc);
-  border:1px solid rgba(0,140,255,.28);
-  box-shadow:0 4px 8px rgba(0,30,80,.12),0 12px 28px rgba(0,40,100,.18),0 28px 56px rgba(0,20,60,.16),0 48px 96px rgba(0,15,50,.1),inset 0 2px 0 rgba(100,190,255,.22),inset 0 -3px 10px rgba(0,15,50,.3);
-}
+.ccard{flex:2;min-height:460px;max-height:80vh;border-radius:22px;padding:26px 24px;display:flex;flex-direction:column;position:relative;overflow:hidden;background:linear-gradient(160deg,#0070e0,#005cc0 25%,#003d8f 50%,#004da6 75%,#0062cc);border:1px solid rgba(0,140,255,.28);box-shadow:0 4px 8px rgba(0,30,80,.12),0 12px 28px rgba(0,40,100,.18),0 28px 56px rgba(0,20,60,.16),0 48px 96px rgba(0,15,50,.1),inset 0 2px 0 rgba(100,190,255,.22),inset 0 -3px 10px rgba(0,15,50,.3)}
 .ccard .gline{position:absolute;top:0;left:8%;right:8%;height:2.5px;background:linear-gradient(90deg,transparent,#c9a54e55,#c9a54eaa,#c9a54e55,transparent)}
 .ccard .ctl{position:absolute;top:12px;right:12px;width:20px;height:20px;border-top:1.5px solid rgba(201,165,78,.4);border-right:1.5px solid rgba(201,165,78,.4);border-radius:0 5px 0 0}
 .ccard .cbr{position:absolute;bottom:12px;left:12px;width:20px;height:20px;border-bottom:1.5px solid rgba(201,165,78,.4);border-left:1.5px solid rgba(201,165,78,.4);border-radius:0 0 0 5px}
@@ -77,12 +54,10 @@ body{font-family:'DM Sans',sans-serif;background:linear-gradient(170deg,#eef1f7 
 .stxt .c{color:#7dd3fc;font-style:italic;display:block;margin:6px 0;padding:6px 10px;background:rgba(0,0,0,.1);border-left:2px solid #7dd3fc;border-radius:0 6px 6px 0;font-weight:500}
 .stxt .r{color:#fcd34d;display:block;margin:4px 0 4px 12px;font-weight:500}
 .stxt .note{color:rgba(180,210,255,.55);font-size:12px;display:block;margin-top:10px;padding-top:8px;border-top:1px solid rgba(100,180,255,.1);font-style:italic}
-
 .subdirs{margin-top:14px;padding-top:12px;border-top:1px solid rgba(100,180,255,.12);position:relative;z-index:1}
 .subdirs-title{font-size:8px;font-weight:800;letter-spacing:2px;color:rgba(201,165,78,.7);text-transform:uppercase;margin-bottom:8px}
 .subdir-btn{display:inline-block;margin:3px 4px 3px 0;padding:7px 14px;border-radius:10px;background:rgba(0,0,0,.15);border:1px solid rgba(100,180,255,.15);color:rgba(200,225,255,.85);font-size:11px;font-weight:600;cursor:pointer;transition:all .25s;font-family:inherit}
 .subdir-btn:hover{background:rgba(0,0,0,.25);border-color:rgba(100,180,255,.3);transform:translateY(-1px)}
-
 .form-area{margin-top:14px;padding:16px;border-radius:14px;background:rgba(0,0,0,.12);border:1px solid rgba(201,165,78,.2)}
 .form-title{font-size:9px;font-weight:800;letter-spacing:2px;color:#e8c85a;text-transform:uppercase;margin-bottom:10px}
 .fgrp{margin-bottom:8px}
@@ -92,7 +67,6 @@ body{font-family:'DM Sans',sans-serif;background:linear-gradient(170deg,#eef1f7 
 .fgrp input::placeholder{color:rgba(150,190,240,.35)}
 .fbtn{width:100%;margin-top:8px;border:none;border-radius:10px;padding:11px;background:linear-gradient(135deg,#c9a54e,#a8862e);color:#fff;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;font-family:inherit;box-shadow:0 4px 18px rgba(184,148,46,.3)}
 .fbtn:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(184,148,46,.4)}
-
 .nav{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:12px;z-index:100;background:rgba(255,255,255,.88);backdrop-filter:blur(20px);border-radius:18px;padding:7px 14px;border:1px solid rgba(0,80,180,.1);box-shadow:0 6px 28px rgba(0,30,80,.08)}
 .nbtn{border-radius:10px;padding:8px 16px;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px;font-family:inherit;transition:all .25s;border:1px solid rgba(0,80,180,.1);background:rgba(0,80,180,.04);color:#1e3a5f}
 .nbtn:disabled{cursor:not-allowed;color:#d1d5db;background:transparent;border-color:rgba(0,0,0,.02)}
@@ -100,7 +74,6 @@ body{font-family:'DM Sans',sans-serif;background:linear-gradient(170deg,#eef1f7 
 .ncnt{display:flex;align-items:center;gap:3px;padding:0 6px}
 .ncur{font-size:13px;font-weight:800;color:#c9a54e}
 .ntot{font-size:10px;color:#c5c9d4}
-
 .popup-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:200;background:rgba(0,15,40,.6);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s ease}
 .popup-overlay.show{display:flex}
 .popup{width:100%;max-width:680px;max-height:80vh;overflow-y:auto;border-radius:22px;padding:32px 28px;position:relative;background:linear-gradient(160deg,#0070e0,#004da6 40%,#003580 70%,#0058c0);border:1px solid rgba(0,140,255,.3);box-shadow:0 20px 60px rgba(0,20,60,.4),0 40px 100px rgba(0,10,40,.3),inset 0 1px 0 rgba(100,190,255,.2);animation:popIn .3s cubic-bezier(.16,1,.3,1)}
@@ -118,7 +91,6 @@ body{font-family:'DM Sans',sans-serif;background:linear-gradient(170deg,#eef1f7 
 .popup-body .example{padding:10px 14px;background:rgba(0,0,0,.12);border-left:2px solid #fcd34d;border-radius:0 8px 8px 0;margin:8px 0;color:#fcd34d;font-weight:500;font-size:13px}
 .popup-body .proof{padding:10px 14px;background:rgba(34,197,94,.08);border-left:2px solid #22c55e;border-radius:0 8px 8px 0;margin:8px 0;color:#86efac;font-size:13px}
 .popup-body .warning{padding:8px 14px;background:rgba(239,68,68,.08);border-left:2px solid #ef4444;border-radius:0 8px 8px 0;margin:8px 0;color:#fca5a5;font-size:12px}
-
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes popIn{from{opacity:0;transform:scale(.92) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
 </style>
@@ -157,7 +129,6 @@ body{font-family:'DM Sans',sans-serif;background:linear-gradient(170deg,#eef1f7 
     <div class="popup-body" id="popBody"></div>
   </div>
 </div>
-
 <script>
 const M=[
   {id:"receptivo",label:"Receptivo",color:"#22c55e",emoji:"😊"},
@@ -168,466 +139,485 @@ const M=[
 ];
 
 const P=[
-// F1 PRESENTACION
-{id:1,name:"Presentación",sub:"Posicionar como consultora",timer:"< 30 seg",mission:"Posiciónate como consultora del sector. Llegas a hacer negocios, no a vender.",
+// ═══ F1 PRESENTACIÓN ═══
+{id:1,name:"Presentación",sub:"Consultora del sector",timer:"< 30 seg",mission:"Posiciónate como consultora especializada. Llegas a hacer negocios con el dueño, no a vender nada.",
 script:{
 receptivo:`<span class="v">— ¡Buenas tardes! ¿Hablo con [NEGOCIO]?</span>
-<span class="v">— Mi nombre es Aarón, le llamo de parte de una consultora que trabaja exclusivamente con negocios de [RUBRO] en [ZONA].</span>
-<span class="v">— Estamos buscando al dueño porque queremos proponerle algo de negocio. ¿Con quién tengo el gusto?</span>
+<span class="v">— Mi nombre es Aarón, le llamo de parte de una consultora que trabaja exclusivamente con negocios de [RUBRO] aquí en [ZONA].</span>
+<span class="v">— Estamos buscando al dueño porque queremos proponerle algo de negocio directamente. ¿Con quién tengo el gusto?</span>
 
 <span class="c">👤 "Sí, soy yo" / "Sí, ¿qué necesita?"</span>
-<span class="r">→ ¡Perfecto, [NOMBRE]! Mire, hemos estado trabajando con varios negocios de [RUBRO] aquí en [ZONA] y tenemos una propuesta que a otros dueños como usted les ha funcionado muy bien. ¿Me regala 2 minutos?</span>
+<span class="r">→ ¡Perfecto, [NOMBRE]! Mire, antes que nada déjeme decirle algo: nosotros no llamamos a cualquier negocio, trabajamos específicamente con negocios de [RUBRO] que ya tienen tracción en su zona, y el suyo nos llamó la atención. Tenemos una propuesta que a otros dueños como usted les ha funcionado muy bien. ¿Me regala 2 minutitos?</span>
 
 <span class="c">👤 "No, no está" / "¿De parte de quién?"</span>
-<span class="r">→ Soy Aarón de [CONSULTORA]. Trabajamos con negocios de [RUBRO] en la zona y tenemos una propuesta de negocio para el dueño. ¿A qué hora lo localizo?</span>
+<span class="r">→ Claro, soy Aarón, de la consultora especializada en [RUBRO]. Mire, no es nada comercial, es una propuesta de negocio directamente para el dueño. Algo que a negocios como el suyo les está dando muy buenos resultados. ¿A qué hora lo puedo localizar? Es brevísimo y de verdad le va a interesar.</span>
 
 <span class="c">👤 "¿De qué se trata?"</span>
-<span class="r">→ Somos una consultora especializada en hacer crecer negocios de [RUBRO]. Estamos trabajando con varios de su zona y queremos proponerle algo al encargado. No es venta por teléfono, es una propuesta de negocio. ¿Se encuentra?</span>
+<span class="r">→ Mire, somos una consultora que trabaja exclusivamente con negocios de [RUBRO]. Hemos ayudado a otros negocios de la zona a crecer su clientela con una propuesta muy concreta, y queremos ver si al dueño le interesa. No es una venta por teléfono, es una propuesta de negocio entre profesionales. ¿Se encuentra el encargado?</span>
 
-<span class="note">Claves: "Consultora especializada en su rubro" + "propuesta de negocio" + "otros dueños como usted". NUNCA menciones bot, WhatsApp, web, ni precio.</span>`,
+<span class="note">IDENTIDAD: "Consultora especializada en su rubro" + "propuesta de negocio" + "no llamamos a cualquier negocio". HALAGA desde el inicio: "nos llamó la atención". NUNCA menciones bot, WhatsApp, web ni precio. Suenas a socio estratégico, no a vendedor.</span>`,
 
 esceptico:`<span class="v">— Buenas tardes, ¿[NEGOCIO]?</span>
-<span class="v">— Soy Aarón. Le llamo de una consultora especializada en negocios de [RUBRO]. Necesito hablar con el dueño, tenemos una propuesta de negocio. ¿Es usted?</span>
+<span class="v">— Soy Aarón. Le llamo de una consultora especializada en negocios de [RUBRO]. Necesito hablar directamente con el dueño o responsable porque tenemos una propuesta de negocio. ¿Es usted?</span>
 
 <span class="c">👤 "¿Qué tipo de propuesta?" / "¿Qué vende?"</span>
-<span class="r">→ No vendo nada por teléfono. Somos consultores del sector y tenemos un modelo que a otros negocios como el suyo les está dando resultados. Son 2 minutos. ¿Es usted el dueño?</span>
+<span class="r">→ Excelente pregunta, y se la respondo con total transparencia: no le vendo nada por teléfono. Somos consultores que trabajamos exclusivamente con negocios de [RUBRO] en [ZONA], y hemos desarrollado un modelo que a otros negocios del sector les está generando entre 5 y 15 clientes nuevos adicionales al mes. Quiero evaluar si aplica para ustedes. ¿Es usted el que toma las decisiones?</span>
 
 <span class="c">👤 "Sí, pero estoy ocupado"</span>
-<span class="r">→ Lo entiendo. 2 minutos exactos. Si no le hace sentido, lo dejamos ahí. ¿Me da la oportunidad?</span>
+<span class="r">→ Lo entiendo perfectamente, y justamente por eso le pido solo 2 minutos exactos. Si en esos 2 minutos no le hace sentido lo que le digo, me despido y no le quito más tiempo. Pero si le hace sentido, puede ser una de las mejores llamadas que reciba este mes. ¿Me da la oportunidad?</span>
 
-<span class="note">Tono neutro y profesional. "Consultora", "propuesta de negocio", "modelo que da resultados".</span>`,
+<span class="note">Con el escéptico: transparencia total. "Se la respondo con total transparencia". Dato concreto: "5 a 15 clientes nuevos". No insistas, ofrece un intercambio justo: 2 minutos por algo que puede valer mucho.</span>`,
 
 agresivo:`<span class="v">— Buenas, ¿[NEGOCIO]?</span>
-<span class="v">— Aarón, consultora especializada en [RUBRO]. Necesito al dueño, tenemos una propuesta de negocio. ¿Está?</span>
+<span class="v">— Aarón, consultora especializada en [RUBRO]. Necesito hablar con el dueño, tenemos una propuesta de negocio. ¿Está disponible?</span>
 
-<span class="c">👤 "¿Qué quiere?"</span>
-<span class="r">→ No es comercial. Trabajamos con negocios de [RUBRO] en [ZONA] y queremos hacer negocios con el dueño. 90 segundos. ¿Está o no?</span>
+<span class="c">👤 "¿Qué quiere?" / "No pasamos llamadas"</span>
+<span class="r">→ Lo entiendo y lo respeto. Mire, le soy directo: no es una llamada de ventas. Somos una consultora que trabaja solo con negocios de [RUBRO] y tenemos un modelo que está funcionando muy bien en la zona. Solo necesito 90 segundos con quien toma las decisiones. Si no le interesa, me retiro sin problema. ¿Está el dueño?</span>
+
+<span class="c">👤 "Soy yo, ¿qué necesita?"</span>
+<span class="r">→ Perfecto, [NOMBRE]. Y antes que nada, respeto su tiempo, voy al grano: trabajamos con dueños de negocios como el suyo que quieren crecer su clientela sin depender solo del boca a boca. Tengo una propuesta concreta. ¿Me permite una pregunta directa?</span>
 
 <span class="c">👤 "No me interesa"</span>
-<span class="r">→ Respeto su tiempo. Solo una pregunta: ¿hoy el negocio tiene presencia digital profesional o depende del boca a boca? Si ya lo tiene resuelto, no lo molesto más.</span>
+<span class="r">→ Respeto totalmente su posición. Solo una cosa antes de irme: ¿actualmente usted está satisfecho al 100% con cómo llegan sus clientes nuevos, o hay meses donde la cosa se pone más floja? Si me dice que está al 100%, le agradezco y no lo molesto más.</span>
 
-<span class="note">Tono firme. "Hacer negocios con el dueño", no "ofrecerle algo".</span>`,
+<span class="note">Con el agresivo: NO te achiques pero tampoco confrontes. "Lo entiendo y lo respeto" + ir al grano. Si dice no me interesa, UNA pregunta ancla con salida digna para ambos.</span>`,
 
 analitico:`<span class="v">— Buenas tardes, ¿me comunico con [NEGOCIO]?</span>
-<span class="v">— Mi nombre es Aarón, represento a una consultora especializada en el sector de [RUBRO]. ¿Podría hablar con el responsable? Tenemos una propuesta de negocio.</span>
+<span class="v">— Mi nombre es Aarón, represento a una consultora especializada en el sector de [RUBRO]. ¿Podría hablar con el responsable de la operación? Tenemos una propuesta de negocio que involucra crecimiento de clientela.</span>
 
-<span class="c">👤 "¿Cuál es el motivo?"</span>
-<span class="r">→ Trabajamos exclusivamente con negocios de [RUBRO] en [ZONA]. Hemos desarrollado un modelo de crecimiento que estamos implementando con varios negocios del sector. Son 2 minutos puntuales.</span>
+<span class="c">👤 "¿Cuál es el motivo de la llamada?"</span>
+<span class="r">→ Con gusto se lo explico. Trabajamos exclusivamente con negocios de [RUBRO] en [ZONA]. Hemos desarrollado un modelo de crecimiento digital que, estadísticamente hablando, genera entre 5 y 15 clientes nuevos adicionales al mes para negocios del sector. Quiero evaluar si las condiciones de su negocio son compatibles con este modelo. Son 2 minutos puntuales.</span>
 
-<span class="note">"Modelo de crecimiento", "evaluar si aplica". Lenguaje consultivo.</span>`,
+<span class="c">👤 "Envíeme un correo"</span>
+<span class="r">→ Con todo gusto, ¿a qué correo se lo envío? Aunque le adelanto algo, [NOMBRE]: este es el tipo de propuesta que se entiende mucho mejor en 2 minutos de conversación que en un PDF. Le propongo algo: le mando el correo Y me da 2 minutos por teléfono para contextualizarlo. ¿Le parece justo?</span>
+
+<span class="note">Al analítico: datos concretos desde el inicio. "Estadísticamente hablando", "5 a 15 clientes". Si pide correo, ofrece AMBOS: correo + 2 minutos. Técnica del "Y" en vez del "O".</span>`,
 
 indeciso:`<span class="v">— ¡Hola! ¿[NEGOCIO]? ¿Cómo le va?</span>
-<span class="v">— Soy Aarón, de una consultora que trabaja con negocios de [RUBRO]. ¿Me podría comunicar con el dueño? Tenemos algo que proponerle.</span>
+<span class="v">— Soy Aarón, de una consultora que trabaja con negocios de [RUBRO] aquí en la zona. ¿Me podría comunicar con el dueño? Tenemos algo muy interesante que proponerle.</span>
 
 <span class="c">👤 "Mmm, ¿para qué sería?"</span>
-<span class="r">→ Tranquilo, es algo positivo. Trabajamos con negocios como el suyo y queremos ver si le podemos ayudar a crecer. No toma más de 2 minutos. ¿Es usted el dueño?</span>
+<span class="r">→ Tranquilo, es algo muy positivo. Mire, nosotros ayudamos a negocios como el suyo a conseguir más clientes de forma automática, sin que usted tenga que hacer nada diferente a lo que ya hace. Otros dueños de [RUBRO] en la zona ya lo están usando y les va muy bien. Solo quiero contarle en 2 minutitos y usted decide si le interesa o no, sin ninguna presión. ¿Es usted el dueño?</span>
 
-<span class="note">El indeciso necesita seguridad: "algo positivo", "tan amigos", opciones cerradas.</span>`
+<span class="c">👤 "Sí... pero no sé si tenga tiempo"</span>
+<span class="r">→ Lo entiendo perfectamente. Le prometo que son 2 minutos reales, y si en cualquier momento siente que no va con usted, me lo dice y lo dejamos ahí, tan amigos. Pero le adelanto que a muchos dueños como usted les ha cambiado completamente la forma de conseguir clientes. ¿Me da la oportunidad?</span>
+
+<span class="note">Al indeciso: seguridad + prueba social. "Otros dueños ya lo usan", "sin ninguna presión", "tan amigos". Dale certeza, no opciones abiertas.</span>`
 },
 subdirs:[
-  {label:"Gatekeeper no cede",action:"'¿Cuál es el nombre del dueño y a qué hora está? Dígale que le llaman de la consultora de [RUBRO], él sabe.'"},
-  {label:"Piden que llames después",action:"Nunca aceptes 'después' sin fecha. '¿Mañana a las 10 o a las 3?'"},
-  {label:"Preguntan qué vendes",action:"'No es venta telefónica. Somos consultores del sector, queremos proponerle algo al dueño directamente. ¿Se encuentra?'"}
+  {label:"Gatekeeper no cede",action:"'Entiendo, y respeto su trabajo. Solo dígame una cosa: ¿cuál es el nombre del dueño y a qué hora lo puedo localizar? Dígale que le llaman de la consultora especializada en [RUBRO], él va a saber de qué se trata.' Si no da nombre, pregunta turno."},
+  {label:"Piden que llames después",action:"'¡Claro que sí! ¿Le queda mejor mañana a las 10 o por la tarde a las 3? Le llamo puntual.' NUNCA aceptes un 'después' sin fecha y hora concreta."},
+  {label:"Preguntan qué vendes",action:"'No es una venta telefónica, es una propuesta de crecimiento para el negocio. Trabajamos con negocios de [RUBRO] ayudándoles a crecer su clientela. ¿Se encuentra el dueño para que se lo explique en 2 minutos?'"}
 ],
 objections:[
   {title:"¿De qué se trata?",popup:{
-    receptivo:`<div class="section"><div class="section-title">Estrategia</div>Posiciónate como consultor del sector, NO vendedor. Palabra mágica: "propuesta de negocio".</div><div class="section"><div class="example">"Somos una consultora que trabaja exclusivamente con negocios de [RUBRO]. Estamos ayudando a otros en [ZONA] a crecer su clientela. Solo necesito 2 minutos con el dueño."</div></div><div class="warning">NUNCA: bot, WhatsApp, web, automatización, precio, 199€.</div>`,
-    esceptico:`<div class="section"><div class="example">"No es venta. Somos consultores del sector [RUBRO] con un modelo de crecimiento para negocios en [ZONA]. Quiero verificar si aplica. ¿Es usted el responsable?"</div></div>`,
-    agresivo:`<div class="section"><div class="example">"Crecimiento de clientela para su negocio. No es comercial. Necesito al responsable. ¿Está?"</div></div>`,
-    analitico:`<div class="section"><div class="example">"Consultoría de crecimiento para negocios de [RUBRO]. Ayudamos a profesionalizar la captación de clientes con herramientas digitales. 2 minutos."</div></div>`,
-    indeciso:`<div class="section"><div class="example">"Es algo sencillo. Trabajamos con negocios como el suyo ayudándoles a conseguir más clientes. Si no aplica, no pasa nada. ¿Es usted el dueño?"</div></div>`
+    receptivo:`<div class="section"><div class="section-title">Técnica: Curiosidad + Autoridad</div><div class="example">"Mire, [NOMBRE], somos una consultora que trabaja exclusivamente con negocios de [RUBRO]. Lo que hacemos, en palabras simples, es ayudar a que le lleguen más clientes de forma automática, sin que usted tenga que hacer nada diferente. Otros negocios como el suyo en [ZONA] ya lo están usando y les está funcionando muy bien. Solo quiero contarle cómo funciona en 2 minutos, y usted decide si le interesa o no. ¿Me da esos 2 minutos?"</div></div><div class="proof">Técnica VALIDAR + PRUEBA SOCIAL + PREGUNTA CERRADA. No revelas el producto, revelas el RESULTADO: "más clientes de forma automática".</div><div class="warning">NUNCA: mencionar bot, WhatsApp, web, automatización, precio ni 199€ en esta fase. Si preguntan más, repite: "es sobre crecimiento de clientela, se lo explico en 2 minutos al dueño".</div>`,
+    esceptico:`<div class="section"><div class="section-title">Técnica: Transparencia + Dato</div><div class="example">"Se lo digo con total transparencia: no le vendo nada por teléfono. Somos consultores del sector [RUBRO] y tenemos un modelo que, en los negocios donde lo hemos implementado, genera entre 5 y 15 clientes nuevos adicionales al mes. Quiero evaluar si aplica para ustedes. ¿Es usted el responsable o me puede comunicar con él?"</div></div><div class="proof">Al escéptico dale DATO CONCRETO ("5 a 15 clientes") + TRANSPARENCIA ("no le vendo nada por teléfono"). El escéptico respeta la honestidad directa.</div>`,
+    agresivo:`<div class="section"><div class="example">"Le soy directo: es sobre crecimiento de clientela para su negocio. Trabajamos exclusivamente con [RUBRO] y tenemos algo concreto que proponerle. No es publicidad ni nada por el estilo. ¿Me permite 90 segundos para explicarle y usted decide?"</div></div><div class="proof">Al agresivo: directo + respetuoso + límite de tiempo claro. "90 segundos y usted decide" le da control.</div>`,
+    analitico:`<div class="section"><div class="example">"Realizamos consultoría de crecimiento para negocios de [RUBRO]. Específicamente, implementamos un modelo de adquisición digital que en nuestros clientes actuales genera un incremento promedio de 5 a 15 clientes nuevos mensuales. Quiero evaluar si las métricas de su negocio son compatibles. ¿Me permite 2 minutos?"</div></div>`,
+    indeciso:`<div class="section"><div class="example">"Es algo muy sencillo y positivo, no se preocupe. Nosotros ayudamos a negocios como el suyo a que les lleguen más clientes sin complicaciones. Otros dueños de [RUBRO] ya lo están probando y están contentos. Solo quiero contarle en 2 minutos y usted decide tranquilamente. ¿Le parece?"</div></div>`
   }},
   {title:"No pasan comerciales",popup:{
-    receptivo:`<div class="section"><div class="section-title">Reclasifícate</div><div class="example">"No es comercial. Somos consultora del sector [RUBRO] y el dueño de un negocio similar nos recomendó hablar con ustedes. ¿A qué hora localizo al encargado?"</div></div><div class="proof">Técnica: Referencia cruzada. "Un negocio similar nos recomendó." Crea legitimidad y FOMO.</div>`,
-    esceptico:`<div class="section"><div class="example">"No es venta, es consultoría del sector. 2 minutos con el responsable para evaluar si nuestro modelo aplica."</div></div>`,
-    agresivo:`<div class="section"><div class="example">"No es comercial, es propuesta de negocio. Necesito al dueño 90 segundos. ¿Está o no?"</div></div>`,
-    analitico:`<div class="section"><div class="example">"Mi llamada es consultiva. Estamos implementando un modelo de crecimiento en el sector. ¿Cuándo encuentro al responsable?"</div></div>`,
-    indeciso:`<div class="section"><div class="example">"No es nada de ventas, es una propuesta para ayudar al negocio. ¿A qué hora encuentro al dueño?"</div></div>`
+    receptivo:`<div class="section"><div class="section-title">Técnica: Reclasificación + Referencia cruzada</div><div class="example">"Entiendo completamente, y tiene toda la razón en filtrar. Pero mire, esto no es una llamada comercial. Le cuento: el dueño de un negocio de [RUBRO] similar al suyo en la zona nos sugirió que los contactáramos porque le fue muy bien con lo que hacemos. Solo quiero verificar algo con el dueño, son 2 minutos. ¿A qué hora lo puedo localizar?"</div></div><div class="proof">VALIDAR ("tiene razón en filtrar") + REFERENCIA CRUZADA ("un negocio similar nos sugirió contactarlos"). Esto crea legitimidad y FOMO sin confrontar al gatekeeper.</div><div class="warning">Si el gatekeeper es firme, NO pelees. Agradece y llama en otro horario. Diferente turno = diferente gatekeeper.</div>`,
+    esceptico:`<div class="section"><div class="example">"Comprendo perfectamente la política, y me parece bien que cuiden al dueño de llamadas innecesarias. Pero justamente esta no lo es: somos consultores del sector [RUBRO], no vendemos por teléfono. Solo necesito 2 minutos con el responsable para una evaluación sin costo. Si no aplica, yo mismo se lo digo. ¿A qué hora lo encuentro?"</div></div>`,
+    agresivo:`<div class="section"><div class="example">"Lo respeto. Mire, no es comercial, es una propuesta de negocio directa para el dueño. Trabaja con negocios de [RUBRO] como el suyo. Solo necesito 90 segundos con quien decide. Si no le interesa, me retiro. ¿Está disponible o a qué hora lo localizo?"</div></div>`,
+    analitico:`<div class="section"><div class="example">"Comprendo la política y me parece razonable. Mi llamada es de carácter consultivo: estamos implementando un modelo de crecimiento en el sector [RUBRO] y necesito validar viabilidad con el responsable. ¿Me puede indicar el horario más adecuado para contactarlo?"</div></div>`,
+    indeciso:`<div class="section"><div class="example">"Claro, lo entiendo perfectamente. No es nada de ventas, es una propuesta para ayudar al negocio a crecer. Es algo que al dueño le va a interesar mucho. ¿Me dice a qué hora lo encuentro? Le prometo que es brevísimo."</div></div>`
   }},
   {title:"Ya es el decisor",popup:{
-    receptivo:`<div class="section"><div class="section-title">¡Objetivo cumplido! Transición a F2</div><div class="example">"¡Perfecto, [NOMBRE]! Estamos trabajando con varios negocios de [RUBRO] en [ZONA] y les va muy bien. Una pregunta: ¿hoy el negocio tiene presencia digital profesional — web, atención automática — o funciona más por boca a boca?"</div></div>`,
-    esceptico:`<div class="section"><div class="example">"Perfecto. ¿Actualmente tiene presencia digital profesional o depende de la recomendación?"</div></div>`,
-    agresivo:`<div class="section"><div class="example">"Bien. ¿Web propia y atención digital o boca a boca?"</div></div>`,
-    analitico:`<div class="section"><div class="example">"Excelente. ¿Qué canales digitales utiliza actualmente para captación y atención?"</div></div>`,
-    indeciso:`<div class="section"><div class="example">"Qué bueno. ¿Hoy el negocio cómo se da a conocer? ¿Tienen algo digital o los clientes llegan solitos?"</div></div>`
+    receptivo:`<div class="section"><div class="section-title">¡Objetivo cumplido! Ahora: Halagar + Transición suave a F2</div><div class="example">"¡Excelente, [NOMBRE]! Mire, antes que nada déjeme decirle algo: el solo hecho de que usted esté al frente de su propio negocio de [RUBRO] ya lo pone por encima de muchos. Ahora, déjeme hacerle una pregunta rápida: hoy en día, ¿cómo se da a conocer el negocio? ¿Tiene presencia digital — web propia, algo de atención automática — o funciona más por boca a boca y recomendación?"</div></div><div class="proof">HALAGAR al dueño ("por encima de muchos") + pregunta puente a F2. Sea cual sea la respuesta, tienes entrada al sondeo.</div>`,
+    esceptico:`<div class="section"><div class="example">"Perfecto, [NOMBRE]. Se nota que usted está al frente de las decisiones, y eso me facilita las cosas. Seré directo: ¿actualmente el negocio tiene presencia digital profesional — web propia, algún sistema de atención digital — o funciona principalmente por recomendación?"</div></div>`,
+    agresivo:`<div class="section"><div class="example">"Bien, [NOMBRE], directo entonces. Me gusta trabajar con gente que va al grano como usted. Pregunta directa: ¿su negocio tiene web propia y atención digital o funciona más por boca a boca?"</div></div>`,
+    analitico:`<div class="section"><div class="example">"Excelente, [NOMBRE]. Permítame una consulta puntual para evaluar si nuestro modelo aplica para su caso: ¿qué canales digitales utiliza actualmente su negocio para captación de clientes y atención al público?"</div></div>`,
+    indeciso:`<div class="section"><div class="example">"¡Qué bueno que hablo directamente con usted, [NOMBRE]! Eso hace todo más fácil. Solo una cosita rápida: ¿hoy el negocio cómo se da a conocer? ¿Tienen algo en internet — una web, algo así — o los clientes llegan más por recomendación?"</div></div>`
   }},
   {title:"Espejear el tono",popup:{
-    receptivo:`<div class="section"><div class="section-title">Perfil Receptivo</div>Espejea energía. Ritmo rápido, sonríe. Usa "mira", "te cuento".</div><div class="proof">Señales: Responde rápido · Humor · "Cuéntame" · No pone barreras</div>`,
-    esceptico:`<div class="section"><div class="section-title">Perfil Escéptico</div>Baja energía 30%. Factual, no emocional. Trata de usted.</div><div class="proof">Señales: Muchas preguntas · Duda · Pide pruebas · Tono plano</div>`,
-    agresivo:`<div class="section"><div class="section-title">Perfil Agresivo</div>NO te achiques. Firme sin ser agresivo. Respuestas cortas.</div><div class="proof">Señales: Interrumpe · "Vaya al grano" · Impaciente</div>`,
-    analitico:`<div class="section"><div class="section-title">Perfil Analítico</div>Datos, no emociones. Estructura: "primero... segundo...".</div><div class="proof">Señales: "¿Cómo funciona?" · Quiere detalles · Pide documentación</div>`,
-    indeciso:`<div class="section"><div class="section-title">Perfil Indeciso</div>Tú eres el guía. Preguntas cerradas. Nunca silencio largo.</div><div class="proof">Señales: "No sé..." · Respuestas vagas · No toma decisiones</div>`
+    receptivo:`<div class="section"><div class="section-title">Perfil Receptivo: Abierto y amigable</div>Espejea su energía positiva. Ritmo rápido pero claro. Sonríe al hablar (se escucha). Usa "mira", "te cuento", "fíjate". Trata de tú si él lo hace primero. Halaga con naturalidad: "se nota que le va bien", "qué bueno hablar con alguien que entiende".</div><div class="proof">Señales que lo identifican: Responde rápido · Usa humor · Dice "cuéntame" o "dale" · No pone barreras · Tono relajado y abierto</div><div class="warning">No seas demasiado formal — lo aburres. No leas guión robótico. Fluye con la conversación como si fueran colegas.</div>`,
+    esceptico:`<div class="section"><div class="section-title">Perfil Escéptico: Cauteloso y desconfiado</div>Baja tu energía un 30%. Factual, no emocional. Cada afirmación debe tener dato que la respalde. Trata de usted. NUNCA digas "confíe en mí". Ofrece MOSTRAR, no pidas que CREA. Valida sus dudas: "excelente pregunta", "tiene toda la razón en preguntar eso".</div><div class="proof">Señales: Hace muchas preguntas · Duda de lo que dices · Pide pruebas · Tono plano · Silencios largos · "¿Y cómo sé que...?"</div><div class="warning">Red flags para el escéptico: "confíe en mí", "le va a encantar", "increíble", "revolucionario". Las detecta como humo al instante.</div>`,
+    agresivo:`<div class="section"><div class="section-title">Perfil Agresivo: Directo y confrontativo</div>NO te achiques pero TAMPOCO confrontes. Firme y respetuoso. Respuestas directas sin rodeos. Si te interrumpe, déjalo hablar y retoma con calma. Valida su estilo: "me gusta trabajar con gente directa como usted".</div><div class="proof">Señales: Interrumpe · Tono alto · "Vaya al grano" · Impaciente · Confronta afirmaciones · Poco tiempo</div><div class="warning">"Perdón por molestarlo" = UNA vez máximo. La disculpa excesiva es debilidad ante el agresivo. Respétalo pero no te sometas.</div>`,
+    analitico:`<div class="section"><div class="section-title">Perfil Analítico: Metódico y racional</div>Usa datos, no emociones. Estructura: "primero... segundo... tercero". Preciso con números. Evita jerga emocional. Dale tiempo para procesar. Ofrece documentación. Valida: "excelente pregunta", "eso es clave".</div><div class="proof">Señales: "¿Cómo funciona exactamente?" · Quiere detalles · Tono neutro · Pide documentación · Compara opciones · Toma notas mentales</div><div class="warning">No digas "es increíble" ni "todos lo aman". El analítico decide con datos, no con entusiasmo ajeno.</div>`,
+    indeciso:`<div class="section"><div class="section-title">Perfil Indeciso: Dudoso e inseguro</div>TÚ eres el guía. Toma la iniciativa siempre. Preguntas cerradas (A o B, sí o no). Nunca silencio largo. Valida sus dudas: "es completamente normal tener esa pregunta". Dale certeza: "muchos empezaron con esa misma duda y hoy están encantados".</div><div class="proof">Señales: "No sé..." · "Tendría que ver..." · Respuestas vagas · No toma decisiones · Pide tiempo · Cambia de tema</div><div class="warning">No le des opciones abiertas — se paraliza. En vez de "¿cuándo le queda?", di "Le marco mañana a las 10, ¿le parece?"</div>`
   }}
 ]},
 
-// F2 SONDEO SUAVE
-{id:2,name:"Sondeo suave",sub:"Conocer sin interrogar",timer:"1-2 min",mission:"Entiende su situación digital con preguntas naturales. Escucha más de lo que hablas.",
+// ═══ F2 SONDEO SUAVE ═══
+{id:2,name:"Sondeo suave",sub:"Conocer sin interrogar",timer:"1-2 min",mission:"Entiende su situación digital con preguntas naturales y conversacionales. Escucha más de lo que hablas. HALAGA siempre.",
 script:{
-receptivo:`<span class="v">— [NOMBRE], cuénteme: ¿hoy cómo se da a conocer el negocio?</span>
+receptivo:`<span class="v">— [NOMBRE], cuénteme algo: hoy en día, ¿cómo se da a conocer el negocio?</span>
 <span class="v">— ¿Tiene web propia, redes, o funciona más por recomendación?</span>
 
 <span class="c">👤 "Por recomendación" / "Boca a boca"</span>
-<span class="r">→ Eso está bien, la recomendación es oro. Pero: ¿cuando alguien busca un [RUBRO] por Google en la zona, los encuentra? ¿Tienen algo que los represente en internet?</span>
+<span class="r">→ Mire, eso habla muy bien de usted, porque significa que sus clientes lo valoran tanto que lo recomiendan. Eso es oro. Ahora, déjeme preguntarle algo: cuando alguien que NO lo conoce busca un [RUBRO] por Google en la zona, ¿lo encuentra a usted? ¿Tiene algo que lo represente en internet?</span>
 
 <span class="c">👤 "Tenemos redes sociales"</span>
-<span class="r">→ ¿Y les funciona? O sea, ¿de las redes llegan clientes que agendan y pagan? ¿O es más para presencia?</span>
+<span class="r">→ Muy bien, y eso ya lo pone por encima de muchos negocios que ni siquiera tienen eso. Ahora, le hago una pregunta honesta: de esas redes, ¿le llegan clientes que realmente agendan y pagan? ¿O es más para tener presencia y que la gente sepa que existen?</span>
 
-<span class="c">👤 "No tenemos web" / "Está desactualizada"</span>
-<span class="r">→ Ahí hay un tema, [NOMBRE]. Hoy la gente busca un [RUBRO] en Google primero. Si usted no aparece con algo profesional, se van con quien sí aparece. ¿Le ha pasado?</span>
+<span class="c">👤 "La verdad no muchos" / "Es más presencia"</span>
+<span class="r">→ Y eso es lo más normal del mundo, le pasa al 80% de los negocios. Tienen redes pero no las tienen trabajando para ellos. ¿Y web propia tienen? Me refiero a algo profesional donde la gente pueda ver sus servicios, precios, y contactarlos fácilmente.</span>
 
-<span class="note">NO interrogues. Conversa. Cada pregunta debe sentirse natural, como un colega interesado.</span>`,
+<span class="c">👤 "No tenemos web" / "Tenemos pero está desactualizada"</span>
+<span class="r">→ Ahí hay una oportunidad enorme, [NOMBRE]. Le cuento por qué: hoy, 8 de cada 10 personas lo primero que hacen antes de ir a un negocio es buscarlo en Google. Si usted no aparece con algo profesional, esa persona — que QUERÍA ir con usted — termina yendo con el que sí aparece. ¿Le ha pasado que siente que podrían llegar más clientes de los que llegan?</span>
+
+<span class="note">METODOLOGÍA: cada respuesta del cliente es una oportunidad para HALAGAR primero, luego preguntar. "Eso habla muy bien de usted", "ya lo pone por encima de muchos", "le pasa al 80%". NUNCA juzgues lo que no tiene. Pregunta con curiosidad, no con juicio.</span>`,
 
 esceptico:`<span class="v">— [NOMBRE], una consulta directa:</span>
-<span class="v">— ¿El negocio tiene presencia digital profesional? Web propia, sistema de atención automática, algo así.</span>
+<span class="v">— ¿Actualmente el negocio tiene presencia digital profesional? Me refiero a web propia, algún sistema de atención digital, algo así.</span>
 
 <span class="c">👤 "Tenemos redes / Facebook"</span>
-<span class="r">→ ¿Y las redes generan clientes reales? No likes, personas que llegan, agendan y pagan.</span>
+<span class="r">→ Bien, y eso ya es un paso que muchos no han dado, así que bien por usted. Ahora, siendo honestos: ¿esas redes le generan clientes reales? No hablo de likes o seguidores, sino de personas que realmente agenden y paguen por un servicio.</span>
 
-<span class="c">👤 "Más o menos"</span>
-<span class="r">→ ¿Y web propia tienen? Hay una diferencia importante entre un perfil en redes y una presencia digital que trabaje para usted.</span>
+<span class="c">👤 "Más o menos" / "No tantos"</span>
+<span class="r">→ Y eso no es culpa suya, es que las redes están diseñadas para generar visibilidad, no para convertir. Hay una diferencia enorme entre que alguien lo vea y que alguien le agende cita. ¿Tiene web propia del negocio? Algo profesional donde la gente pueda llegar desde Google.</span>
 
-<span class="note">Preguntas cerradas, factuales. Deja que él llegue a sus conclusiones.</span>`,
+<span class="note">Con el escéptico: valida SIN exagerar. "Bien por usted" (no "¡INCREÍBLE!"). Preguntas factuales y directas. Deja que ÉL conecte los puntos.</span>`,
 
 agresivo:`<span class="v">— [NOMBRE], al grano:</span>
-<span class="v">— ¿Web propia y atención digital o boca a boca?</span>
+<span class="v">— ¿El negocio tiene web propia y atención digital o funciona por boca a boca?</span>
 
 <span class="c">👤 "Boca a boca" / "No tenemos web"</span>
-<span class="r">→ Cuando alguien busca un [RUBRO] en Google por la zona, usted no aparece. Esos clientes se van con quien sí. ¿No le preocupa?</span>
+<span class="r">→ Mire, y eso que le funcione por boca a boca ya dice mucho de la calidad de lo que usted ofrece, porque si no fuera bueno, nadie lo recomendaría. Ahora bien, le pregunto algo directo: ¿no le gustaría que además de los que llegan recomendados, le llegaran clientes que hoy ni siquiera saben que usted existe pero que están buscando exactamente lo que usted ofrece? ¿Sí o no?</span>
 
-<span class="note">Directo. Una pregunta a la vez. Que los hechos hablen.</span>`,
+<span class="note">Con agresivo: HALAGA su calidad ("dice mucho de lo que ofrece") + pregunta cerrada directa ("¿sí o no?"). Respeta su estilo directo.</span>`,
 
-analitico:`<span class="v">— [NOMBRE], me gustaría entender su situación digital:</span>
-<span class="v">— ¿Qué canales tienen? ¿Web, redes, sistema de atención automática?</span>
+analitico:`<span class="v">— [NOMBRE], me gustaría entender su situación digital actual:</span>
+<span class="v">— ¿Qué canales tienen hoy? ¿Web, redes, algún sistema de atención automática?</span>
 
-<span class="c">👤 "Redes sociales"</span>
-<span class="r">→ ¿Y generan conversiones reales? Clientes que agendan y pagan a través de ellos.</span>
+<span class="c">👤 "Redes sociales / Facebook / Instagram"</span>
+<span class="r">→ Entendido, y eso es un buen inicio. Ahora, estadísticamente hablando, el ratio de conversión promedio de redes sociales para negocios de [RUBRO] es menor al 2%. Es decir, de cada 100 personas que ven una publicación, menos de 2 agendan cita. ¿Está en línea con lo que usted ve o difiere?</span>
 
-<span class="c">👤 "No lo tenemos medido"</span>
-<span class="r">→ Muy común en el sector. La mayoría tiene presencia pero no infraestructura digital que convierta. ¿Es algo que quieren resolver?</span>
+<span class="c">👤 "No lo tenemos medido exactamente"</span>
+<span class="r">→ Y eso es completamente normal, el 85% de negocios del sector no lo miden. Pero ahí está la oportunidad: cuando algo no se mide, no se optimiza. Y cuando no se optimiza, hay ingresos que se quedan en la mesa sin que uno lo note. ¿Es algo que le interesaría resolver?</span>
 
-<span class="note">Canal → resultado → medición. Le gusta el orden.</span>`,
+<span class="note">Al analítico: datos específicos. "Ratio menor al 2%", "85% no lo miden". Que sienta que habla con alguien que sabe.</span>`,
 
-indeciso:`<span class="v">— [NOMBRE], cuénteme algo sencillo:</span>
-<span class="v">— Cuando alguien quiere ir a un [RUBRO] por la zona, ¿cómo los encuentra?</span>
+indeciso:`<span class="v">— [NOMBRE], cuénteme algo bien sencillo:</span>
+<span class="v">— Cuando alguien quiere ir a un [RUBRO] por la zona, ¿cómo los encuentra a ustedes?</span>
 
 <span class="c">👤 "Por recomendación"</span>
-<span class="r">→ Ok. ¿Y si alguien los busca por internet? ¿Tienen algo? ¿Una web?</span>
+<span class="r">→ Qué bien, y eso significa que hace un trabajo excelente, porque la gente solo recomienda lo que le gusta. Ahora, le pregunto algo: ¿y si alguien que no lo conoce busca un [RUBRO] por internet en la zona? ¿Lo encuentra? ¿Tiene algo donde la gente pueda verlo?</span>
 
-<span class="c">👤 "No" / "Solo redes"</span>
-<span class="r">→ Le cuento: hoy 8 de cada 10 personas buscan por Google antes de ir a un negocio. Si no tiene presencia ahí, no lo encuentran. ¿Le gustaría tener algo profesional?</span>
+<span class="c">👤 "No, la verdad no" / "Solo redes"</span>
+<span class="r">→ Y no se preocupe, le pasa a la mayoría. Pero le cuento un dato que quizá no sabía: hoy, 8 de cada 10 personas buscan por Google antes de ir a cualquier negocio. Si usted no aparece ahí con algo profesional, esas personas ni se enteran de que existe y van con otro. No es culpa suya, es que así funciona hoy. Pero la buena noticia es que tiene solución, y es más fácil de lo que imagina. ¿Le gustaría saber cómo?</span>
 
-<span class="note">Preguntas simples, datos fáciles. "8 de cada 10" impacta más que porcentajes.</span>`
+<span class="note">Al indeciso: HALAGA ("hace un trabajo excelente") + dato simple ("8 de cada 10") + empatía ("no se preocupe, le pasa a la mayoría") + cierre suave ("¿le gustaría saber cómo?").</span>`
 },
 subdirs:[
-  {label:"Dice que ya tiene todo",action:"'Qué bueno. ¿Puedo ver su web? [Pide URL]. Le doy una opinión honesta.' Si la web es débil, tienes entrada."},
-  {label:"No quiere responder",action:"'Solo quería conocer el negocio para ver si la propuesta aplica. ¿Cuándo le queda? Es algo que le puede interesar.'"},
-  {label:"Quiere ir al grano",action:"Salta a F4: 'Perfecto, justamente quiero contarle lo que hacemos...'"}
+  {label:"Dice que ya tiene todo resuelto",action:"HALAGA: 'Eso es fantástico, [NOMBRE], de verdad lo felicito porque estadísticamente está por encima del 90% de su competencia. Ahora, por curiosidad nada más: ¿puedo ver su web? Porque le puedo dar una opinión profesional gratuita de cómo la ve un cliente nuevo desde afuera. ¿Me comparte la URL?'"},
+  {label:"No quiere responder preguntas",action:"'Lo entiendo perfectamente, [NOMBRE], y respeto su tiempo. Solo quería conocer un poco su negocio para ver si lo que hacemos aplica para usted. Le propongo algo: ¿me da 60 segundos para contarle qué hacemos y usted me dice si le hace sentido? Si no, me despido sin problema.'"},
+  {label:"Quiere ir directo al grano",action:"VALIDA: 'Me encanta, [NOMBRE], gente directa como usted es con quien mejor trabajo.' Salta a F4: 'Perfecto, entonces déjeme contarle directo lo que hacemos...'"}
 ],
 objections:[
   {title:"Yo no uso internet",popup:{
-    receptivo:`<div class="section"><div class="example">"No tiene que usarlo usted. Sus CLIENTES sí lo usan. Si buscan un [RUBRO] y no lo encuentran, van con otro. Nosotros nos encargamos de todo lo digital."</div></div>`,
-    esceptico:`<div class="section"><div class="example">"No necesita usarlo. Sus clientes sí lo usan para buscar. ¿Quiere que lo encuentren a usted o a la competencia?"</div></div>`,
-    agresivo:`<div class="section"><div class="example">"Usted no tiene que usar internet. Sus clientes sí lo usan para buscarlo."</div></div>`,
-    analitico:`<div class="section"><div class="example">"El usuario final es su cliente, no usted. El 87% busca negocios locales online antes de visitarlos."</div></div>`,
-    indeciso:`<div class="section"><div class="example">"No necesita saber nada de internet. Nosotros hacemos todo. Usted solo recibe clientes nuevos por WhatsApp."</div></div>`
+    receptivo:`<div class="section"><div class="section-title">Técnica: Validar + Redirigir al cliente, no al dueño</div><div class="example">"[NOMBRE], tiene toda la razón, y no tiene por qué usarlo usted. Pero déjeme contarle algo importante: sus CLIENTES sí lo usan. Hoy en día, cuando alguien necesita un [RUBRO], lo primero que hace es sacar el celular y buscar en Google. Si no lo encuentra a usted, va con el que sí aparece. Y no estamos hablando de jóvenes solamente, hasta personas de 50, 60 años buscan así. La buena noticia es que usted no tiene que aprender nada de internet, nosotros nos encargamos de todo. Usted solo va a empezar a recibir clientes nuevos que le escriben directamente. Dígame la verdad, [NOMBRE]: ¿a usted le gustaría recibir entre 5 y 15 clientes nuevos al mes sin tener que hacer nada diferente a lo que ya hace? ¿Sí o no?"</div></div><div class="proof">PATRÓN COMPLETO: Validar ("tiene razón") → Redirigir al comportamiento del consumidor → Empatía ("no tiene que aprender nada") → Pregunta cerrada ("¿sí o no?").</div>`,
+    esceptico:`<div class="section"><div class="example">"Entiendo su posición y la respeto. Pero le comparto un dato verificable: el 87% de los consumidores buscan negocios locales en internet antes de visitarlos. Eso incluye a los clientes de [RUBRO]. Usted no necesita usar internet para nada, nosotros hacemos todo. La pregunta real es: ¿quiere que esos clientes que buscan lo encuentren a usted, o prefiere que sigan yendo con quien sí aparece?"</div></div>`,
+    agresivo:`<div class="section"><div class="example">"Y no tiene por qué usarlo, [NOMBRE]. Pero sus clientes sí lo usan para buscarlo. Y los que no lo encuentran, van con otro. Nosotros nos encargamos de todo lo digital. Usted solo recibe clientes. ¿Le interesa tener más clientes sin esfuerzo extra sí o no?"</div></div>`,
+    analitico:`<div class="section"><div class="example">"Comprendo. El usuario final de estas herramientas no es usted, es su cliente potencial. El dato es este: el 87% de consumidores realizan una búsqueda online antes de visitar un negocio local. La infraestructura digital que proponemos la gestionamos nosotros al 100%. Su rol se limita a recibir y atender a los clientes nuevos que lleguen. ¿Le parece una propuesta lógica?"</div></div>`,
+    indeciso:`<div class="section"><div class="example">"No se preocupe, [NOMBRE], eso es lo mejor de todo: usted no necesita saber absolutamente nada de internet. Nosotros hacemos todo, todo, todo. Usted solo va a empezar a recibir mensajes de clientes nuevos por WhatsApp que quieren agendar con usted. Es así de simple, como recibir un mensaje de un amigo. ¿Eso le gustaría?"</div></div>`
   }},
   {title:"Las redes me bastan",popup:{
-    receptivo:`<div class="section"><div class="example">"Las redes son presencia, pero hay diferencia entre un like y una cita agendada. ¿Hoy las redes le traen clientes que pagan o es más visibilidad?"</div></div>`,
-    esceptico:`<div class="section"><div class="example">"¿Cuántos clientes concretos generan al mes? Sin dato exacto, hay oportunidad. Redes sin conversión son escaparate sin puerta."</div></div>`,
-    agresivo:`<div class="section"><div class="example">"¿Cuántos clientes que pagan llegan de redes al mes? Likes no pagan facturas."</div></div>`,
-    analitico:`<div class="section"><div class="example">"¿Tiene medido el ratio de conversión? De cada 100 interacciones, ¿cuántas se convierten en cliente?"</div></div>`,
-    indeciso:`<div class="section"><div class="example">"Las redes están bien, pero ¿le traen clientes de verdad? Si no pasa mucho, hay algo que se puede mejorar fácil."</div></div>`
+    receptivo:`<div class="section"><div class="section-title">Técnica: Halagar + Elevar</div><div class="example">"[NOMBRE], antes que nada déjeme felicitarlo, porque el hecho de que tenga redes activas ya lo pone estadísticamente por encima del 70% de negocios de [RUBRO] en su zona. Eso habla muy bien de su visión. Ahora, justamente porque usted ya entiende el poder de lo digital, esta propuesta es para gente como usted, que sabe que la tecnología mueve clientes. Le hago una pregunta: ¿en quién cree que confiaría más un cliente que lo ve en redes: en un negocio que no tiene página web y le contesta 10 minutos después, o en un negocio con una web profesional de primer nivel y una contestación instantánea? Dígame sinceramente."</div></div><div class="proof">PATRÓN: Halagar ("lo felicito", "por encima del 70%") → Elevar ("esto es para gente como usted") → Pregunta cerrada de contraste ("¿en cuál confiaría más?"). NUNCA ataques las redes. Son buenas, pero esto las POTENCIA.</div>`,
+    esceptico:`<div class="section"><div class="example">"Y es un buen canal, no lo niego. Ahora, seamos honestos: ¿ha medido cuántos de esos seguidores se convierten en clientes que pagan? Porque estadísticamente, el ratio de conversión de redes para negocios locales es menor al 2%. No es culpa suya, es el diseño de la plataforma: las redes están hechas para entretener, no para vender. Lo que nosotros hacemos es justamente complementar eso con algo que SÍ convierte. ¿Le interesaría saber cómo potenciar lo que ya tiene?"</div></div>`,
+    agresivo:`<div class="section"><div class="example">"Y me alegra que las tenga, eso ya lo diferencia. Pero déjeme hacerle una pregunta directa: de todos los seguidores que tiene, ¿cuántos al mes le agendan cita y pagan? Porque los likes no pagan facturas, y si las redes le generan visibilidad pero no clientes concretos, hay una pieza que falta. ¿Tiene sentido lo que le digo sí o no?"</div></div>`,
+    analitico:`<div class="section"><div class="example">"Las redes son un canal válido de awareness. Pero permítame un dato: el funnel de redes sociales para negocios locales tiene un ratio de conversión promedio del 1.5-2%. Es decir, de cada 1000 impresiones, 15-20 interacciones, y de esas, 1-2 clientes reales. Nuestro modelo trabaja en la parte del funnel donde las redes no llegan: la conversión directa. ¿Le interesaría complementar lo que ya tiene con algo que se enfoque específicamente en generar citas?"</div></div>`,
+    indeciso:`<div class="section"><div class="example">"Y qué bueno que las tenga, [NOMBRE], eso ya es un gran paso. Ahora, le cuento algo que le pasa a muchos negocios: tienen redes bonitas, publican seguido, pero a la hora de la hora los clientes nuevos no llegan tanto como quisieran. ¿Le suena familiar? Porque lo que nosotros hacemos es justamente resolver eso. Es como ponerle un motor a lo que ya tiene."</div></div>`
   }},
   {title:"No necesito más clientes",popup:{
-    receptivo:`<div class="section"><div class="example">"¡Qué bueno! Pero ¿tiene web propia? Independientemente de clientes, hoy un negocio sin web pierde credibilidad. La gente busca en Google antes de ir. Si no lo encuentra, duda."</div></div><div class="proof">Cambio de ángulo: no es cantidad, es imagen profesional y credibilidad.</div>`,
-    esceptico:`<div class="section"><div class="example">"Entonces hablemos de calidad: ¿tiene presencia digital que represente el nivel de su negocio? Su reputación online afecta incluso a referidos."</div></div>`,
-    agresivo:`<div class="section"><div class="example">"¿Y web profesional? Los clientes referidos lo buscan en Google antes de ir. Si no hay nada profesional, dudan."</div></div>`,
-    analitico:`<div class="section"><div class="example">"Ángulo diferente: 76% de clientes revisan presencia online antes de agendar, incluso referidos."</div></div>`,
-    indeciso:`<div class="section"><div class="example">"Cuando la gente lo busca en Google, ¿qué encuentra? Muchos clientes buscan antes de ir. Si no hay nada, a veces no van."</div></div>`
+    receptivo:`<div class="section"><div class="section-title">Técnica: Validar + Cambiar ángulo a credibilidad</div><div class="example">"[NOMBRE], ¡eso es fantástico! Y me da mucho gusto escucharlo porque significa que hace un trabajo excelente. Ahora, déjeme proponerle algo desde otro ángulo: independientemente de los clientes, ¿tiene una presencia digital profesional? Se lo pregunto porque hoy pasa algo muy interesante: incluso los clientes que llegan por recomendación lo buscan en Google ANTES de ir. Si no encuentran nada profesional — una web seria, información clara — a veces dudan. Y si encuentran algo profesional, llegan con más confianza y más dispuestos a pagar. ¿No le gustaría que cada cliente que llegue, llegue ya convencido de que usted es la mejor opción?"</div></div><div class="proof">No pelear contra "no necesito más clientes". Cambiar el ángulo: no es cantidad, es CREDIBILIDAD y CONFIANZA del cliente que ya viene. Pregunta cerrada al final.</div>`,
+    esceptico:`<div class="section"><div class="example">"Lo respeto completamente, y el hecho de que no necesite más clientes dice mucho de su trabajo. Ahora, le pregunto desde otro ángulo: ¿tiene presencia digital profesional que represente el nivel real de su negocio? Porque le comparto un dato: el 76% de consumidores revisan la presencia online de un negocio antes de visitarlo, incluso si llegaron por referido. Si lo que encuentran no refleja la calidad que usted ofrece, puede generar dudas. ¿No le parece importante que lo que la gente vea en internet esté a la altura de lo que usted ofrece en persona?"</div></div>`,
+    agresivo:`<div class="section"><div class="example">"Me alegra escuchar eso, y lo respeto. Solo una pregunta antes de irme: ¿tiene web profesional? Porque incluso los clientes referidos lo buscan en Google antes de ir. Si no hay nada profesional, algunos dudan. ¿No le gustaría que todo el que lo busque, se convenza de que usted es la mejor opción, sí o no?"</div></div>`,
+    analitico:`<div class="section"><div class="example">"Excelente, eso indica buena operación. Permítame un ángulo diferente: independientemente del volumen, ¿tiene medida la experiencia digital de su cliente? Le comparto: el 76% de consumidores revisan presencia online antes de agendar, incluso referidos. Una presencia digital optimizada no solo atrae nuevos, también aumenta la tasa de conversión de los referidos existentes. ¿Le interesaría optimizar esa variable?"</div></div>`,
+    indeciso:`<div class="section"><div class="example">"¡Qué bueno, [NOMBRE]! Eso dice mucho de usted. Y le cuento algo: no se trata solo de tener más clientes, se trata de que cuando alguien lo busque en internet — porque sí lo buscan — encuentre algo profesional que diga 'este negocio es serio'. ¿Sabe qué pasa cuando la gente busca y no encuentra nada? Duda. Aunque se lo hayan recomendado. ¿No le gustaría que todo el que lo busque se quede impresionado?"</div></div>`
   }},
   {title:"¿Esto tiene costo?",popup:{
-    receptivo:`<div class="section"><div class="example">"Lo que hacemos ahora es una evaluación sin costo. Quiero entender su negocio para ver si aplica. Si aplica, le cuento la propuesta y usted decide."</div></div><div class="warning">NO menciones 199€ todavía. Primero que vea el valor.</div>`,
-    esceptico:`<div class="section"><div class="example">"Esta conversación es sin costo. Si la propuesta hace sentido, le doy todos los detalles."</div></div>`,
-    agresivo:`<div class="section"><div class="example">"La evaluación es gratis. Si tiene sentido, hablamos de inversión."</div></div>`,
-    analitico:`<div class="section"><div class="example">"La fase de evaluación es sin costo. Si aplica, le presento propuesta con precios transparentes."</div></div>`,
-    indeciso:`<div class="section"><div class="example">"No, esta conversación no tiene costo. Es para ver si le podemos ayudar."</div></div>`
+    receptivo:`<div class="section"><div class="section-title">Técnica: Desviar elegantemente, aún no es momento</div><div class="example">"Mire, [NOMBRE], lo que estamos haciendo ahora es simplemente una evaluación sin ningún costo. Quiero entender su negocio primero para ver si lo que hacemos realmente le puede ayudar. Si sí, le cuento la propuesta completa con total transparencia y usted decide con toda la información sobre la mesa. Sin presión, sin compromiso. ¿Le parece justo?"</div></div><div class="warning">NO menciones 199€ todavía. El precio sin contexto de valor asusta o genera desconfianza. Primero necesitas que vea el problema y la oportunidad. El precio viene en F4 cuando ya entiende el valor.</div>`,
+    esceptico:`<div class="section"><div class="example">"Excelente pregunta, [NOMBRE], y se la respondo con total honestidad: esta conversación no tiene absolutamente ningún costo. Es una evaluación que hacemos para ver si nuestro modelo aplica para su negocio. Si aplica, le presento los detalles y usted decide con total libertad. Si no aplica, se lo digo yo mismo. ¿Le parece?"</div></div>`,
+    agresivo:`<div class="section"><div class="example">"La evaluación es gratuita. Si lo que le propongo tiene sentido para su negocio, le doy todos los números y usted decide. Si no, agradezco su tiempo y no lo molesto más. ¿Le parece justo?"</div></div>`,
+    analitico:`<div class="section"><div class="example">"La fase de evaluación es completamente sin costo. Si determinamos que nuestro modelo es compatible con su operación, le presento la propuesta con precios, proyecciones y todo el desglose. Usted evalúa con datos y decide."</div></div>`,
+    indeciso:`<div class="section"><div class="example">"No, [NOMBRE], esta conversación no tiene ningún costo, tranquilo. Es simplemente para ver si lo que hacemos le puede ayudar. Si le gusta, le cuento todo. Si no, tan amigos. ¿Le parece?"</div></div>`
   }}
 ]},
 
-// F3 SEMBRAR LA NECESIDAD
-{id:3,name:"Sembrar la necesidad",sub:"Que lo sienta, no que lo calcule",timer:"1-2 min",mission:"Hazle ver lo que pierde de forma natural. Historias, ejemplos y sentido común. Nada de fórmulas.",
+// ═══ F3 SEMBRAR NECESIDAD ═══
+{id:3,name:"Sembrar la necesidad",sub:"Que lo sienta, no que lo calcule",timer:"1-2 min",mission:"Hazle ver la oportunidad con historias, sentido común y emoción. NADA de fórmulas matemáticas. Valida, halaga, redirige.",
 script:{
-receptivo:`<span class="v">— [NOMBRE], le digo algo que a muchos dueños de [RUBRO] les abre los ojos:</span>
-<span class="v">— Hoy, cuando alguien necesita un [RUBRO], saca el celular y busca en Google.</span>
-<span class="v">— Si usted no aparece ahí con algo profesional, esa persona va con quien sí aparece. Y no es uno o dos... son todos los días.</span>
+receptivo:`<span class="v">— [NOMBRE], déjeme contarle algo que a muchos dueños de [RUBRO] les abre los ojos:</span>
+<span class="v">— Hoy en día, cuando alguien necesita un [RUBRO], ¿sabe qué es lo primero que hace? Saca el celular y busca en Google. Así de simple.</span>
+<span class="v">— Si usted no aparece ahí con algo profesional, esa persona — que estaba buscando EXACTAMENTE lo que usted ofrece — termina yendo con otro. Y no es uno ni dos, es todos los días.</span>
 
 <span class="c">👤 "Sí, tiene sentido"</span>
-<span class="r">→ Y hay algo más: cuando un cliente le escribe, ¿quién contesta? ¿Usted? Porque si está ocupado y no responde rápido, ese cliente también se va. Hoy la gente quiere respuesta inmediata.</span>
+<span class="r">→ Y hay algo más, [NOMBRE]: cuando un cliente SÍ lo encuentra y le escribe, ¿quién le contesta? ¿Usted personalmente? Porque si está ocupado atendiendo a otro paciente o en algo y no responde rápido, ese cliente también se va. Hoy la gente quiere respuesta inmediata. Si usted no le contesta en minutos, busca otro. ¿Le ha pasado que siente que pierden mensajes porque no dan abasto?</span>
 
-<span class="c">👤 "A veces no puedo contestar rápido"</span>
-<span class="r">→ Exacto. Ese cliente que no le contestaron ya fue con otro. No es que no quiera, es que no puede estar en todo. ¿Se imagina tener alguien que conteste 24/7, califique y agende automáticamente?</span>
+<span class="c">👤 "Sí, a veces no puedo contestar rápido"</span>
+<span class="r">→ Exacto, y no es culpa suya, es que no puede estar en todo. Ahora, imagínese por un momento tener a alguien que le conteste a cada persona que le escribe las 24 horas del día, los 7 días de la semana, que le resuelva sus dudas, y que le agende la cita automáticamente. Usted solo llega a atender. ¿Eso no le cambiaría la vida, [NOMBRE]? ¿Sí o no?</span>
 
-<span class="c">👤 "Me llegan por recomendación"</span>
-<span class="r">→ La recomendación es lo mejor. Pero ¿incluso sus referidos lo buscan en Google antes de ir? Hoy hasta los referidos verifican. Si no encuentran nada, dudan.</span>
+<span class="c">👤 "Me llegan clientes por recomendación"</span>
+<span class="r">→ Y eso es lo más valioso que tiene, de verdad, porque significa que la gente queda tan contenta con usted que lo recomienda. Eso no tiene precio. Pero le pregunto algo: ¿incluso sus clientes recomendados, antes de ir, lo buscan en Google para ver fotos, ubicación, reseñas? Porque hoy hasta los referidos verifican. Y si buscan y no encuentran nada profesional, a veces dudan. ¿No le gustaría que quien lo busque se encuentre con algo que diga "este es el mejor [RUBRO] de la zona"?</span>
 
-<span class="note">NO hagas cuentas. Usa sentido común: "saca el celular", "no le contestaron y se fue", "hasta los referidos verifican".</span>`,
+<span class="note">PATRÓN EN CADA RESPUESTA: Validar lo que dice → Empatía ("no es culpa suya") → Pintar el escenario de lo que pierde → Pintar el escenario de lo que GANARÍA → Pregunta cerrada ("¿sí o no?", "¿eso no le cambiaría la vida?"). NADA de cuentas matemáticas. Historias, sentido común, emoción.</span>`,
 
-esceptico:`<span class="v">— [NOMBRE], dato real:</span>
-<span class="v">— El 90% de personas buscan en internet antes de visitar un negocio local. Incluye su rubro.</span>
-<span class="v">— Si no tiene presencia profesional online, esos clientes van con su competencia.</span>
+esceptico:`<span class="v">— [NOMBRE], le comparto algo basado en datos reales:</span>
+<span class="v">— El 90% de las personas buscan en internet antes de visitar un negocio local. Eso incluye negocios de [RUBRO].</span>
+<span class="v">— Si su negocio no aparece con presencia profesional, esos clientes potenciales van directamente con su competencia.</span>
 
-<span class="c">👤 "A mí me va bien"</span>
-<span class="r">→ Me alegra. Pero "bien" y "al máximo" son diferentes. ¿Tiene horas muertas? ¿Días más flojos?</span>
+<span class="c">👤 "Puede ser, pero a mí me va bien"</span>
+<span class="r">→ Y me alegra mucho, de verdad, porque eso habla de la calidad de lo que ofrece. Pero le pregunto algo con total honestidad: "bien" y "al máximo de su capacidad", ¿son lo mismo? ¿Tiene días donde la agenda está más vacía de lo que quisiera? ¿Meses donde la cosa baja un poco?</span>
 
 <span class="c">👤 "Sí, hay días lentos"</span>
-<span class="r">→ Esos días lentos son clientes que buscaron un [RUBRO] y no lo encontraron a usted. No porque sea malo, sino porque no estaba visible.</span>
+<span class="r">→ Y esos días lentos, [NOMBRE], representan algo que muchos dueños no ven: son clientes que buscaron un [RUBRO] en su zona, no lo encontraron a usted, y fueron con otro. No porque usted sea malo, al contrario, sino porque simplemente no estaba visible en ese momento. ¿No le gustaría que esos días lentos se convirtieran en días llenos? ¿Sí o no?</span>
 
-<span class="note">Datos, no emociones. "90% buscan en internet" es verificable.</span>`,
+<span class="note">Con el escéptico: datos verificables ("90% buscan en internet") + validación constante + preguntas que él mismo responde. Que ÉL llegue a la conclusión, no se la impongas.</span>`,
 
-agresivo:`<span class="v">— [NOMBRE], dato rápido:</span>
-<span class="v">— Cada día, gente busca un [RUBRO] en Google por su zona. Si no aparece, van con quien sí.</span>
-<span class="v">— Y cuando le escriben, ¿tiene quién conteste al instante?</span>
+agresivo:`<span class="v">— [NOMBRE], le digo algo rápido y directo:</span>
+<span class="v">— En este momento, hay gente en su zona buscando un [RUBRO] en Google. Si usted no aparece, van con quien sí.</span>
+<span class="v">— Y cuando alguien le escribe, ¿tiene quién le conteste al instante o depende de cuándo pueda usted?</span>
 
 <span class="c">👤 "Contesto cuando puedo"</span>
-<span class="r">→ "Cuando puedo" = clientes que se van. Hoy la gente quiere respuesta en minutos. ¿No le gustaría resolver eso?</span>
+<span class="r">→ Y lo entiendo, [NOMBRE], porque usted está ocupado haciendo lo que realmente importa: atender a sus clientes. Pero mientras usted atiende, los mensajes nuevos se enfrían. El cliente que no recibe respuesta en 5 minutos busca otro. No es que sea impaciente, es que hoy así funciona. ¿No le gustaría tener un sistema que le conteste y le agende mientras usted está ocupado? ¿Sí o no?</span>
 
-<span class="note">Directo, sin rodeos. Hechos brutos.</span>`,
+<span class="note">Con agresivo: RESPETA su tiempo. Valida que está ocupado en lo importante. Dato real sin adornos. Pregunta cerrada directa.</span>`,
 
-analitico:`<span class="v">— [NOMBRE], la situación es esta:</span>
-<span class="v">— Recorrido del cliente hoy: búsqueda en Google → revisar opciones → contactar al que tenga mejor presencia → agendar con el que responda más rápido.</span>
-<span class="v">— Si su negocio no tiene web profesional o no responde rápido, pierde al cliente en alguna etapa.</span>
+analitico:`<span class="v">— [NOMBRE], le presento la situación desde un punto de vista de embudo:</span>
+<span class="v">— El recorrido del cliente hoy es: búsqueda en Google → evalúa opciones → contacta al que tenga mejor presencia → se queda con el que responda más rápido.</span>
+<span class="v">— Si en alguna de esas etapas su negocio falla — no aparece en Google, no tiene web profesional, o no responde rápido — pierde al cliente en ese punto del embudo.</span>
 
-<span class="c">👤 "¿Cómo proponen resolver eso?"</span>
-<span class="r">→ Con dos piezas: presencia digital profesional que lo posicione, y sistema de atención automática que no pierda ningún contacto.</span>
+<span class="c">👤 "¿Y cómo proponen cerrar ese embudo?"</span>
+<span class="r">→ Excelente pregunta. Con dos piezas complementarias: primero, una presencia digital profesional que lo posicione en Google y le dé credibilidad instantánea. Segundo, un sistema de atención automática con IA que responde al instante, califica al prospecto y lo agenda. Así usted no pierde ningún lead en ninguna etapa. ¿Le gustaría ver cómo funciona aplicado a su caso?</span>
 
-<span class="note">Recorrido lógico: búsqueda → evaluación → contacto → conversión. Que vea dónde falla.</span>`,
+<span class="note">Al analítico: lenguaje de embudo, etapas, "lead", "prospecto". Que sienta que habla con alguien que entiende de negocio, no con un vendedor.</span>`,
 
-indeciso:`<span class="v">— [NOMBRE], le cuento algo que le pasa a muchos dueños de [RUBRO]:</span>
-<span class="v">— El negocio funciona bien por recomendación, pero hay clientes que buscan por internet y como no los encuentran... van con otro.</span>
-<span class="v">— No es que haga algo mal. Es que esos clientes ni saben que usted existe.</span>
+indeciso:`<span class="v">— [NOMBRE], le cuento algo que le pasa a muchísimos dueños de [RUBRO] y seguramente a usted también:</span>
+<span class="v">— El negocio funciona bien por recomendación, ¿verdad? Pero hay clientes que buscan por internet un [RUBRO] en la zona, y como no lo encuentran a usted... van con otro.</span>
+<span class="v">— Y no es que usted haga algo mal, al contrario. Es simplemente que esos clientes ni siquiera saben que usted existe. ¿No es una lástima?</span>
 
-<span class="c">👤 "¿Se puede resolver?"</span>
-<span class="r">→ Sí, y es más fácil de lo que piensa. Eso es exactamente lo que hacemos. ¿Le cuento?</span>
+<span class="c">👤 "¿Y eso se puede resolver?"</span>
+<span class="r">→ Sí, [NOMBRE], y es mucho más fácil de lo que se imagina. De hecho, eso es exactamente lo que hacemos: que esos clientes que buscan por internet lo encuentren a usted con algo profesional, y que cuando le escriban, reciban respuesta instantánea y les agenden cita automáticamente. Usted no tiene que cambiar nada de lo que hace. ¿Le gustaría saber cómo funciona?</span>
 
-<span class="note">Empatía, NO presión. Solución como algo fácil e inmediato.</span>`
+<span class="note">Al indeciso: empatía máxima. "Le pasa a muchísimos", "no es culpa suya", "mucho más fácil de lo que imagina". Pinta la solución como algo SIMPLE y SIN RIESGO.</span>`
 },
 subdirs:[
-  {label:"Dice que no pierde clientes",action:"'No es que los pierda, es que nunca llegan. Hay gente buscando un [RUBRO] por Google ahora que no lo encuentra. No es pérdida, es oportunidad invisible.'"},
-  {label:"Quiere solución ya",action:"Ve directo a F4: 'Perfecto, justo eso quería contarle...'"},
-  {label:"Se defiende con sus redes",action:"'Redes son presencia, no conversión. ¿Cuántas citas concretas salen de sus redes al mes?' Si no sabe, ahí está tu punto."}
+  {label:"Dice que no pierde clientes",action:"VALIDA: '[NOMBRE], y me alegra que sienta eso. Pero permítame ponerlo así: no es que los pierda, es que nunca llegan. Hay gente buscando un [RUBRO] en Google en su zona AHORA MISMO que no sabe que usted existe. No es una pérdida, es una oportunidad invisible. ¿No le gustaría capturar esa oportunidad?'"},
+  {label:"Quiere solución ya",action:"VALIDA: '¡Me encanta su actitud, [NOMBRE]! Gente de acción.' Ve a F4: 'Perfecto, entonces déjeme contarle exactamente lo que hacemos...'"},
+  {label:"Se defiende con sus redes",action:"HALAGA PRIMERO: '[NOMBRE], el hecho de que tenga redes activas ya lo pone por encima de la mayoría. Ahora, le pregunto algo: ¿de las redes cuántas citas concretas salen al mes? Porque la red social es el escaparate, pero la conversión — que alguien realmente agende y pague — eso necesita otra pieza. ¿Le gustaría tener esa pieza que le falta?'"}
 ],
 objections:[
-  {title:"Mi competencia tampoco tiene web",popup:{receptivo:`<div class="section"><div class="example">"¡Mejor! Si nadie lo tiene, usted llega primero. Cuando SÍ la tengan, ya estará posicionado. Es como abrir en una esquina antes que nadie."</div></div>`,esceptico:`<div class="section"><div class="example">"Justamente. El primero en posicionarse captura ese mercado."</div></div>`,agresivo:`<div class="section"><div class="example">"Mejor. Si llega primero, se queda con esos clientes. ¿O prefiere esperar?"</div></div>`,analitico:`<div class="section"><div class="example">"Ventaja de primer movimiento. El costo de adquisición digital es más bajo con poca competencia."</div></div>`,indeciso:`<div class="section"><div class="example">"Si su competencia no lo tiene, usted les lleva ventaja. Es llegar primero a donde todos van a querer estar."</div></div>`}},
-  {title:"Antes funcionaba sin internet",popup:{receptivo:`<div class="section"><div class="example">"Antes funcionaba, pero el consumidor cambió. Hoy no abre la guía telefónica, abre Google. Es como si antes la gente pasaba por su puerta y hoy pasa por internet."</div></div>`,esceptico:`<div class="section"><div class="example">"El mercado cambió. Internet complementa la recomendación. Los negocios que no se adaptan pierden terreno gradualmente."</div></div>`,agresivo:`<div class="section"><div class="example">"Antes sí. Hoy no. El mundo cambió. ¿Se adapta o pierde terreno?"</div></div>`,analitico:`<div class="section"><div class="example">"El comportamiento de compra inicia con búsqueda digital en el 87% de los casos. Dato estructural."</div></div>`,indeciso:`<div class="section"><div class="example">"Es verdad, antes no se necesitaba. Pero hoy la gente cambió. Busca todo por el celular. Adaptarse es más fácil de lo que piensa."</div></div>`}},
-  {title:"Estoy conforme con lo que tengo",popup:{receptivo:`<div class="section"><div class="example">"Lo respeto. Muchos clientes decían lo mismo. Después de tener web y atención automática nos dicen: 'No sabía cuántos clientes dejaba pasar.'"</div></div>`,esceptico:`<div class="section"><div class="example">"Conformidad no es optimización. ¿Ha medido cuántos potenciales pasan de largo porque no lo encuentran online?"</div></div>`,agresivo:`<div class="section"><div class="example">"OK. ¿Algún mes la cosa se pone lenta? Porque ahí es donde esto funciona."</div></div>`,analitico:`<div class="section"><div class="example">"¿Ha medido la demanda latente? Búsquedas de [RUBRO] en [ZONA] al mes que no captura."</div></div>`,indeciso:`<div class="section"><div class="example">"¿Y si puede irle todavía mejor sin hacer nada diferente? ¿Al menos le da curiosidad?"</div></div>`}},
-  {title:"Eso suena a humo",popup:{receptivo:`<div class="section"><div class="example">"Entiendo. Por eso no le pido que confíe: le propongo que vea un ejemplo real. Le muestro webs y bots que hemos montado para [RUBRO]. Si no convence, aquí no pasó nada."</div></div>`,esceptico:`<div class="section"><div class="example">"No le doy teoría. Le enseño resultados de negocios reales: sus webs, sus bots funcionando. ¿Le da más confianza?"</div></div>`,agresivo:`<div class="section"><div class="example">"No es humo. Es medible. Le muestro negocios como el suyo que ya lo tienen. ¿Quiere verlos?"</div></div>`,analitico:`<div class="section"><div class="example">"Evidencia empírica: casos implementados, URLs verificables de negocios reales del sector."</div></div>`,indeciso:`<div class="section"><div class="example">"¿Sabe qué le quitaría la duda? Ver un caso real de un negocio parecido al suyo."</div></div>`}}
+  {title:"Mi competencia tampoco tiene web",popup:{receptivo:`<div class="section"><div class="section-title">Técnica: Convertir objeción en oportunidad de oro</div><div class="example">"[NOMBRE], ¡pero eso es la mejor noticia que podía darme! Escúcheme bien: si su competencia NO tiene web ni atención digital, y USTED sí la tiene... usted se lleva TODOS esos clientes que buscan por internet. Es como abrir un local en una calle donde no hay nadie más. Todo el que pase, entra al suyo. Y cuando la competencia reaccione y quiera hacer lo mismo, usted ya va a estar posicionado, con reseñas, con clientes, con todo. ¿No le gustaría ser el primero en llegar a esa oportunidad? ¿Sí o no?"</div></div><div class="proof">Objeción convertida en URGENCIA positiva. "Ventaja de primer movimiento." Si nadie lo tiene, quien lo tenga primero GANA todo.</div>`,esceptico:`<div class="section"><div class="example">"Justamente, y eso es una ventaja para usted. El primero en posicionarse digitalmente captura ese mercado. Cuando la competencia reaccione, usted ya tendrá meses de ventaja, clientes acumulados y reseñas. En marketing digital se llama 'ventaja de primer movimiento'. ¿Le interesaría ser el primero?"</div></div>`,agresivo:`<div class="section"><div class="example">"¡Mejor para usted! Si ninguno lo tiene y usted sí, todos los clientes que buscan van directo con usted. ¿Prefiere esperar a que otro lo haga primero o quiere ser el que se lleva esos clientes?"</div></div>`,analitico:`<div class="section"><div class="example">"Eso es lo que se llama ventaja de primer movimiento. En un mercado sin competencia digital, el costo de adquisición es significativamente más bajo y la cuota de mercado capturada es máxima. Es el momento óptimo para posicionarse. ¿Le parece una oportunidad lógica?"</div></div>`,indeciso:`<div class="section"><div class="example">"¡Pero eso es buenísimo, [NOMBRE]! Si nadie lo tiene y usted llega primero, todos los clientes que buscan por internet van directo con usted. Es como llegar primero a un lugar donde todos van a querer estar. ¿No le gustaría tener esa ventaja?"</div></div>`}},
+  {title:"Antes funcionaba sin internet",popup:{receptivo:`<div class="section"><div class="section-title">Técnica: Validar + Evolución natural</div><div class="example">"[NOMBRE], tiene toda la razón, y antes funcionaba muy bien así. Nadie le va a quitar eso. Pero le cuento algo: el consumidor cambió. Antes la gente pasaba por la calle, veía el letrero y entraba. Hoy la gente 'pasa' por Google. Es la misma calle, pero digital. Y los negocios que están en esa 'calle digital' reciben a los clientes que pasan. Los que no están... esos clientes pasan de largo sin saber que existen. No es que lo de antes estuviera mal, es que hoy hay una calle NUEVA llena de gente, y usted todavía no tiene local ahí. ¿No le gustaría tener presencia en esa calle también? ¿Sí o no?"</div></div><div class="proof">Metáfora de la "calle digital". No invalidamos el pasado, lo complementamos. El mundo CAMBIÓ, no es que él esté mal.</div>`,esceptico:`<div class="section"><div class="example">"Correcto, y eso le funcionó durante años. El tema es que el mercado evolucionó. No es que internet reemplace la recomendación, la complementa. Pero los negocios que no se adaptan pierden terreno gradualmente. El dato es claro: cada año un porcentaje mayor de clientes inicia su búsqueda online. ¿Tiene sentido al menos evaluarlo?"</div></div>`,agresivo:`<div class="section"><div class="example">"Antes sí, [NOMBRE], y nadie se lo discute. Pero hoy el mundo cambió. Los clientes buscan diferente. ¿Se adapta y captura esos clientes, o deja que se los lleve otro? Sin presión, solo la realidad."</div></div>`,analitico:`<div class="section"><div class="example">"Históricamente correcto. Sin embargo, el comportamiento de compra evolucionó: el 87% de las decisiones de compra local hoy inician con una búsqueda digital. Es un cambio estructural, no temporal. ¿Le parece prudente al menos evaluar cómo adaptarse?"</div></div>`,indeciso:`<div class="section"><div class="example">"Es totalmente cierto, [NOMBRE], antes no se necesitaba. Pero la gente cambió la forma de buscar las cosas. Hoy todo es por el celular. No es bueno ni malo, es como funciona ahora. Y adaptarse es mucho más fácil de lo que piensa. ¿Quiere que le cuente cómo?"</div></div>`}},
+  {title:"Estoy conforme con lo que tengo",popup:{receptivo:`<div class="section"><div class="section-title">Técnica: Validar + Elevar la aspiración</div><div class="example">"[NOMBRE], y me da mucho gusto escuchar eso, de verdad. El hecho de que esté conforme significa que ha construido algo sólido, y eso merece reconocimiento. Ahora, le comparto algo que me dicen muchos de nuestros clientes: antes de tener su web profesional y su sistema de atención, también decían 'estoy conforme'. Después, cuando empezaron a recibir 5, 10, 15 clientes nuevos al mes que antes ni sabían que existían, nos dicen: 'No tenía idea de cuántos clientes estaba dejando pasar.' No es que usted esté mal, para nada. Es que hay un nivel SIGUIENTE al que puede llegar. ¿Al menos le da curiosidad saber cuántos clientes podrían estarle buscando y no lo encuentran?"</div></div>`,esceptico:`<div class="section"><div class="example">"Lo respeto completamente. Ahora, como consultor le comparto una observación: conformidad no es lo mismo que optimización. ¿Ha medido cuántas búsquedas de [RUBRO] en [ZONA] hay al mes en Google? Porque puede haber decenas de personas buscándolo que hoy no lo encuentran. No hablo de insatisfacción, hablo de oportunidad no capturada. ¿No le interesaría al menos conocer ese dato?"</div></div>`,agresivo:`<div class="section"><div class="example">"Y lo respeto, [NOMBRE]. Solo una cosa: ¿algún mes del año la cosa se pone más lenta de lo normal? Porque si la respuesta es sí, ahí es exactamente donde esto funciona. Si la respuesta es no, lo felicito y no lo molesto más. ¿Qué me dice?"</div></div>`,analitico:`<div class="section"><div class="example">"'Conforme' es un estado válido. Pero desde un punto de vista analítico, ¿ha medido la demanda latente? Es decir, cuántas búsquedas mensuales de [RUBRO] en [ZONA] existen que hoy no captura. Conformidad no es sinónimo de optimización. ¿Le interesaría conocer esos datos?"</div></div>`,indeciso:`<div class="section"><div class="example">"Qué bueno que le vaya bien, [NOMBRE], de verdad. Y le cuento que muchos de nuestros clientes decían lo mismo. Después de tener su web y su bot funcionando, nos dicen: 'No sabía lo que me estaba perdiendo.' ¿No le daría al menos curiosidad ver qué más podría lograr sin esfuerzo extra?"</div></div>`}},
+  {title:"Eso suena a humo",popup:{receptivo:`<div class="section"><div class="section-title">Técnica: Validar la desconfianza + Ofrecer prueba</div><div class="example">"[NOMBRE], tiene toda la razón en desconfiar, y se lo digo en serio. Hoy hay tanta gente prometiendo cosas que uno ya no sabe a quién creerle. Por eso nosotros no le pedimos que nos crea: le pedimos que nos VEA. Le puedo mostrar webs y bots que hemos montado para negocios de [RUBRO] exactamente como el suyo, funcionando en este momento. Si después de verlo sigue pensando que es humo, le agradezco su tiempo y tan amigos. Pero si le hace sentido, puede ser el inicio de algo muy bueno para su negocio. ¿Le parece justo al menos verlo antes de decidir? ¿Sí o no?"</div></div><div class="proof">NUNCA defiendas. VALIDA la desconfianza. "Tiene razón en desconfiar." Luego ofrece PRUEBA TANGIBLE: "le pedimos que nos VEA, no que nos crea". Pregunta cerrada.</div>`,esceptico:`<div class="section"><div class="example">"Válido. Y no le voy a pedir que me crea. Le propongo algo más justo: le muestro resultados reales de negocios de [RUBRO] como el suyo. URLs verificables, bots funcionando en vivo. Usted los revisa, y si le parece humo después de ver la evidencia, le doy la razón y no lo molesto más. ¿Le parece justo?"</div></div>`,agresivo:`<div class="section"><div class="example">"Y tiene razón en desconfiar, [NOMBRE], hay mucho charlatán por ahí. Por eso no le pido que me crea: le pido que vea. Le muestro ejemplos reales y usted juzga. Si es humo, me lo dice en la cara y tan amigos. ¿Le parece?"</div></div>`,analitico:`<div class="section"><div class="example">"Postura válida. Le propongo algo empírico: le puedo presentar casos implementados con URLs verificables, bots funcionando en vivo, y métricas de rendimiento documentadas de negocios de su sector. Usted evalúa la evidencia y decide. ¿Le parece un proceso razonable?"</div></div>`,indeciso:`<div class="section"><div class="example">"Es completamente normal pensar eso, [NOMBRE], y me parece bien que sea cauteloso. ¿Sabe qué le quitaría todas las dudas? Ver un ejemplo real de un negocio como el suyo que ya lo tiene funcionando. Si después de verlo sigue dudando, no pasa nada. Pero al menos vea antes de decidir. ¿Le parece?"</div></div>`}}
 ]},
 
-// F4 PRESENTAR EL PACK 199
-{id:4,name:"Presentar el Pack",sub:"199€: Web + Bot + Dominio",timer:"1.5 min",mission:"Presenta el Pack 199€ como inversión irrisoria. Vende el resultado, no la tecnología.",
+// ═══ F4 PACK 199€ ═══
+{id:4,name:"Presentar el Pack",sub:"199€: Web + Bot IA + Dominio",timer:"1.5 min",mission:"Presenta el Pack 199€ como inversión irrisoria. Vende el RESULTADO. Con un solo cliente nuevo, ya se pagó.",
 script:{
-receptivo:`<span class="v">— [NOMBRE], le cuento lo que hacemos y por qué a tantos negocios de [RUBRO] les funciona:</span>
-<span class="v">— Le montamos un Pack Digital completo. Incluye tres cosas:</span>
-<span class="v">— Primero: página web moderna y profesional con su dominio propio. www.sunegocio.com.</span>
-<span class="v">— Segundo: un bot de WhatsApp con inteligencia artificial que atiende 24/7. El cliente escribe, el bot responde, resuelve dudas y agenda cita. Usted solo llega a atender.</span>
-<span class="v">— Tercero: el dominio incluido. No compra nada aparte.</span>
+receptivo:`<span class="v">— [NOMBRE], ahora sí, déjeme contarle lo que hacemos y por qué a tantos negocios de [RUBRO] les está funcionando:</span>
+<span class="v">— Nosotros le montamos un Pack Digital completo para su negocio. Incluye tres cosas muy concretas:</span>
+<span class="v">— Primero: una página web moderna y profesional con su dominio propio. O sea, www.sunegocio.com. Algo que cuando la gente lo busque en Google, vea algo serio, profesional, que genere confianza al instante.</span>
+<span class="v">— Segundo: un bot de WhatsApp con inteligencia artificial que atiende a sus clientes las 24 horas del día, los 7 días de la semana. El cliente le escribe, el bot le responde con información de SU negocio, le resuelve dudas, y le agenda cita automáticamente. Usted solo llega a atender.</span>
+<span class="v">— Tercero: el dominio incluido. No tiene que comprar nada aparte ni gastar nada extra.</span>
 
-<span class="c">👤 "¿Cuánto cuesta?"</span>
-<span class="r">→ Todo el Pack: 199 euros. Web, bot, dominio, todo. Es menos de lo que muchos gastan en un anuncio que no genera nada.</span>
+<span class="c">👤 "¿Y cuánto cuesta eso?"</span>
+<span class="r">→ Y aquí viene lo mejor, [NOMBRE]: todo el Pack completo — la web, el bot con inteligencia artificial, el dominio, todo configurado y funcionando — sale por 199 euros. Así como lo oye. Y le digo algo: con UN solo cliente nuevo que le llegue gracias a este Pack, ya recuperó la inversión varias veces. Es que literalmente no hay forma de perder.</span>
 
 <span class="c">👤 "¿Solo 199?"</span>
-<span class="r">→ Solo 199. Con UN solo cliente nuevo que llegue gracias al Pack, ya recuperó la inversión varias veces. No hay forma de perder.</span>
+<span class="r">→ Solo 199, [NOMBRE]. Y se lo pongo en perspectiva: un desarrollador freelance le cobra mínimo 2.000 euros solo por la web, sin bot, sin nada. Una agencia le cobra 5.000 o más. Nosotros le damos web + bot con inteligencia artificial + dominio por 199 porque trabajamos a escala con negocios de su sector. Es un modelo que funciona para todos. ¿Le hace sentido?</span>
 
-<span class="c">👤 "¿Quién lo mantiene?"</span>
-<span class="r">→ Nosotros. Usted no toca nada técnico. Configuramos todo y lo dejamos funcionando.</span>
+<span class="c">👤 "¿Y quién lo mantiene?"</span>
+<span class="r">→ Nosotros al 100%. Usted no tiene que tocar absolutamente nada técnico. Nosotros lo diseñamos, lo configuramos, lo montamos, y se lo dejamos funcionando. Usted lo único que hace es disfrutar los resultados: clientes nuevos que le escriben listos para agendar.</span>
 
-<span class="note">VENDE RESULTADO: "web que lo posiciona", "bot que atiende y agenda solo". 199€ es ancla absurdamente baja — úsalo como cierre.</span>`,
+<span class="note">VENDE EL RESULTADO: "web que genera confianza al instante", "bot que atiende y agenda solo", "usted solo llega a atender". 199€ es tan bajo que se convierte en el argumento MÁS fuerte del cierre. Compáralo siempre: freelancer 2.000€, agencia 5.000€, un anuncio 300€/mes sin garantía.</span>`,
 
-esceptico:`<span class="v">— [NOMBRE], sin rodeos:</span>
-<span class="v">— Pack Digital: web profesional con dominio propio + bot de WhatsApp con IA que atiende y agenda automáticamente.</span>
-<span class="v">— 199 euros. Todo incluido.</span>
+esceptico:`<span class="v">— [NOMBRE], se lo presento sin rodeos y con total transparencia:</span>
+<span class="v">— Le montamos un Pack Digital que incluye: página web profesional con dominio propio + bot de WhatsApp con inteligencia artificial que atiende y agenda clientes automáticamente.</span>
+<span class="v">— La inversión total es de 199 euros. Todo incluido. Sin costos ocultos, sin letra pequeña.</span>
 
 <span class="c">👤 "¿Qué incluye exactamente?"</span>
-<span class="r">→ Web diseñada a medida con dominio .com, bot inteligente en WhatsApp que responde, califica y agenda, configuración completa. Usted no hace nada técnico.</span>
+<span class="r">→ Se lo desgloso: página web diseñada a medida para su negocio con dominio .com, bot inteligente en WhatsApp que responde preguntas específicas de SU negocio, califica al prospecto y le agenda cita, y la configuración completa la hacemos nosotros. Usted no toca nada técnico. Todo eso por 199 euros.</span>
 
-<span class="c">👤 "¿199 y ya? ¿Costos ocultos?"</span>
-<span class="r">→ 199 y ya. Sin letra pequeña. Servicios adicionales son opcionales y se presentan aparte. Pack base: 199 y funciona tal cual.</span>
+<span class="c">👤 "¿199 y ya? ¿No hay costos ocultos?"</span>
+<span class="r">→ 199 y ya, [NOMBRE]. Cero letra pequeña. Si en el futuro quiere servicios adicionales, eso es completamente opcional y se lo presentaríamos aparte con total transparencia. Pero el Pack base es 199 euros, incluye todo lo que le mencioné, y funciona tal cual.</span>
 
-<span class="note">Transparencia total. Precio de frente. La honestidad desarma al escéptico.</span>`,
+<span class="note">Al escéptico: TRANSPARENCIA es tu arma. "Sin costos ocultos, sin letra pequeña." Dale el desglose exacto. La honestidad directa desarma al escéptico más que cualquier argumento.</span>`,
 
-agresivo:`<span class="v">— [NOMBRE], simple:</span>
-<span class="v">— Web profesional + bot WhatsApp con IA + dominio. 199 euros.</span>
-<span class="v">— El bot atiende 24/7. La web lo posiciona. Usted solo atiende.</span>
+agresivo:`<span class="v">— [NOMBRE], se lo digo simple y directo:</span>
+<span class="v">— Web profesional con dominio propio + bot de WhatsApp con inteligencia artificial + todo configurado por nosotros.</span>
+<span class="v">— 199 euros. Todo. El bot atiende 24/7, la web lo posiciona en Google, usted solo atiende las citas.</span>
 
-<span class="c">👤 "¿199? ¿Qué tiene de bueno?"</span>
-<span class="r">→ Que con un solo cliente nuevo, ya recuperó la inversión. ¿Cuánto cobra por consulta? Ahí está su respuesta.</span>
+<span class="c">👤 "¿199? ¿Por qué tan barato?"</span>
+<span class="r">→ Porque trabajamos a escala con muchos negocios de [RUBRO] a la vez. Lo que individualmente costaría miles, nosotros lo entregamos por 199 porque nuestro modelo se basa en volumen, no en cobrarle de más a un solo cliente. La calidad la puede verificar usted mismo: le muestro una demo y juzga. ¿Sí o no?</span>
 
-<span class="note">Precio directo, valor directo, cero adornos.</span>`,
+<span class="note">Con agresivo: precio directo sin rodeos. Si pregunta por qué barato, explica el modelo sin defensas.</span>`,
 
-analitico:`<span class="v">— [NOMBRE], la propuesta:</span>
-<span class="v">— Pack Digital 199€:</span>
-<span class="v">— 1. Web profesional responsive con dominio .com incluido.</span>
-<span class="v">— 2. Bot WhatsApp con IA: atención 24/7, calificación y agendamiento automático.</span>
-<span class="v">— 3. Configuración completa. Sin curva de aprendizaje.</span>
+analitico:`<span class="v">— [NOMBRE], le detallo la propuesta técnicamente:</span>
+<span class="v">— Pack Digital por 199€ que incluye:</span>
+<span class="v">— 1. Página web profesional responsive, diseñada para su sector, con dominio .com incluido y optimización básica para SEO local.</span>
+<span class="v">— 2. Bot de WhatsApp con inteligencia artificial conversacional: atención automatizada 24/7, calificación de prospectos mediante preguntas configuradas a su negocio, y agendamiento automático.</span>
+<span class="v">— 3. Configuración completa por nuestro equipo. Tiempo de implementación: 5-7 días hábiles. Sin curva de aprendizaje para usted.</span>
 
-<span class="c">👤 "¿Qué tecnología usa el bot?"</span>
-<span class="r">→ IA conversacional. Entiende contexto, responde preguntas de su negocio y guía hasta agendar. No es menú de opciones, es conversación real.</span>
+<span class="c">👤 "¿El ROI en cuánto tiempo?"</span>
+<span class="r">→ Si su ticket promedio es de [Z]€, con un solo cliente nuevo la inversión de 199€ ya está cubierta. Con 5 clientes, tiene un ROI de más del 1000%. Y el sistema sigue generando mes tras mes sin inversión adicional. El ROI potencial es prácticamente inmediato.</span>
 
-<span class="note">Desglosa componentes, explica tecnología, demuestra ROI con ticket promedio.</span>`,
+<span class="note">Al analítico: desglose técnico, timeline, ROI con sus números. Que pueda calcular él mismo.</span>`,
 
-indeciso:`<span class="v">— [NOMBRE], se lo pongo sencillo:</span>
-<span class="v">— Le hacemos una página web bonita y profesional. Con su nombre: www.sunegocio.com.</span>
-<span class="v">— Y un asistente inteligente en WhatsApp que atiende clientes por usted: responde, explica servicios y agenda cita. Todo solito.</span>
-<span class="v">— Todo por 199 euros. Sin complicaciones.</span>
+indeciso:`<span class="v">— [NOMBRE], se lo pongo bien sencillito para que lo vea claro:</span>
+<span class="v">— Nosotros le hacemos una página web bonita, moderna y profesional para su negocio. Con su propio nombre: www.sunegocio.com. Algo que cuando la gente lo busque, diga "este lugar se ve serio y profesional".</span>
+<span class="v">— Y además, le ponemos un asistente inteligente en WhatsApp que atiende a los clientes por usted: les responde, les explica sus servicios, les resuelve dudas, y les agenda cita. Todo solito, las 24 horas.</span>
+<span class="v">— Todo eso por 199 euros. Sin complicaciones, sin sorpresas.</span>
 
-<span class="c">👤 "¿Es difícil de usar?"</span>
-<span class="r">→ Nada. Nosotros montamos y configuramos todo. Usted solo recibe clientes nuevos por WhatsApp. Como tener un empleado que trabaja 24 horas.</span>
+<span class="c">👤 "¿Y es difícil de usar?"</span>
+<span class="r">→ Nada, [NOMBRE], absolutamente nada. Usted no hace nada. Nosotros lo montamos, lo configuramos, y se lo dejamos listo. Usted solo va a empezar a recibir mensajes de clientes nuevos por WhatsApp que quieren ir a su negocio. Es como tener un empleado que trabaja las 24 horas sin cobrar sueldo ni tomar vacaciones. ¿Eso no le gustaría?</span>
 
-<span class="note">Sencillez total. "Web bonita", "asistente que atiende solito", "199 y ya".</span>`
+<span class="note">Al indeciso: sencillez TOTAL. "Bonita", "solito", "sin complicaciones". Metáfora del empleado que trabaja 24h. Todo suena FÁCIL y SIN RIESGO.</span>`
 },
 subdirs:[
-  {label:"Pide precio directamente",action:"Dáselo con orgullo: '199€. Web + bot IA + dominio. Todo incluido.' El precio es tu arma — es tan bajo que desarma."},
-  {label:"Compara con otro servicio",action:"'¿El otro incluye web a medida, bot con IA Y dominio por 199€? Compare todo el paquete, no solo precio.'"},
-  {label:"Quiere demo ahora",action:"Ve a F6: 'Perfecto, le muestro cómo quedaría en 15 minutos...'"}
+  {label:"Pide precio directamente",action:"Dáselo con ORGULLO y compara: '199€, [NOMBRE]. Todo incluido: web + bot con IA + dominio. Para que se haga una idea, un freelancer le cobra mínimo 2.000 solo por la web. Una agencia, 5.000 o más. Y con un solo cliente nuevo que le llegue, ya lo recuperó. ¿No le parece una inversión inteligente?'"},
+  {label:"Compara con otro servicio",action:"VALIDA: 'Qué bueno que compare, eso habla bien de usted.' Luego: '¿El otro le incluye web a medida, bot con inteligencia artificial que atienda 24/7, Y dominio? Porque si solo es la web, no es lo mismo. Nosotros le damos el sistema COMPLETO por 199€.'"},
+  {label:"Quiere demo ahora",action:"CELEBRA: '¡Me encanta su actitud, [NOMBRE]!' Ve a F6: 'Perfecto, lo que hacemos es agendar una sesión de 15 minutos donde le muestro exactamente cómo quedaría para su negocio...'"}
 ],
 objections:[
-  {title:"Es muy barato, desconfío",popup:{receptivo:`<div class="section"><div class="section-title">Argumento: Volumen</div><div class="example">"Trabajamos con muchos negocios de [RUBRO] simultáneamente. Eso nos permite ofrecer por una fracción lo que individualmente costaría miles. Es como comprar al mayoreo."</div></div>`,esceptico:`<div class="section"><div class="example">"El precio es posible porque operamos a escala: cientos de negocios del mismo sector. Estandarización sin sacrificar calidad."</div></div>`,agresivo:`<div class="section"><div class="example">"Trabajamos a volumen. La calidad la verifica usted: le muestro demo y juzga."</div></div>`,analitico:`<div class="section"><div class="example">"Modelo basado en escala vertical. Al estandarizar para su sector, reducimos costos y trasladamos ahorro al cliente."</div></div>`,indeciso:`<div class="section"><div class="example">"Al trabajar con muchos negocios como el suyo, podemos dar algo que normalmente costaría muchísimo más por algo accesible."</div></div>`}},
-  {title:"¿Y si no funciona?",popup:{receptivo:`<div class="section"><div class="example">"199€ es menos de lo que gasta en papelería. Con UN cliente nuevo ya ganó. Y no va a ser uno, van a ser varios. Pero incluso si fuera cero: algo que queda montado y trabajando."</div></div>`,esceptico:`<div class="section"><div class="example">"199€ de riesgo vs retorno potencial de miles al mes. Relación riesgo-recompensa muy favorable."</div></div>`,agresivo:`<div class="section"><div class="example">"199€. ¿Cuánto cobra por consulta? Con un cliente lo recupera. Riesgo prácticamente cero."</div></div>`,analitico:`<div class="section"><div class="example">"Riesgo asimétrico: 199€ de inversión vs retorno potencial múltiple. El costo de oportunidad de NO hacerlo es mayor."</div></div>`,indeciso:`<div class="section"><div class="example">"Son 199€. Es probar algo que puede cambiar mucho arriesgando muy poco. Como invertir una cena para ganar un año de clientes."</div></div>`}},
-  {title:"Tengo que pensarlo",popup:{receptivo:`<div class="section"><div class="example">"¿Qué le genera duda? Si puedo resolverla ahora, no tiene que pensarlo. ¿Qué parte le inquieta?"</div></div><div class="proof">Indaga la duda real: precio (199€ es mínimo), confianza (muestra demo), tiempo (nosotros hacemos todo).</div>`,esceptico:`<div class="section"><div class="example">"¿Qué información le falta? Se la doy ahora."</div></div>`,agresivo:`<div class="section"><div class="example">"¿Qué necesita pensar? 199€ y nosotros hacemos todo. ¿Es precio? ¿Confianza? ¿Cuál es?"</div></div>`,analitico:`<div class="section"><div class="example">"¿Qué variable falta? Le proporciono datos adicionales."</div></div>`,indeciso:`<div class="section"><div class="example">"Le mando ejemplo por WhatsApp de cómo quedaría. Lo ve tranquilo y hablamos mañana a las 10."</div></div>`}},
-  {title:"Mi sobrino me hace la web",popup:{receptivo:`<div class="section"><div class="example">"¿Y su sobrino también le hace un bot con IA que atienda 24/7, responda dudas y agende citas? Eso diferencia nuestro Pack. No es solo web, es sistema completo de captación y atención."</div></div>`,esceptico:`<div class="section"><div class="example">"Una web estática no genera clientes sola. Lo diferente es el sistema de atención con IA. ¿Su contacto puede hacer eso?"</div></div>`,agresivo:`<div class="section"><div class="example">"¿Le incluye bot con IA? ¿Atención 24/7? ¿Agendamiento automático? Solo la web no es lo mismo."</div></div>`,analitico:`<div class="section"><div class="example">"Web sin conversión tiene 85% rebote. Lo diferente es la capa de IA conversacional. ¿Puede obtener eso por 199€?"</div></div>`,indeciso:`<div class="section"><div class="example">"Lo nuestro no es solo web. Es web + asistente inteligente 24h. Eso no lo hace un sobrino. Y por 199€ es difícil encontrarlo."</div></div>`}}
+  {title:"Es caro / No hay presupuesto",popup:{receptivo:`<div class="section"><div class="section-title">Técnica: Validar + Redirigir a la ganancia + Pregunta cerrada</div><div class="example">"[NOMBRE], tiene usted razón, no es un producto barato, y yo no voy a negarle eso. Pero justamente no es barato por la ganancia que le va a generar. Mire, con este Pack de web profesional + bot con IA, en poco tiempo va a estar recibiendo entre 5 y 15 clientes nuevos ADICIONALES a los que ya tiene. Y con un solo cliente — UNO solo — ya está pagando este producto completo. Piénselo así: ¿cuánto cobra usted por una consulta? Si cobra 50 euros, con un solo cliente ya recuperó el 25% de la inversión. Con 4 clientes, ya ganó. Y van a ser muchos más de 4. Dígame la verdad, [NOMBRE]: ¿a usted le gustaría tener entre 5 y 15 clientes nuevos al mes, adicionales a los que ya tiene? ¿Sí o no?"</div></div><div class="proof">PATRÓN COMPLETO: Validar ("tiene razón, no es barato") → NO defender el precio, REDIRIGIR a la ganancia → Dato concreto ("5 a 15 clientes") → Comparación con su ticket → Pregunta cerrada ("¿sí o no?"). NUNCA digas "no es caro". ÉL tiene razón. Lo caro se justifica con el retorno.</div>`,esceptico:`<div class="section"><div class="example">"[NOMBRE], entiendo su posición y la respeto. Y le voy a ser completamente honesto: 199€ no es un número insignificante, tiene razón. Pero le propongo que lo veamos desde otro ángulo: un desarrollador freelance le cobraría mínimo 2.000€ solo por una web. Una agencia, 5.000 o más. Y ninguno de los dos le incluye un bot con inteligencia artificial. Nosotros le damos todo por 199€ porque trabajamos a escala con negocios de su sector. Pero más allá del precio, lo que importa es el retorno: con un solo cliente nuevo que le llegue, la inversión se pagó. ¿No le parece que vale la pena al menos evaluarlo con números concretos de su negocio?"</div></div>`,agresivo:`<div class="section"><div class="example">"[NOMBRE], le doy toda la razón, 199€ no es una moneda, es una inversión. Pero le pregunto algo directo: ¿cuánto cobra usted por consulta? Si cobra 50€, con 4 clientes nuevos ya recuperó el 100% y todo lo demás es ganancia pura. Y le van a llegar más de 4, se lo aseguro. ¿Le interesa ganar más de lo que invierte sí o no?"</div></div>`,analitico:`<div class="section"><div class="example">"[NOMBRE], comprendo la consideración presupuestaria. Hagamos el ejercicio juntos: inversión de 199€ dividida entre el valor promedio de su consulta. Si su ticket es de 50€, necesita 4 clientes para ROI completo. El sistema tiene capacidad para generar entre 5 y 15 mensuales. Eso es un retorno potencial de 250% a 750% sobre la inversión inicial. ¿Le parece una relación riesgo-beneficio favorable?"</div></div>`,indeciso:`<div class="section"><div class="example">"[NOMBRE], lo entiendo perfectamente, y tiene razón en pensarlo. Pero mire, son 199 euros. Es como ir a cenar con su familia, pero en vez de una cena, invierte en algo que le puede traer clientes durante meses y meses. Con un solo cliente nuevo que le llegue, ya recuperó más de la mitad. Y no va a ser uno solo, van a ser varios. ¿No vale la pena al menos probar por algo que cuesta lo de una cenita?"</div></div>`}},
+  {title:"Es muy barato, desconfío",popup:{receptivo:`<div class="section"><div class="section-title">Técnica: Validar + Explicar modelo + Demo</div><div class="example">"[NOMBRE], ¡excelente pregunta! Y me da gusto que la haga porque demuestra que usted es inteligente con su dinero. Le explico por qué podemos darlo a este precio: nosotros no trabajamos con UN solo negocio a la vez. Trabajamos con muchos negocios de [RUBRO] simultáneamente en toda la zona. Al hacerlo así, podemos ofrecer algo que individualmente costaría miles de euros, por una fracción del precio. Es como cuando usted compra al mayoreo: el producto es el mismo, pero el precio baja porque el volumen lo permite. La calidad es exactamente la misma. ¿Sabe qué le quitaría cualquier duda? Ver el producto funcionando en vivo. ¿Le gustaría ver una demo real de una web y un bot que ya están funcionando para un negocio de [RUBRO]?"</div></div><div class="proof">VALIDAR la inteligencia del cliente ("demuestra que es inteligente") → Explicar el MODELO de escala → Metáfora del mayoreo → Ofrecer PRUEBA tangible (demo).</div>`,esceptico:`<div class="section"><div class="example">"Válida desconfianza, y la respeto. Le doy la explicación técnica: operamos a escala vertical. Al estandarizar la solución para negocios de un mismo sector, reducimos costos operativos y trasladamos ese ahorro al cliente final. Es economía de escala, nada más. La calidad la puede verificar usted mismo: le muestro URLs activas de clientes reales. ¿Le parece justo evaluarlo con evidencia?"</div></div>`,agresivo:`<div class="section"><div class="example">"Y tiene razón en dudar, [NOMBRE], hay mucho charlatán suelto. La razón del precio es simple: trabajamos a volumen con muchos negocios de su sector. Pero la calidad no la negocio: la puede ver usted mismo ahora. Le muestro una demo y usted juzga. ¿Sí o no?"</div></div>`,analitico:`<div class="section"><div class="example">"La pregunta es pertinente. El modelo económico se basa en escala vertical: al estandarizar la solución para un nicho específico (su sector), optimizamos procesos y reducimos el costo marginal por cliente. Esto nos permite ofrecer a 199€ lo que de forma personalizada costaría 2.000-5.000€. Puedo compartirle ejemplos activos para que valide la calidad."</div></div>`,indeciso:`<div class="section"><div class="example">"[NOMBRE], me alegra que pregunte, porque eso muestra que usted no toma decisiones a la ligera. Le explico: es accesible porque trabajamos con muchos negocios como el suyo al mismo tiempo. Al hacerlo así, podemos dar un servicio que normalmente costaría muchísimo más, por algo que cualquier negocio puede pagar. ¿Sabe qué le daría total confianza? Ver cómo se ve y cómo funciona. ¿Le enseño un ejemplo real?"</div></div>`}},
+  {title:"Tengo que pensarlo",popup:{receptivo:`<div class="section"><div class="section-title">Técnica: Validar + Indagar la duda + Anclar seguimiento</div><div class="example">"[NOMBRE], por supuesto, y me parece muy bien que se tome su tiempo para decidir. Ahora, déjeme preguntarle algo para ayudarle: ¿qué es lo que más le genera duda? ¿Es el precio? Porque son solo 199€ y con un cliente se paga. ¿Es la confianza? Porque le puedo mostrar ejemplos reales ahora mismo. ¿O es que necesita consultarlo con alguien? Dígame cuál es la verdadera duda y seguramente puedo resolverla ahora."</div></div><div class="proof">Indagar la duda REAL. El "tengo que pensarlo" siempre esconde algo: precio, confianza, o tercero. Si lo descubres, lo resuelves ahí mismo.</div><div class="section"><div class="section-title">Si insiste en pensarlo:</div><div class="example">"Perfecto, [NOMBRE]. Lo que hago es esto: le mando un ejemplo por WhatsApp de cómo quedaría para su negocio, lo ve tranquilo, y hablamos mañana. ¿Le parece a las 10 de la mañana o por la tarde? Así tiene algo concreto que evaluar y no solo la idea."</div></div>`,esceptico:`<div class="section"><div class="example">"Lo respeto totalmente. ¿Me permite una pregunta? ¿Qué información le falta para poder tomar la decisión? Porque si es algo que puedo proporcionarle ahora — datos, casos, una demo — se la doy con gusto."</div></div>`,agresivo:`<div class="section"><div class="example">"Entendido. Pero dígame algo, [NOMBRE]: ¿qué parte es la que necesita pensar? Porque si es el precio, son 199€ y con un cliente se paga solo. Si es la confianza, le muestro ejemplos ahora. ¿Cuál es la duda real?"</div></div>`,analitico:`<div class="section"><div class="example">"Comprendo, es una decisión que merece análisis. ¿Qué variable le falta para completar su evaluación? Puedo proporcionarle datos adicionales, proyecciones de ROI, o casos documentados de su sector."</div></div>`,indeciso:`<div class="section"><div class="example">"Claro, [NOMBRE], sin ninguna presión. ¿Sabe qué le propongo? Le mando un ejemplo por WhatsApp de cómo quedaría para su negocio. Lo ve tranquilito, sin prisa, y hablamos el jueves a las 10. Así tiene algo real que mirar y no solo la idea. ¿Le parece bien?"</div></div>`}},
+  {title:"Mi sobrino/amigo me hace la web",popup:{receptivo:`<div class="section"><div class="section-title">Técnica: Validar + Elevar el estándar + Diferenciador</div><div class="example">"[NOMBRE], qué bueno que tenga esa opción, y la valoro. Ahora, déjeme preguntarle algo importante: su sobrino o su amigo, ¿también le va a hacer un bot con inteligencia artificial que le atienda clientes las 24 horas del día, les responda las dudas específicas de SU negocio, y les agende cita automáticamente? Porque eso es lo que realmente diferencia lo que hacemos. Una web sola, sin conversión, es como un escaparate bonito sin vendedor adentro. Lo nuestro es el escaparate MÁS el vendedor que trabaja 24/7 sin cobrar sueldo. Y todo por 199€, que probablemente es lo que le cobraría su amigo solo por la web. ¿No le parece que vale la pena al menos comparar lo que le ofrecemos?"</div></div><div class="proof">NUNCA desacredites al sobrino/amigo. VALIDA. Luego ELEVA: "una web sola es un escaparate sin vendedor". El diferenciador es el BOT + el SISTEMA COMPLETO.</div>`,esceptico:`<div class="section"><div class="example">"Bien, y no le voy a decir que no lo haga. Pero le hago una pregunta técnica: ¿esa persona le puede implementar un bot con IA conversacional que atienda 24/7, califique prospectos y agende automáticamente? Porque una web estática, sin sistema de conversión, tiene una tasa de rebote del 85%. El cliente entra, ve, y se va. Lo que diferencia nuestro Pack es la capa de atención inteligente que convierte visitantes en citas. ¿Puede obtener eso por 199€ con su contacto?"</div></div>`,agresivo:`<div class="section"><div class="example">"Bien, y respeto eso. Solo pregunto: ¿le incluye bot con IA? ¿Atención 24/7? ¿Agendamiento automático? Porque si solo es la web, no es lo mismo. La web sin conversión es una vitrina. Lo nuestro es vitrina MÁS vendedor. Y por 199€."</div></div>`,analitico:`<div class="section"><div class="example">"Entendido. Permítame un análisis comparativo: una web sin sistema de conversión tiene una tasa de rebote promedio del 85% y una conversión menor al 1%. Nuestro Pack incluye la capa de IA conversacional que incrementa la conversión a 8-12% porque atiende, califica y agenda en tiempo real. La pregunta es si el costo total de la solución alternativa incluye esa funcionalidad."</div></div>`,indeciso:`<div class="section"><div class="example">"Qué bueno que tenga ayuda, [NOMBRE]. Pero le cuento algo: lo nuestro no es solo una web. Es web + un asistente inteligente que atiende a los clientes por WhatsApp las 24 horas, les responde, y les agenda cita. Eso no lo hace un sobrino, por más bueno que sea. Y por 199 euros es prácticamente imposible encontrarlo en otro lado. ¿No le gustaría al menos ver cómo funciona antes de decidir?"</div></div>`}}
 ]},
 
-// F5 DEFENDER
-{id:5,name:"Defender la solución",sub:"Objeta = interesado",timer:"Sin límite",mission:"El que objeta está interesado. Cada objeción es puerta al cierre.",
+// ═══ F5 DEFENDER ═══
+{id:5,name:"Defender la solución",sub:"Objeta = interesado",timer:"Sin límite",mission:"El que objeta está interesado. Cada objeción es una puerta al cierre. NUNCA defiendas: Valida → Halaga → Redirige → Pregunta cerrada.",
 script:{
-receptivo:`<span class="v">— [NOMBRE], entiendo su punto. Déjeme abordarlo:</span>
-<span class="v">— [Usar argumentos de objeciones laterales]</span>
+receptivo:`<span class="v">— [NOMBRE], entiendo perfectamente su punto y le agradezco que me lo diga.</span>
+<span class="v">— Déjeme abordarlo: [Usar argumentos de objeciones laterales]</span>
 
-<span class="c">👤 Después de resolver:</span>
-<span class="r">→ ¿Eso aclara su duda? ¿Hay algo más? Porque si estamos claros, el siguiente paso es simple...</span>
+<span class="c">👤 Después de resolver la objeción:</span>
+<span class="r">→ ¿Eso le aclara la duda? ¿O hay algo más que le inquiete? Porque si ya estamos claros, [NOMBRE], el siguiente paso es muy sencillo y sin compromiso...</span>
 
-<span class="note">Resuelve → pregunta si hay más → si no hay más, pasa a F6.</span>`,
-esceptico:`<span class="v">— [NOMBRE], válida preocupación. Respondo con hechos:</span>
+<span class="note">PATRÓN: Validar ("entiendo su punto") → Resolver con técnica → Verificar → Si no hay más dudas, transición a F6. Cada objeción resuelta es un ladrillo más hacia el cierre.</span>`,
+esceptico:`<span class="v">— [NOMBRE], es una preocupación válida y me parece bien que la plantee.</span>
+<span class="v">— Le respondo con datos: [Argumento basado en evidencia]</span>
 
-<span class="c">👤 "Necesito pruebas"</span>
-<span class="r">→ Absolutamente. ¿Demo de 15 min? Sin compromiso.</span>
+<span class="c">👤 "Necesitaría ver pruebas"</span>
+<span class="r">→ Absolutamente, y me parece lo más inteligente. ¿Le parece si le muestro una demo real de 15 minutos? Sin compromiso. Si los datos no le convencen, ahí lo dejamos y tan amigos.</span>
 
-<span class="note">Siempre ofrece MOSTRAR, nunca solo DECIR.</span>`,
-agresivo:`<span class="v">— [NOMBRE], directo:</span>
+<span class="note">Al escéptico: SIEMPRE ofrece MOSTRAR. "Tiene razón en pedir pruebas" + demo tangible.</span>`,
+agresivo:`<span class="v">— [NOMBRE], entendido. Le respondo directo:</span>
+<span class="v">— [Respuesta sin rodeos pero respetuosa]</span>
 
 <span class="c">👤 "OK pero..."</span>
-<span class="r">→ ¿Cuál es la duda real? ¿Precio? 199€ se pagan con un cliente. ¿Confianza? Le muestro demo. ¿Cuál es?</span>
+<span class="r">→ [NOMBRE], le pregunto con todo respeto: ¿cuál es la duda de fondo? Porque si es el precio, 199€ se pagan con un cliente. Si es la confianza, le muestro la demo ahora. Dígame cuál es y la resolvemos.</span>
 
-<span class="note">"¿Cuál es la duda real?" corta capas de resistencia.</span>`,
+<span class="note">Con agresivo: "¿Cuál es la duda de fondo?" — corta capas de resistencia con respeto.</span>`,
 analitico:`<span class="v">— [NOMBRE], abordemos punto por punto:</span>
+<span class="v">— [Evidencia estructurada: primero... segundo...]</span>
 <span class="v">— ¿Le gustaría revisar documentación de respaldo?</span>
 
-<span class="note">Ofrece documentación y tiempo para revisarla.</span>`,
-indeciso:`<span class="v">— [NOMBRE], es normal tener esa duda.</span>
-<span class="v">— Muchos pensaron lo mismo. Les ayudó ver cómo queda. ¿Le muestro?</span>
+<span class="note">Al analítico: estructura + datos + ofrecer documentación. Que procese a su ritmo.</span>`,
+indeciso:`<span class="v">— [NOMBRE], es completamente normal tener esa duda. Muchos de nuestros clientes pensaron exactamente lo mismo al principio.</span>
+<span class="v">— Y le cuento qué fue lo que les ayudó: VER el sistema funcionando. Cuando lo ven, las dudas desaparecen.</span>
+<span class="v">— ¿Le gustaría verlo usted también? Son solo 15 minutos y sin ningún compromiso.</span>
 
-<span class="note">Normaliza → evidencia social → opción fácil.</span>`
+<span class="note">Al indeciso: Normalizar ("es normal") → Prueba social ("muchos pensaron lo mismo") → Opción fácil ("solo ver, sin compromiso").</span>`
 },
 subdirs:[
-  {label:"Múltiples objeciones",action:"Anota cada una. '[NOMBRE], escuché 3 puntos. Permítame abordarlos uno por uno.'"},
-  {label:"Silencio largo",action:"No llenes el silencio. Espera 3-5 seg. '¿[NOMBRE]? ¿Hay algo que le preocupe?'"},
-  {label:"Listo para cerrar",action:"Pasa a F6: 'Perfecto, entonces lo que hacemos es esto...'"}
+  {label:"Múltiples objeciones seguidas",action:"'[NOMBRE], me encanta que tenga preguntas, eso me dice que le interesa. Escuché 3 puntos importantes. Permítame abordarlos uno por uno para que quede todo claro.' Esto muestra profesionalismo y control."},
+  {label:"Silencio largo del cliente",action:"NO llenes el silencio. Espera 3-5 segundos. Si sigue: '[NOMBRE], ¿hay algo en lo que esté pensando? Porque si tiene alguna duda, prefiero que me la diga y la resolvemos juntos.' El silencio muchas veces es procesamiento, no rechazo."},
+  {label:"Listo para cerrar",action:"Si las objeciones se resolvieron y hay señales positivas, transición a F6: 'Perfecto, [NOMBRE], entonces lo que hacemos es muy sencillo...'"}
 ],
 objections:[
-  {title:"Es caro / No hay presupuesto",popup:{receptivo:`<div class="section"><div class="example">"199€, [NOMBRE]. Menos que una cena para dos. Con un cliente nuevo ya lo recuperó varias veces. La pregunta no es si puede pagarlo, sino cuánto le cuesta cada mes NO tenerlo."</div></div>`,esceptico:`<div class="section"><div class="example">"¿199€ caro? Un desarrollador cobra 2.000 mínimo por web sola. Nosotros: web + bot IA + dominio."</div></div>`,agresivo:`<div class="section"><div class="example">"199€. ¿Cuánto cobra por consulta? Con un cliente lo recupera. Eso no es caro."</div></div>`,analitico:`<div class="section"><div class="example">"199€ / valor de consulta = clientes para ROI. Si ticket es 50€, necesita 4 clientes. El sistema genera más."</div></div>`,indeciso:`<div class="section"><div class="example">"199€ es como unas compras del super para tener algo que traiga clientes todos los meses."</div></div>`}},
-  {title:"Necesito pensarlo",popup:{receptivo:`<div class="section"><div class="example">"¡Claro! Le mando ejemplo de cómo quedaría y hablamos mañana. Así tiene algo concreto. ¿Mañana a las 10 o tarde?"</div></div>`,esceptico:`<div class="section"><div class="example">"¿Qué información adicional le falta? Se la preparo."</div></div>`,agresivo:`<div class="section"><div class="example">"¿Cuándo tiene respuesta? Le llamo puntual."</div></div>`,analitico:`<div class="section"><div class="example">"¿Le envío propuesta formal con desglose técnico?"</div></div>`,indeciso:`<div class="section"><div class="example">"Le mando ejemplo por WhatsApp. Hablamos jueves a las 10."</div></div>`}},
-  {title:"No confío en estos servicios",popup:{receptivo:`<div class="section"><div class="example">"Entiendo, hay mucho humo. Le muestro ejemplo real de un negocio de [RUBRO] con web y bot funcionando. Usted ve y decide."</div></div>`,esceptico:`<div class="section"><div class="example">"Le comparto URLs de clientes reales verificables. ¿Eso da confianza?"</div></div>`,agresivo:`<div class="section"><div class="example">"Desconfianza se cura con hechos. Ejemplos reales. ¿Sí o no?"</div></div>`,analitico:`<div class="section"><div class="example">"Casos documentados, URLs verificables, demo del bot en vivo."</div></div>`,indeciso:`<div class="section"><div class="example">"¿Qué le daría tranquilidad? ¿Ver ejemplo real? ¿Hablar con alguien que ya lo tiene?"</div></div>`}},
-  {title:"Otro lo ofrece más barato",popup:{receptivo:`<div class="section"><div class="example">"¿Incluyen bot con IA + web a medida + dominio? Si no, no es lo mismo. Nuestro Pack es sistema completo: presencia + atención + conversión."</div></div>`,esceptico:`<div class="section"><div class="example">"¿Qué incluye la otra oferta? Web sola no genera clientes. Lo diferente es la IA que convierte."</div></div>`,agresivo:`<div class="section"><div class="example">"¿Más barato? ¿Con bot IA, dominio y configuración? Si solo es web, no es lo mismo."</div></div>`,analitico:`<div class="section"><div class="example">"Compare: web responsive + bot IA + dominio + configuración por 199€. ¿La otra cubre todo?"</div></div>`,indeciso:`<div class="section"><div class="example">"¿Le incluyen todo? Web + asistente IA + dominio por 199€. Es difícil encontrar eso."</div></div>`}}
+  {title:"Necesito pensarlo / consultarlo",popup:{receptivo:`<div class="section"><div class="section-title">Técnica: Validar + Indagar + Anclar</div><div class="example">"[NOMBRE], me parece perfecto que se tome su tiempo, habla bien de usted que no tome decisiones a la ligera. Ahora, le pregunto algo para ayudarle: ¿qué parte es la que necesita pensar? Porque si es el precio, recuerde que son 199€ y con un cliente se paga. Si es la confianza, le muestro ejemplos reales ahora mismo. Si necesita consultarlo con alguien, podemos hacer la sesión juntos con esa persona. Dígame cuál es y la resolvemos."</div></div><div class="section"><div class="section-title">Si insiste:</div><div class="example">"Perfecto. Le propongo algo: le mando un ejemplo real por WhatsApp de cómo quedaría el Pack para su negocio. Lo ve tranquilo y hablamos mañana. ¿Le parece mañana a las 10 o por la tarde?"</div></div><div class="proof">SIEMPRE ancla follow-up con fecha y hora. "Pensar" sin seguimiento = olvidar. "Pensar" con material + fecha = decidir.</div>`,esceptico:`<div class="section"><div class="example">"Lo respeto. ¿Qué información adicional necesitaría para tomar la decisión? Si es datos, se los preparo. Si es ver el producto, le hago una demo. Dígame qué le falta y se lo doy."</div></div>`,agresivo:`<div class="section"><div class="example">"Entendido. ¿Qué parte necesita pensar? Si es precio: 199€, un cliente lo paga. Si es confianza: le muestro demo ahora. ¿Cuál es?"</div></div>`,analitico:`<div class="section"><div class="example">"Comprendo, es una decisión que merece análisis. ¿Qué variable le falta para completar su evaluación? Puedo enviarle propuesta formal con desglose técnico, casos documentados y proyección de ROI."</div></div>`,indeciso:`<div class="section"><div class="example">"Claro, [NOMBRE], sin presión. Le propongo algo: le mando ejemplo por WhatsApp de cómo quedaría para su negocio. Lo ve tranquilito y hablamos el jueves a las 10. ¿Le parece bien?"</div></div>`}},
+  {title:"No confío en estos servicios",popup:{receptivo:`<div class="section"><div class="section-title">Técnica: Validar desconfianza + Prueba tangible</div><div class="example">"[NOMBRE], tiene toda la razón en desconfiar, y se lo digo de corazón. Hoy hay tanta gente prometiendo cosas en internet que uno ya no sabe a quién creerle. Y por eso nosotros no le pedimos que nos crea: le pedimos que nos VEA. Le puedo mostrar webs y bots que ya están funcionando para negocios de [RUBRO] como el suyo. URLs reales que usted puede verificar. Si después de verlo sigue sin confiar, le agradezco su tiempo y tan amigos. Pero al menos déme la oportunidad de mostrarle antes de decidir. ¿Le parece justo?"</div></div><div class="proof">La confianza NO se pide, se DEMUESTRA. "No le pedimos que nos crea, le pedimos que nos VEA." Demo > cualquier promesa verbal.</div>`,esceptico:`<div class="section"><div class="example">"Postura prudente, y la respeto completamente. Le propongo algo verificable: le comparto URLs activas de clientes reales de su sector. Usted las revisa, las verifica, prueba el bot. Si no le convence la evidencia, respeto su decisión. ¿Le parece un proceso justo?"</div></div>`,agresivo:`<div class="section"><div class="example">"Y tiene razón, [NOMBRE], hay mucho charlatán. Por eso no le pido que me crea: le muestro. Ejemplos reales, funcionando ahora. Usted juzga. Si es humo, me lo dice en la cara. ¿Sí o no?"</div></div>`,analitico:`<div class="section"><div class="example">"Comprensible. Le propongo un proceso de verificación: (a) URLs de clientes activos que puede auditar, (b) demo en vivo del bot respondiendo en tiempo real, (c) métricas documentadas de rendimiento. ¿Le parece un nivel de evidencia suficiente para evaluar?"</div></div>`,indeciso:`<div class="section"><div class="example">"Es totalmente normal, [NOMBRE], y me parece bien que sea precavido. Muchos de nuestros clientes empezaron con esa misma duda. ¿Sabe qué les quitó todas las dudas? Ver el sistema funcionando en vivo para un negocio como el suyo. ¿Le gustaría verlo? Sin ningún compromiso."</div></div>`}},
+  {title:"Otro me lo ofrece más barato",popup:{receptivo:`<div class="section"><div class="section-title">Técnica: Validar + No competir + Diferenciar</div><div class="example">"[NOMBRE], qué bueno que esté comparando opciones, eso habla de un dueño inteligente que busca lo mejor para su negocio. Ahora, déjeme hacerle una pregunta importante: ¿lo que le ofrecen incluye web profesional a medida, bot con inteligencia artificial que atienda 24/7, Y dominio? Porque si solo es la web, o si es una web con plantilla genérica, no es lo mismo. Lo nuestro es un SISTEMA completo: la web lo posiciona, el bot lo atiende, y el dominio le da identidad. Piénselo así: ¿qué vale más, una web sola que es una vitrina, o un sistema completo que atrae, atiende y convierte? Dígame sinceramente."</div></div><div class="proof">NUNCA ataques a la competencia. Valida que compare. Luego DIFERENCIA: "sistema completo vs pieza suelta". Pregunta cerrada de contraste.</div>`,esceptico:`<div class="section"><div class="example">"Bien, me parece prudente que compare. ¿Me permite una pregunta? ¿Qué incluye exactamente la otra oferta? Porque web sola, sin sistema de conversión, no genera clientes. Lo que diferencia nuestro Pack es la capa de IA que convierte visitantes en citas agendadas. Si la otra oferta incluye eso también, le digo honestamente que compare y elija la que más le convenga."</div></div>`,agresivo:`<div class="section"><div class="example">"Bien. ¿Y le incluyen bot con IA, dominio y configuración completa? Porque si es solo web, no es lo mismo. Nosotros le damos el sistema completo por 199€. Compare todo el paquete, no solo el precio."</div></div>`,analitico:`<div class="section"><div class="example">"Interesante. ¿Me puede compartir el alcance de la otra oferta? Porque el precio solo es una variable. Lo relevante es: ¿incluye web responsive + bot IA conversacional + dominio + configuración? Si la respuesta es sí al mismo nivel, evalúe ambas. Si no incluye la capa de IA, son productos fundamentalmente diferentes."</div></div>`,indeciso:`<div class="section"><div class="example">"Qué bueno que compare, [NOMBRE], eso es lo más inteligente. ¿Pero sabe qué? Le propongo algo: mire lo que le ofrecen ellos y mire lo nuestro. Si lo de ellos le da web + bot con IA + dominio + configuración por menos, hágalo con ellos sin problema. Pero si no le dan todo eso, entonces no es lo mismo. ¿Le parece justo comparar así?"</div></div>`}},
+  {title:"Ya tengo algo que funciona",popup:{receptivo:`<div class="section"><div class="section-title">Técnica: Halagar + Elevar + Complementar</div><div class="example">"[NOMBRE], antes de decir nada más, déjeme felicitarlo. Porque el hecho de que ya tenga algo funcionando lo pone, estadísticamente hablando, por encima del 80% de negocios de [RUBRO] en su zona. Eso habla muy bien de su visión de negocio. Ahora, justamente porque usted ya entiende el valor de lo digital, esta propuesta es PARA gente como usted. Es como subir al siguiente nivel. Le pregunto algo: ¿en quién confiaría más un cliente nuevo — en un negocio con lo que tiene ahora, o en un negocio con una web de primer nivel y un bot que le contesta al instante con toda la información? Dígame sinceramente."</div></div><div class="proof">PATRÓN: Halagar ("lo felicito", "por encima del 80%") → Elevar ("esto es para gente como usted") → Pregunta cerrada de contraste ("¿en cuál confiaría más?"). NUNCA ataques lo que ya tiene. Lo COMPLEMENTAS.</div>`,esceptico:`<div class="section"><div class="example">"Y me alegra que tenga algo, eso habla bien de su gestión. ¿Me permite una pregunta técnica? ¿Lo que tiene actualmente le atiende clientes 24/7, les responde con IA conversacional, y les agenda cita automáticamente? Porque si no, lo nuestro no reemplaza lo que tiene: lo POTENCIA."</div></div>`,agresivo:`<div class="section"><div class="example">"Bien, y lo respeto. Solo una cosa: ¿lo que tiene le contesta al instante, 24 horas, y le agenda solo? Porque si la respuesta es sí, no lo molesto más. Si no, nuestro Pack complementa lo que ya tiene. ¿Tiene sentido?"</div></div>`,analitico:`<div class="section"><div class="example">"Bien, eso indica madurez digital. ¿Me permite evaluar complementariedad? ¿Su solución actual incluye IA conversacional con atención 24/7 y agendamiento automático? Si no, nuestro Pack no reemplaza lo que tiene, lo complementa cubriendo gaps del funnel."</div></div>`,indeciso:`<div class="section"><div class="example">"¡Qué bueno, [NOMBRE]! Y no le voy a decir que lo cambie. Lo nuestro es para SUMAR a lo que ya tiene. Es como agregarle un turbo al motor que ya funciona. ¿No le gustaría que funcione todavía mejor?"</div></div>`}}
 ]},
 
-// F6 CIERRE
-{id:6,name:"Cierre",sub:"Se conduce, no se pide",timer:"30 seg",mission:"No preguntes '¿quiere?', di '¿cuándo?'. Agenda la demo.",
+// ═══ F6 CIERRE ═══
+{id:6,name:"Cierre",sub:"Se conduce, no se pide",timer:"30 seg",mission:"El cierre se CONDUCE, nunca se pide. No preguntes '¿quiere?', di '¿cuándo?'. Agenda la sesión de demostración.",
 script:{
-receptivo:`<span class="v">— Perfecto [NOMBRE], lo que hacemos es esto:</span>
-<span class="v">— Le agendo una sesión de 15 minutos donde le muestro el Pack para su negocio.</span>
-<span class="v">— Le enseño la web, el bot funcionando, todo personalizado.</span>
-<span class="v">— Sin compromiso. Si le gusta, avanzamos. Si no, aquí no pasó nada.</span>
+receptivo:`<span class="v">— Perfecto [NOMBRE], entonces lo que hacemos es esto, muy sencillo:</span>
+<span class="v">— Le agendo una sesión cortita de 15 minutos donde le muestro exactamente cómo quedaría el Pack para su negocio.</span>
+<span class="v">— Le enseño su web, el bot funcionando, todo personalizado para [NEGOCIO].</span>
+<span class="v">— Es completamente sin compromiso. Si le gusta, avanzamos. Si no, aquí no pasó nada y tan amigos.</span>
 <span class="v">— ¿Le queda mejor hoy en la tarde o mañana en la mañana?</span>
 
-<span class="c">👤 "Mañana"</span>
-<span class="r">→ ¿A las 10 o a las 11? → Listo, le confirmo por WhatsApp. ¿Me da su número?</span>
+<span class="c">👤 "Mañana en la mañana"</span>
+<span class="r">→ ¡Perfecto! ¿A las 10 o a las 11? → Listo, [NOMBRE], queda agendado. Le confirmo por WhatsApp ahora mismo. ¿Me da su número para enviarle la confirmación?</span>
 
-<span class="note">Alternativa de cierre. NUNCA "¿quiere agendar?". Siempre "¿martes o miércoles?".</span>`,
-esceptico:`<span class="v">— [NOMBRE], le propongo:</span>
-<span class="v">— Sesión de 15 min donde le muestro el Pack con datos de su negocio.</span>
-<span class="v">— Sin costo, sin compromiso. Usted ve y decide.</span>
+<span class="note">TÉCNICA: Alternativa de cierre. NUNCA preguntes "¿quiere agendar?" — eso ya está decidido. Solo preguntas el CUÁNDO: "¿martes o miércoles?", "¿10 o 11?". El cierre se conduce como si fuera lo más natural del mundo.</span>`,
+esceptico:`<span class="v">— [NOMBRE], lo que le propongo es lo siguiente:</span>
+<span class="v">— Una sesión de diagnóstico de 15 minutos donde le muestro el Pack funcionando con datos de SU negocio.</span>
+<span class="v">— Sin costo, sin compromiso, sin presión. Usted ve todo y decide con total libertad.</span>
 <span class="v">— ¿Tiene disponibilidad esta semana?</span>
 
-<span class="note">El escéptico quiere control. Opciones de formato y horario.</span>`,
-agresivo:`<span class="v">— [NOMBRE], siguiente paso:</span>
-<span class="v">— Sesión 15 min. Le muestro cómo queda para su negocio.</span>
-<span class="v">— Si en 5 min no convence, cortamos.</span>
+<span class="c">👤 "¿Cuál es el formato?"</span>
+<span class="r">→ Videollamada o llamada telefónica, como usted prefiera. Si es videollamada le comparto pantalla con la demo en vivo. 15 minutos exactos, ni un minuto más. ¿Qué formato y qué día le funcionan?</span>
+
+<span class="note">Al escéptico: dale CONTROL. Que elija formato, día y hora. "Sin presión" + "usted decide con total libertad". El control disminuye la resistencia.</span>`,
+agresivo:`<span class="v">— [NOMBRE], siguiente paso, muy simple:</span>
+<span class="v">— Sesión de 15 minutos. Le muestro el Pack para su negocio.</span>
+<span class="v">— Si en 5 minutos no le convence, cortamos ahí.</span>
 <span class="v">— ¿Hoy o mañana?</span>
 
-<span class="note">Rápido, sin florituras.</span>`,
-analitico:`<span class="v">— [NOMBRE], siguiente paso lógico:</span>
-<span class="v">— Sesión personalizada: maqueta web, demo bot en vivo, desglose Pack 199€.</span>
-<span class="v">— 15 minutos estructurados. ¿Qué día?</span>
+<span class="note">Con agresivo: rápido, sin florituras, dale control del tiempo. "5 minutos y si no le convence, cortamos" es irresistible para el agresivo.</span>`,
+analitico:`<span class="v">— [NOMBRE], el siguiente paso lógico sería:</span>
+<span class="v">— Sesión personalizada de 15 minutos donde le presento: maqueta de web para su negocio, demo del bot funcionando en vivo, y desglose completo del Pack 199€.</span>
+<span class="v">— Son 15 minutos estructurados con agenda clara. ¿Qué día y horario le funciona?</span>
 
-<span class="note">Agenda si sabe que recibirá valor: demo, datos, desglose.</span>`,
-indeciso:`<span class="v">— [NOMBRE], mire:</span>
-<span class="v">— Le muestro cómo quedaría en 15 minutos. Solo ver, sin compromiso.</span>
-<span class="v">— Si le gusta, genial. Si no, no pasa nada.</span>
-<span class="v">— Le agendo mañana a las 10. ¿Le parece?</span>
+<span class="note">Al analítico: detalla QUÉ recibirá en la sesión. "Maqueta + demo + desglose" = valor tangible que justifica los 15 minutos.</span>`,
+indeciso:`<span class="v">— [NOMBRE], mire lo que podemos hacer, muy fácil:</span>
+<span class="v">— Le muestro cómo quedaría todo para su negocio en solo 15 minutitos. Es solo ver, sin ningún compromiso.</span>
+<span class="v">— Si le gusta, genial, avanzamos. Si no le gusta, no pasa absolutamente nada.</span>
+<span class="v">— Le voy a agendar para mañana a las 10. ¿Le parece bien?</span>
 
-<span class="note">DECIDE por él. "Le agendo mañana a las 10."</span>`
+<span class="note">Con indeciso: DECIDE por él. "Le voy a agendar mañana a las 10" — NO "¿cuándo le queda?" porque se paraliza. Tú decides, él solo confirma.</span>`
 },
 subdirs:[
-  {label:"Sí pero no da fecha",action:"'Perfecto, ¿mañana a las 10? Le mando confirmación ahora.'"},
-  {label:"Pide info antes",action:"'Le mando ejemplo por WhatsApp y agendamos sesión. ¿Me da su número?'"},
-  {label:"'Déjame pensarlo'",action:"'¿Qué dato le falta? Puedo resolverlo ahora.' Si insiste: 'Le llamo jueves. ¿10 o 3?'"}
+  {label:"Dice sí pero no da fecha",action:"Toma control: 'Perfecto, [NOMBRE], ¿mañana a las 10 le funciona? Le mando confirmación ahora mismo.' Si dice 'puede ser': 'Listo, queda mañana a las 10. Le envío confirmación.' Asúmelo como hecho."},
+  {label:"Pide info antes de agendar",action:"Técnica del Y: 'Le mando toda la info por WhatsApp ahora Y agendamos la sesión para verlo juntos. Así tiene la info para revisarla y en la sesión resolvemos dudas. ¿Me da su número?' NO es info O sesión. Es info Y sesión."},
+  {label:"'Déjame pensarlo'",action:"'Claro, [NOMBRE]. ¿Qué dato le ayudaría a decidir? Porque seguramente puedo resolverlo ahora.' Si insiste: 'Perfecto, le llamo el jueves. ¿A las 10 o a las 3?' SIEMPRE ancla fecha."}
 ],
 objections:[
-  {title:"Mándame info primero",popup:{receptivo:`<div class="section"><div class="example">"¡Claro! Pero en 15 min explico mejor que cualquier PDF. ¿Info Y sesión? ¿Mañana o pasado?"</div></div>`,esceptico:`<div class="section"><div class="example">"Con gusto. ¿WhatsApp? Le mando ejemplo real. Si quiere profundizar, agendamos 15 min."</div></div>`,agresivo:`<div class="section"><div class="example">"Se la mando. ¿WhatsApp? Pero la info real está en la demo. ¿Mañana?"</div></div>`,analitico:`<div class="section"><div class="example">"Le preparo ejemplo web, demo bot y desglose. ¿Correo? Y agendamos 15 min."</div></div>`,indeciso:`<div class="section"><div class="example">"Sí, se la mando. ¿WhatsApp? Y le agendo llamadita. ¿Martes le queda?"</div></div>`}},
-  {title:"Hablar con mi socio",popup:{receptivo:`<div class="section"><div class="example">"¡Perfecto! ¿Sesión con los dos? Así ven juntos y deciden. ¿Cuándo pueden?"</div></div>`,esceptico:`<div class="section"><div class="example">"¿Agendamos sesión conjunta? Información completa y evalúan juntos."</div></div>`,agresivo:`<div class="section"><div class="example">"Agenda con tu socio. ¿Cuándo pueden los dos?"</div></div>`,analitico:`<div class="section"><div class="example">"¿Le preparo material y agendamos sesión conjunta?"</div></div>`,indeciso:`<div class="section"><div class="example">"¿Cuándo pueden los dos? Lo agendamos."</div></div>`}},
-  {title:"No estoy convencido",popup:{receptivo:`<div class="section"><div class="example">"¿Qué le genera duda? La sesión es para eso: ver todo y decidir con información. Solo 15 minutos."</div></div>`,esceptico:`<div class="section"><div class="example">"¿Qué necesitaría ver? Datos, demo, testimonios... dígame."</div></div>`,agresivo:`<div class="section"><div class="example">"¿Qué necesitas para decidir? Dime."</div></div>`,analitico:`<div class="section"><div class="example">"¿Qué variable falta?"</div></div>`,indeciso:`<div class="section"><div class="example">"Es normal. Sesión sin compromiso, solo para resolver dudas. ¿Mañana?"</div></div>`}},
-  {title:"No estoy interesado",popup:{receptivo:`<div class="section"><div class="example">"Respeto. ¿Es porque ya tiene web y bot funcionando, o no es el momento? Si es timing, puedo llamar cuando sea mejor."</div></div>`,esceptico:`<div class="section"><div class="example">"¿Qué parte no pareció relevante?"</div></div>`,agresivo:`<div class="section"><div class="example">"¿Es el servicio o el momento?"</div></div>`,analitico:`<div class="section"><div class="example">"¿Factor: precio, servicio o timing?"</div></div>`,indeciso:`<div class="section"><div class="example">"Sin problema. ¿Le dejo mi número por si acaso?"</div></div>`}}
+  {title:"Mándame info primero",popup:{receptivo:`<div class="section"><div class="section-title">Técnica del Y (no del O)</div><div class="example">"¡Claro que sí, [NOMBRE]! Le mando toda la información ahora mismo. Pero le digo algo: en 15 minutos de sesión le puedo explicar MUCHO mejor que cualquier PDF, porque le muestro todo personalizado para su negocio. Le propongo esto: le mando la info Y agendamos la sesión. Así tiene la info para revisarla, y en la sesión resolvemos cualquier duda. Lo mejor de ambos mundos. ¿Mañana o pasado mañana?"</div></div><div class="proof">"Info O sesión" = pierde la sesión. "Info Y sesión" = gana ambas. SIEMPRE vincula.</div>`,esceptico:`<div class="section"><div class="example">"Con todo gusto. ¿A qué WhatsApp se lo envío? Le incluyo ejemplo de web + demo del bot. Y si después de revisarlo quiere profundizar, agendamos 15 minutos. ¿Le parece una buena forma de evaluarlo?"</div></div>`,agresivo:`<div class="section"><div class="example">"Se la mando ahora. ¿WhatsApp? Pero le anticipo: la info real está en la demo en vivo. ¿La vemos mañana?"</div></div>`,analitico:`<div class="section"><div class="example">"Le preparo un documento con: ejemplo de web del sector, demo del bot, y desglose técnico del Pack. ¿A qué correo? Y para el análisis personalizado, ¿agendamos 15 minutos esta semana?"</div></div>`,indeciso:`<div class="section"><div class="example">"¡Sí, [NOMBRE]! Se la mando ahorita. ¿Me da su WhatsApp? Y le agendo una llamadita cortita para la semana que viene, así si le surgen dudas las resolvemos. ¿El martes a las 10 le queda?"</div></div>`}},
+  {title:"Hablar con mi socio/pareja",popup:{receptivo:`<div class="section"><div class="section-title">Técnica: Incluir al tercero</div><div class="example">"¡Perfecto, [NOMBRE]! ¿Y sabe qué sería ideal? Que hagamos la sesión con los dos presentes. Así ambos ven lo mismo, tienen la misma información, y pueden decidir juntos sin teléfono roto. ¿Cuándo pueden ambos?"</div></div><div class="proof">Incluir al socio/pareja en la sesión es MUCHO MEJOR que dejarlo afuera. Evita el "teléfono roto" donde la info se distorsiona.</div>`,esceptico:`<div class="section"><div class="example">"Comprendo, es importante que estén alineados. ¿Le parece si agendamos sesión con ambos? Así la información llega completa y evalúan juntos con los mismos datos."</div></div>`,agresivo:`<div class="section"><div class="example">"Bien. Agenda con tu socio. ¿Cuándo pueden los dos? 15 minutos. Así los dos ven y deciden."</div></div>`,analitico:`<div class="section"><div class="example">"Lógico. ¿Le preparo material para que comparta? Y agendamos sesión conjunta para que ambos evalúen con los mismos datos. ¿Qué día funcionaría?"</div></div>`,indeciso:`<div class="section"><div class="example">"Claro, es importante que estén de acuerdo. ¿Me dice cuándo pueden los dos y lo agendamos? Así se enteran juntos y nadie se queda con dudas."</div></div>`}},
+  {title:"No estoy convencido",popup:{receptivo:`<div class="section"><div class="example">"[NOMBRE], lo entiendo completamente. ¿Me permite preguntarle qué parte le genera duda? Porque la sesión de 15 minutos es JUSTAMENTE para eso: que vea todo funcionando, haga todas las preguntas que quiera, y decida con información completa. Si después de verlo sigue sin estar convencido, no perdió más que 15 minutos. Pero si le convence, puede ser un antes y un después para su negocio. ¿No vale la pena 15 minutos para saberlo?"</div></div>`,esceptico:`<div class="section"><div class="example">"Respeto eso. ¿Qué necesitaría ver para estar convencido? ¿Datos? ¿Demo en vivo? ¿Testimonios? Dígame y se lo preparo para una sesión de 15 minutos."</div></div>`,agresivo:`<div class="section"><div class="example">"¿Qué necesita para decidir? Dígame y se lo doy. Porque si es algo que puedo resolver en 15 minutos de demo, vale la pena intentar."</div></div>`,analitico:`<div class="section"><div class="example">"¿Qué variable le falta para completar su evaluación? Puedo preparar datos adicionales, proyecciones específicas, o una demo técnica detallada."</div></div>`,indeciso:`<div class="section"><div class="example">"Es totalmente normal, [NOMBRE]. La sesión de 15 minutos es sin compromiso, justamente para resolver esas dudas. Si después no le convence, no pasa absolutamente nada. ¿Le parece mañana a las 10?"</div></div>`}},
+  {title:"No estoy interesado",popup:{receptivo:`<div class="section"><div class="section-title">Última pregunta con salida digna</div><div class="example">"[NOMBRE], lo respeto completamente, y le agradezco su tiempo. Solo una última cosa antes de despedirme: ¿no le interesa porque ya tiene web profesional y bot con IA funcionando, o porque simplemente no es el momento? Porque si ya lo tiene todo resuelto, lo felicito de verdad. Y si es tema de momento, puedo llamarle cuando sea más oportuno."</div></div><div class="proof">Esta pregunta CLASIFICA: si ya tiene todo, es un no real y lo respetas. Si es tema de timing, es oportunidad de follow-up. En ambos casos, sales con dignidad.</div>`,esceptico:`<div class="section"><div class="example">"Entiendo. ¿Me permite preguntarle qué parte no le pareció relevante? Me ayuda a mejorar y se lo agradecería."</div></div>`,agresivo:`<div class="section"><div class="example">"Respetado, [NOMBRE]. ¿Es por el servicio o por el momento? Porque si es momento, le llamo cuando me diga."</div></div>`,analitico:`<div class="section"><div class="example">"Comprendo. ¿El factor determinante fue el precio, el servicio, o el timing? Es información valiosa."</div></div>`,indeciso:`<div class="section"><div class="example">"Claro, sin problema, [NOMBRE]. Y si en algún momento le surge la curiosidad, ¿puedo dejarle mi número? Así me tiene guardado por si acaso."</div></div>`}}
 ]},
 
-// F7 DESPEDIDA
-{id:7,name:"Despedida",sub:"Cierre limpio",timer:"< 20 seg",mission:"Corto, seguro, sin reabrir temas. Confirma datos y despide.",hasForm:true,
+// ═══ F7 DESPEDIDA ═══
+{id:7,name:"Despedida",sub:"Cierre limpio",timer:"< 20 seg",mission:"Corto, seguro, sin reabrir temas. Confirma datos, refuerza la decisión y despide con energía positiva.",hasForm:true,
 script:{
-receptivo:`<span class="v">— ¡Perfecto [NOMBRE]! Queda confirmado:</span>
+receptivo:`<span class="v">— ¡Perfecto [NOMBRE]! Queda confirmado entonces:</span>
 <span class="v">— [DÍA] a las [HORA].</span>
 <span class="v">— Le mando confirmación por WhatsApp ahora mismo.</span>
-<span class="v">— ¡Que le vaya excelente y nos vemos pronto!</span>
+<span class="v">— Le va a encantar lo que le vamos a mostrar. ¡Que le vaya excelente y nos vemos pronto!</span>
 
-<span class="note">NO reabras temas. Confirma y despide con energía positiva.</span>`,
+<span class="note">NO reabras temas. NO hagas más preguntas. Confirma, refuerza ("le va a encantar") y despide con energía positiva.</span>`,
 esceptico:`<span class="v">— Perfecto [NOMBRE]. Queda agendado:</span>
 <span class="v">— [DÍA] a las [HORA].</span>
 <span class="v">— Le envío confirmación por WhatsApp.</span>
-<span class="v">— Cualquier duda, me escribe. Hasta pronto.</span>
+<span class="v">— Cualquier duda previa, me escribe con total confianza. Hasta pronto.</span>
 
-<span class="note">Breve, profesional, sin efusiones.</span>`,
+<span class="note">Breve, profesional, sin efusiones. El escéptico respeta la concisión.</span>`,
 agresivo:`<span class="v">— Listo [NOMBRE]. [DÍA] a las [HORA].</span>
-<span class="v">— Confirmo por WhatsApp. Hasta entonces.</span>
+<span class="v">— Le confirmo por WhatsApp. Hasta entonces.</span>
 
-<span class="note">Máximo 2 frases.</span>`,
+<span class="note">Máximo 2 frases. Ni una más. El agresivo respeta la brevedad.</span>`,
 analitico:`<span class="v">— [NOMBRE], confirmo: sesión el [DÍA] a las [HORA].</span>
-<span class="v">— Le envío confirmación con agenda por correo.</span>
+<span class="v">— Le envío confirmación con agenda de la sesión por correo.</span>
 <span class="v">— Hasta pronto.</span>
 
-<span class="note">Confirma con detalle. Ofrece agenda escrita.</span>`,
-indeciso:`<span class="v">— ¡Listo [NOMBRE]! Agendado para el [DÍA] a las [HORA].</span>
-<span class="v">— Le mando todo por WhatsApp.</span>
-<span class="v">— Va a ver que sale muy bien. ¡Hasta pronto!</span>
+<span class="note">Confirma con detalle y ofrece agenda escrita. El analítico lo aprecia.</span>`,
+indeciso:`<span class="v">— ¡Listo [NOMBRE]! Ya quedó agendado para el [DÍA] a las [HORA].</span>
+<span class="v">— Le mando todo por WhatsApp para que lo tenga guardado.</span>
+<span class="v">— Va a ver que va a salir muy bien. ¡Hasta pronto!</span>
 
-<span class="note">Refuerza: "Va a salir muy bien" elimina arrepentimiento.</span>`
+<span class="note">Refuerza la decisión: "Va a salir muy bien" elimina arrepentimiento anticipado.</span>`
 },
 subdirs:[
-  {label:"No agendó",action:"'Entendido [NOMBRE], gracias. Si en el futuro le interesa, aquí estamos. Que le vaya bien.' NO insistas."},
-  {label:"Agendó pero duda",action:"'Le mando confirmación ahora. Es solo ver, sin compromiso. Nos vemos el [DÍA].' Despide rápido."}
+  {label:"No agendó (no interesado)",action:"Cierra con clase: 'Entendido [NOMBRE], le agradezco mucho su tiempo. Si en el futuro le interesa, aquí estamos para usted. Que le vaya muy bien.' NO insistas. La dignidad abre puertas futuras."},
+  {label:"Agendó pero duda",action:"Refuerza RÁPIDO: 'Le mando la confirmación ahora mismo. Y recuerde: es solo ver, sin ningún compromiso. Si le gusta, avanzamos, y si no, tan amigos. Nos vemos el [DÍA].' Despide antes de que reconsidere."}
 ],
 objections:[
-  {title:"Llámame otro día",popup:{receptivo:`<div class="section"><div class="example">"¡Claro! ¿Día y hora? Le llamo puntual. ¿Me da su número?"</div></div>`,esceptico:`<div class="section"><div class="example">"¿Día y horario? Le agendo y confirmo."</div></div>`,agresivo:`<div class="section"><div class="example">"Día y hora. Le llamo puntual."</div></div>`,analitico:`<div class="section"><div class="example">"¿Día, hora y datos de contacto?"</div></div>`,indeciso:`<div class="section"><div class="example">"¿Le parece jueves a las 10? Le mando recordatorio."</div></div>`}},
-  {title:"Cambié de opinión",popup:{receptivo:`<div class="section"><div class="example">"¿Algo lo hizo cambiar? Si es duda que puedo resolver, con gusto."</div></div><div class="warning">Si insiste: "Sin problema, que le vaya bien."</div>`,esceptico:`<div class="section"><div class="example">"¿Punto específico? Me ayuda saber."</div></div>`,agresivo:`<div class="section"><div class="example">"¿Algo específico? Si no, respeto. Gracias."</div></div>`,analitico:`<div class="section"><div class="example">"¿Factor que no abordamos?"</div></div>`,indeciso:`<div class="section"><div class="example">"No hay presión. Si quiere retomarlo, me escribe. ¿Le dejo mi número?"</div></div>`}},
-  {title:"Dame tu contacto",popup:{receptivo:`<div class="section"><div class="example">"Mi número: [NÚMERO]. ¿Me da el suyo para mandarle mensaje?"</div></div><div class="proof">Siempre intercambia. Con su número puedes hacer follow-up.</div>`,esceptico:`<div class="section"><div class="example">"[NÚMERO]. ¿Le envío mensaje para que me tenga?"</div></div>`,agresivo:`<div class="section"><div class="example">"[NÚMERO]. Le mando mensaje. ¿Su WhatsApp?"</div></div>`,analitico:`<div class="section"><div class="example">"Teléfono: [NÚMERO]. ¿Sus datos para enviarle material?"</div></div>`,indeciso:`<div class="section"><div class="example">"Es [NÚMERO]. Le mando mensajito. ¿Me da su número?"</div></div>`}},
-  {title:"Confirmar datos de cita",popup:{receptivo:`<div class="section"><div class="proof">✅ Nombre completo<br>✅ Negocio<br>✅ WhatsApp<br>✅ Día y hora<br>✅ Formato<br>✅ Confirmación inmediata</div></div><div class="example">"[NOMBRE], confirmo: [DÍA] a las [HORA] por [FORMATO]. Le mando confirmación. ¡Nos vemos!"</div>`,esceptico:`<div class="section"><div class="proof">Misma checklist. Confirma cada dato.</div></div>`,agresivo:`<div class="section"><div class="proof">Confirma rápido. Máximo 2 frases.</div></div>`,analitico:`<div class="section"><div class="proof">Todos los datos + agenda por correo.</div></div>`,indeciso:`<div class="section"><div class="proof">Confirma + "Va a ser muy útil, ya verá."</div></div>`}}
+  {title:"Llámame otro día",popup:{receptivo:`<div class="section"><div class="example">"¡Claro que sí, [NOMBRE]! ¿Qué día y hora le queda mejor? Le llamo puntualísimo. ¿Me da su nombre completo y número para confirmarle?"</div></div><div class="proof">Si deja datos, es oportunidad real. Si no deja datos, era un no educado. SIEMPRE pide datos de contacto.</div>`,esceptico:`<div class="section"><div class="example">"Por supuesto. ¿Qué día y horario prefiere? Le agendo y le confirmo por WhatsApp."</div></div>`,agresivo:`<div class="section"><div class="example">"Dígame día y hora. Le llamo puntual."</div></div>`,analitico:`<div class="section"><div class="example">"Entendido. ¿Me proporciona día, hora y datos de contacto para agendar correctamente?"</div></div>`,indeciso:`<div class="section"><div class="example">"¡Claro! ¿Le parece el jueves a las 10? Le mando recordatorio por WhatsApp. ¿Me da su número?"</div></div>`}},
+  {title:"Cambié de opinión",popup:{receptivo:`<div class="section"><div class="example">"Entiendo, [NOMBRE]. ¿Hay algo que lo hizo cambiar de parecer? Porque a veces una duda sin resolver causa eso, y si puedo aclararla, con gusto lo hago."</div></div><div class="warning">Si insiste en que no: "Sin problema, [NOMBRE], que le vaya muy bien. Si en el futuro le interesa, aquí estamos." Cierra con dignidad.</div>`,esceptico:`<div class="section"><div class="example">"Comprendo. ¿Fue algún punto específico? Me ayuda a saber si hay algo que no expliqué bien."</div></div>`,agresivo:`<div class="section"><div class="example">"OK. ¿Es por algo específico? Si no, respeto. Gracias por su tiempo."</div></div>`,analitico:`<div class="section"><div class="example">"¿Fue algún factor que no abordamos? Si hay información pendiente, puedo resolverla ahora."</div></div>`,indeciso:`<div class="section"><div class="example">"Entiendo, [NOMBRE]. No hay ninguna presión. Si en algún momento quiere retomarlo, me escribe y lo vemos con calma. ¿Le dejo mi número?"</div></div>`}},
+  {title:"Dame tu contacto",popup:{receptivo:`<div class="section"><div class="example">"¡Claro! Mi número es: [NÚMERO]. Y para poder enviarle la confirmación y que me tenga guardado, ¿me da el suyo?"</div></div><div class="proof">SIEMPRE intercambia. Si solo él tiene tu número, depende de que llame. Si TÚ tienes el suyo, puedes hacer follow-up.</div>`,esceptico:`<div class="section"><div class="example">"Mi número es [NÚMERO]. ¿Me permite enviarle un mensaje para que me tenga registrado?"</div></div>`,agresivo:`<div class="section"><div class="example">"[NÚMERO]. Le mando mensaje ahora. ¿Cuál es su WhatsApp?"</div></div>`,analitico:`<div class="section"><div class="example">"Teléfono: [NÚMERO], correo: [CORREO]. ¿Me proporciona sus datos para enviarle el material?"</div></div>`,indeciso:`<div class="section"><div class="example">"Sí, es [NÚMERO]. Le mando un mensajito ahora para que me tenga guardado. ¿Me da su número?"</div></div>`}},
+  {title:"Confirmar datos de cita",popup:{receptivo:`<div class="section"><div class="section-title">Checklist de cierre</div><div class="proof">✅ Nombre completo del contacto<br>✅ Nombre del negocio<br>✅ Número de WhatsApp<br>✅ Día y hora confirmados<br>✅ Formato (videollamada/llamada)<br>✅ Enviar confirmación inmediata</div></div><div class="example">"[NOMBRE], confirmo: [DÍA] a las [HORA] por [FORMATO]. Le mando confirmación ahora mismo. ¡Va a ser una sesión muy productiva, nos vemos!"</div>`,esceptico:`<div class="section"><div class="proof">Misma checklist. Confirma cada dato verbalmente. El escéptico aprecia la precisión.</div></div>`,agresivo:`<div class="section"><div class="proof">Confirma rápido. Máximo 2 frases.</div></div>`,analitico:`<div class="section"><div class="proof">Confirma todos los datos + envía agenda escrita por correo.</div></div>`,indeciso:`<div class="section"><div class="proof">Confirma + refuerza: "Va a ser una sesión muy útil, ya verá."</div></div>`}}
 ]}
 ];
 
