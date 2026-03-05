@@ -7,7 +7,12 @@
     "start": "node server.js",
     "dev": "node server.js"
   },
-  "keywords": ["sales", "cold-calling", "whatsapp", "copilot"],
+  "keywords": [
+    "sales",
+    "cold-calling",
+    "whatsapp",
+    "copilot"
+  ],
   "author": "OpenAI",
   "license": "MIT"
 }
